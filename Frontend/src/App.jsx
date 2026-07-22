@@ -15,7 +15,7 @@ import Airbubbleinsulation from "./pages/productpage/Airbubbleinsulation";
 import AllCategories from "./pages/catergoriespage/AllCategories";
 import ProductList from "./pages/productpage/ProductList";
 import ProductDetails from "./pages/productpage/ProductDetails";
-
+import About from "./pages/Aboutpage/About";
 function App() {
   return (
     <BrowserRouter>
@@ -23,6 +23,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/category/:categoryName" element={<ProductList />} />
         <Route path="/product/:id" element={<ProductDetails />} />
