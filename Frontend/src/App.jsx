@@ -1,13 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "./pages/Home";
-import Categories from "./pages/Categories";
-import ProductList from "./pages/ProductList";
-import ProductDetails from "./pages/ProductDetails";
-import Airbubbleinsulation from "./pages/Airbubbleinsulation";
-import CategoryPage from "./pages/CategoryPage";
-import AllCategories from "./pages/AllCategories";
+
 
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
@@ -15,6 +9,12 @@ import Footer from "./components/layout/Footer";
 // Floating Buttons
 import WhatsAppButton from "./components/home/WhatsappButton";
 import CallButton from "./components/home/CallButton";
+import Home from "./pages/Homepage/Home";
+import Categories from "./pages/catergoriespage/Categories";
+import Airbubbleinsulation from "./pages/productpage/Airbubbleinsulation";
+import AllCategories from "./pages/catergoriespage/AllCategories";
+import ProductList from "./pages/productpage/ProductList";
+import ProductDetails from "./pages/productpage/ProductDetails";
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
           element={<Airbubbleinsulation />}
         />
         <Route path="/all-categories" element={<AllCategories />} />
-        <Route path="/:slug" element={<CategoryPage />} />
+        {/* <Route path="/:slug" element={<CategoryPage />} /> */}
       </Routes>
 
       <Footer />
