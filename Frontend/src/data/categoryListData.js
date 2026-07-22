@@ -6,8 +6,8 @@ import CripmingSheet from "../assets/Untitleddesign/1.png";
 import DeckSheet from "../assets/Untitleddesign/2.png";
 import GCSheet from "../assets/Untitleddesign/3.png";
 import GIAngle from "../assets/Untitleddesign/4.png";
-import GIAnglePhoto from "../assets/angles.jpeg";
-import GIAnglePhoto2 from "../assets/angle.avif";
+import GIAnglePhoto from "../assets/Untitleddesign/angles.jpeg";
+import GIAnglePhoto2 from "../assets/Untitleddesign/angle.avif";
 import Lovres from "../assets/Untitleddesign/5.png";
 import MultiwallSheet from "../assets/Untitleddesign/6.png";
 import PEBStructure from "../assets/Untitleddesign/22.png";
@@ -20,11 +20,11 @@ import TurboVentilators from "../assets/Untitleddesign/13.png";
 import XLPE from "../assets/Untitleddesign/14.png";
 import ZPurlin from "../assets/Untitleddesign/15.png";
 
-import jswLogo from "../assets/JSW Logo.png";
-import tataLogo from "../assets/TATA logo.png";
-import apolloLogo from "../assets/Apollo Logo.png";
-import amnsLogo from "../assets/AMIndia logo.png";
-import hindalcoLogo from "../assets/Hindalco Logo.png";
+import jswLogo from "../assets/brand/JSWLogo.png";
+import tataLogo from "../assets/brand/TATAlogo.png";
+import apolloLogo from "../assets/brand/ApolloLogo.png";
+import amnsLogo from "../assets/brand/AMIndialogo.png";
+import hindalcoLogo from "../assets/brand/HindalcoLogo.png";
 
 export const categoryListData = [
   { label: "Accessories", href: "/accessories", images: [accessoriesImg1] },

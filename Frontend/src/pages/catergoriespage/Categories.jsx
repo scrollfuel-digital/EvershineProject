@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { categoryListData, brands } from "../data/categoryListData";
+import { categoryListData, brands } from "../../data/categoryListData";
 
 const ShelfEdge = ({ progress = 0 }) => (
     <div className="relative mt-4 mb-10 h-[3px] w-full bg-[#E7E5DE] overflow-hidden rounded-full">

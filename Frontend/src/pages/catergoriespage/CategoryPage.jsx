@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { categoryListData } from "../data/categoryListData";
-import { categoryDetails } from "../data/categoryDetails";
+import { categoryListData } from "../../data/categoryListData";
+import { categoryDetails } from "../../data/categoryDetails";
 
 export default function CategoryPage() {
   const { slug } = useParams();

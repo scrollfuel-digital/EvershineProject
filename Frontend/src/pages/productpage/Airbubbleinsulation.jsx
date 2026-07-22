@@ -1,6 +1,6 @@
 import { useState } from "react";
-import bubbleInsulationImg from "../assets/Untitleddesign/18.png";
-import bubbleSheetImg from "../assets/BUBBLE.jpeg";
+import bubbleInsulationImg from "../../assets/Untitleddesign/18.png";
+import bubbleSheetImg from "../../assets/Untitleddesign/BUBBLE.jpeg";
 
 export default function Airbubbleinsulation() {
   const [selectedImage, setSelectedImage] = useState(bubbleInsulationImg);

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import Banner1 from "../../assets/b1.png";
-import Banner3 from "../../assets/banner3.png";
+import Banner1 from "../../assets/banner/banner3.png";
+import Banner3 from "../../assets/banner/b1.png";
 
 const banners = [Banner1, Banner3];
 

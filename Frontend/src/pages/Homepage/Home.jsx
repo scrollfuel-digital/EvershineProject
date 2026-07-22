@@ -1,6 +1,6 @@
-import Categories from "./Categories";
-import Hero from "../components/home/Hero";
-import BrowseIndustries from "../components/BrowseIndustries";
+import Categories from "../catergoriespage/Categories";
+import Hero from "../../components/home/Hero";
+import BrowseIndustries from "../../components/ui/BrowseIndustries";
 
 const Home = () => {
     return (
