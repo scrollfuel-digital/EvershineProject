@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { categoryListData } from "../data/categoryListData";
+import { categoryListData } from "../../data/categoryListData";
 
 export default function AllCategories() {
   return (

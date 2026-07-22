@@ -1,7 +1,7 @@
 import { FaYoutube, FaLinkedin, FaInstagram, FaFacebookF, FaWhatsapp, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import logo from "../../assets/Evershinelogo.png";
-import footerBg from "../../assets/footerimage.png"; // kept for future use
+
 
 const quickLinks = [
   { label: "Home", href: "/" },
