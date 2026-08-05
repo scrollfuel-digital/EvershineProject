@@ -4,9 +4,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import CrimpingBanner from "../../assets/banner/crimping_profile_banner.png";
 import GIAngleBanner from "../../assets/banner/GI Banner.png";
 import AluminiumCrimpingBanner from "../../assets/banner/aluminium_crimping_banner.jpg";
+import PuffPanelsBanner from "../../assets/banner/puff_panels_banner.jpg";
+import DeckSheetsBanner from "../../assets/banner/deck_sheets_banner.jpg";
+import BareGalvalumeBanner from "../../assets/banner/bare_galvalume_banner.jpg";
+import StandingSeamBanner from "../../assets/banner/standing_seam_banner.jpg";
 
-const banners = [CrimpingBanner, GIAngleBanner, AluminiumCrimpingBanner];
-const bannerBgColors = ["bg-[#f1f5f9]", "bg-[#0b1329]", "bg-[#f1f5f9]"];
+const banners = [CrimpingBanner, GIAngleBanner, AluminiumCrimpingBanner, PuffPanelsBanner, DeckSheetsBanner, BareGalvalumeBanner, StandingSeamBanner];
+const bannerBgColors = ["bg-[#f1f5f9]", "bg-[#0b1329]", "bg-[#f1f5f9]", "bg-[#f1f5f9]", "bg-[#f1f5f9]", "bg-[#f1f5f9]", "bg-[#f1f5f9]"];
 
 const AUTOPLAY_DELAY = 4000;
 

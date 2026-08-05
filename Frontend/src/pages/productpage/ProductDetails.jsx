@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ChevronRight, 
+  ChevronLeft,
   ChevronDown, 
   ChevronUp, 
   SlidersHorizontal, 
@@ -151,11 +153,81 @@ const SAMPLE_PRODUCTS = [
   }
 ];
 
-export default function ProductDetails() {
-  // Active Category State ("Deck Sheet" selected by default matching Image 1)
-  const [selectedSubCategory, setSelectedSubCategory] = useState('Deck Sheet');
+export default function ProductDetails({ initialCategory }) {
+  const { slug, categoryName, categorySlug } = useParams();
+  const navigate = useNavigate();
+
+  const currentSlug = slug || categoryName || categorySlug;
+
+  // Resolve category label from URL slug parameter
+  const matchedCategoryFromSlug = useMemo(() => {
+    if (!currentSlug) return null;
+    const cleanSlug = currentSlug.toLowerCase().replace(/^\//, '');
+    const found = categoryListData.find(cat => {
+      const catHref = cat.href.toLowerCase().replace(/^\//, '');
+      const catSlug = cat.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      return catHref === cleanSlug || catSlug === cleanSlug || cat.label.toLowerCase() === cleanSlug;
+    });
+    return found ? found.label : null;
+  }, [currentSlug]);
+
+  // Active Category State initialized from slug / prop / default
+  const [selectedSubCategory, setSelectedSubCategory] = useState(
+    matchedCategoryFromSlug || initialCategory || 'Deck Sheet'
+  );
+
+  // Sync state when URL slug changes
+  useEffect(() => {
+    if (matchedCategoryFromSlug) {
+      setSelectedSubCategory(matchedCategoryFromSlug);
+    }
+  }, [matchedCategoryFromSlug]);
+
+  const handleSubCategoryClick = (cat) => {
+    const isCurrentlyActive = selectedSubCategory === cat.label;
+    if (isCurrentlyActive) {
+      setSelectedSubCategory(null);
+      navigate('/products');
+    } else {
+      setSelectedSubCategory(cat.label);
+      navigate(cat.href);
+    }
+  };
+
   const [selectedCategoryCheck, setSelectedCategoryCheck] = useState('MS Hot rolled');
   const [selectedGrades, setSelectedGrades] = useState([]);
+
+  // Sub-category Carousel Slider State (Continuous one-by-one sliding)
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+
+  const totalCategories = categoryListData.length;
+
+  const handleNextSubCategory = useCallback(() => {
+    setCarouselIndex((prev) => (prev + 1) % totalCategories);
+  }, [totalCategories]);
+
+  const handlePrevSubCategory = () => {
+    setCarouselIndex((prev) => (prev - 1 + totalCategories) % totalCategories);
+  };
+
+  useEffect(() => {
+    if (isCarouselPaused) return;
+    const interval = setInterval(() => {
+      handleNextSubCategory();
+    }, 2800);
+    return () => clearInterval(interval);
+  }, [isCarouselPaused, handleNextSubCategory]);
+
+  // Compute 8 visible cards continuously wrapped around
+  const visibleCategories = useMemo(() => {
+    const items = [];
+    for (let i = 0; i < 8; i++) {
+      const idx = (carouselIndex + i) % totalCategories;
+      items.push({ ...categoryListData[idx], originalIndex: idx });
+    }
+    return items;
+  }, [carouselIndex, totalCategories]);
   
   // Accordion toggle states
   const [categoryOpen, setCategoryOpen] = useState(true);
@@ -206,54 +278,79 @@ export default function ProductDetails() {
           </span>
         </nav>
 
-        {/* Sub-Category Horizontal Showcase Carousel using user's categoryListData matching Image 1 & 2 */}
-        <section className="mb-8">
-          <div className="flex gap-4 overflow-x-auto pb-4 pt-1 scrollbar-thin scrollbar-thumb-slate-300">
-            {categoryListData.map((cat, index) => {
-              const isActive = selectedSubCategory === cat.label;
-              const catImage = cat.images && cat.images[0] ? cat.images[0] : '';
+        {/* Sub-Category Horizontal Showcase Carousel - Continuous Automated Slider */}
+        <section className="mb-8 relative">
+          <div 
+            className="flex items-center gap-3"
+            onMouseEnter={() => setIsCarouselPaused(true)}
+            onMouseLeave={() => setIsCarouselPaused(false)}
+          >
+            {/* Prev Arrow */}
+            <button
+              onClick={handlePrevSubCategory}
+              aria-label="Previous categories"
+              className="w-9 h-9 shrink-0 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-slate-700 hover:border-teal-600 hover:text-teal-600 hover:shadow-md transition duration-200"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
 
-              return (
-                <div
-                  key={index}
-                  onClick={() => setSelectedSubCategory(isActive ? null : cat.label)}
-                  className={`
-                    flex-shrink-0 w-36 bg-white rounded-2xl p-3 flex flex-col items-center 
-                    cursor-pointer transition-all duration-200 relative border
-                    ${isActive 
-                      ? 'border-teal-500 shadow-lg shadow-teal-500/10 ring-2 ring-teal-500/20' 
-                      : 'border-slate-200 hover:border-slate-300 hover:-translate-y-1 hover:shadow-md'
-                    }
-                  `}
-                >
-                  {/* Active yellow dot badge (matching top right dot in Image 1 Deck Sheet) */}
-                  {isActive && (
-                    <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-white" />
-                  )}
+            {/* Cards Slider Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 flex-1 overflow-hidden py-1">
+              {visibleCategories.map((cat, index) => {
+                const isActive = selectedSubCategory === cat.label;
+                const catImage = cat.images && cat.images[0] ? cat.images[0] : '';
 
-                  {/* Image container inside card - full cover */}
-                  <div className="w-full aspect-square bg-slate-100 rounded-xl overflow-hidden mb-3 flex items-center justify-center">
-                    <img 
-                      src={catImage} 
-                      alt={cat.label}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=80';
-                      }}
-                    />
+                return (
+                  <div
+                    key={`${cat.href}-${cat.originalIndex}-${index}`}
+                    onClick={() => handleSubCategoryClick(cat)}
+                    className={`
+                      bg-white rounded-2xl p-3 flex flex-col items-center 
+                      cursor-pointer transition-all duration-300 relative border group
+                      ${isActive 
+                        ? 'border-teal-500 shadow-lg shadow-teal-500/10 ring-2 ring-teal-500/20 scale-[1.02]' 
+                        : 'border-slate-200 hover:border-teal-500 hover:-translate-y-1 hover:shadow-md'
+                      }
+                    `}
+                  >
+                    {/* Active yellow dot badge */}
+                    {isActive && (
+                      <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-white" />
+                    )}
+
+                    {/* Image container inside card */}
+                    <div className="w-full aspect-square bg-slate-100 rounded-xl overflow-hidden mb-2.5 flex items-center justify-center">
+                      <img 
+                        src={catImage} 
+                        alt={cat.label}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=80';
+                        }}
+                      />
+                    </div>
+
+                    {/* Title & Active underline indicator */}
+                    <div className="text-center w-full">
+                      <span className={`text-xs font-semibold block leading-tight truncate ${isActive ? 'text-teal-700 font-bold' : 'text-slate-700'}`}>
+                        {cat.label}
+                      </span>
+                      <div className={`h-0.5 mx-auto mt-1.5 rounded-full transition-all duration-300 ${isActive ? 'w-6 bg-teal-600' : 'w-0'}`} />
+                    </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  {/* Title & Active underline indicator */}
-                  <div className="text-center w-full">
-                    <span className={`text-xs font-semibold block leading-tight truncate ${isActive ? 'text-teal-700 font-bold' : 'text-slate-700'}`}>
-                      {cat.label}
-                    </span>
-                    <div className={`h-0.5 mx-auto mt-1.5 rounded-full transition-all duration-300 ${isActive ? 'w-6 bg-teal-600' : 'w-0'}`} />
-                  </div>
-                </div>
-              );
-            })}
+            {/* Next Arrow */}
+            <button
+              onClick={handleNextSubCategory}
+              aria-label="Next categories"
+              className="w-9 h-9 shrink-0 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-slate-700 hover:border-teal-600 hover:text-teal-600 hover:shadow-md transition duration-200"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </section>
 
