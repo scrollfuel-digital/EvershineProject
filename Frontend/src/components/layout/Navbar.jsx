@@ -243,14 +243,23 @@ const filteredCategories = categoryListData.filter((item) =>
 
     </div>
 </div>
-                    {/* RIGHT — CATEGORIES + CART + LOGIN (tablet & up) */}
+                    {/* RIGHT — CATEGORIES + PRODUCTS + CART (tablet & up) */}
                     <div className="hidden md:flex items-center gap-3 lg:gap-5 xl:gap-6 shrink-0">
+
+                        {/* PRODUCTS — navigates to Product Details page */}
+                        <Link
+                            to="/products"
+                            className="flex items-center gap-1 text-primary font-bold text-sm transition-all duration-200 hover:text-secondary hover:-translate-y-0.5 px-3 py-1.5 rounded-lg bg-teal-50 border border-teal-200"
+                        >
+                            <span>Products</span>
+                        </Link>
 
                         {/* CATEGORIES — navigates to /categories page */}
                         <div className="relative">
                             <Link
                                 to="/categories"
                                 className="flex items-center gap-2 text-primary font-medium text-sm transition-all duration-200 hover:text-secondary hover:-translate-y-0.5"
+                                title="All Categories"
                             >
                                 <HiOutlineViewGrid className="text-2xl lg:text-3xl" />
                             </Link>
