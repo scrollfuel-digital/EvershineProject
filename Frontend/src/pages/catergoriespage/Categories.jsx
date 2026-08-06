@@ -131,7 +131,7 @@ const Categories = () => {
 
     return (
         <>
-            <section className="bg-[#FAFAF7]">
+            <section className="bg-[#FAFAF7] pt-12 sm:pt-16 pb-8">
                 <div className="max-w-7xl mx-auto px-4">
 
                     <SectionHeader
