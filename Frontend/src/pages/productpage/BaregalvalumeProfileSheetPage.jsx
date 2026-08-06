@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { 
   ChevronRight, 
-  CheckCircle, 
-  ShieldCheck, 
-  Truck, 
   Phone, 
   MessageSquare,
   Zap,
