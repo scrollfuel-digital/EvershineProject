@@ -75,7 +75,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {quickLinks.map((l, i) => (
                   <li key={i}>
-                    <Link to={l.href} className="text-gray-500 text-sm hover:text-primary transition">
+                    <Link to={l.href} onClick={() => window.scrollTo(0, 0)} className="text-gray-500 text-sm hover:text-primary transition">
                       → {l.label}
                     </Link>
                   </li>
@@ -89,7 +89,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {products.map((p, i) => (
                   <li key={i}>
-                    <Link to={p.href} className="text-gray-500 text-sm hover:text-primary transition">
+                    <Link to={p.href} onClick={() => window.scrollTo(0, 0)} className="text-gray-500 text-sm hover:text-primary transition">
                       → {p.label}
                     </Link>
                   </li>

@@ -1,6 +1,10 @@
 @import "tailwindcss";        
 
 @theme {
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+
   /* Brand Colors */
   --color-primary: #004060;   
   --color-secondary: #003860;
