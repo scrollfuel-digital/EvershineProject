@@ -11,6 +11,7 @@ import CallButton from "./components/home/CallButton";
 // Pages
 import Home from "./pages/Homepage/Home";
 import About from "./pages/Aboutpage/About";
+import Contact from "./pages/Contactpage/Contact";
 import Categories from "./pages/catergoriespage/Categories";
 import AllCategories from "./pages/catergoriespage/AllCategories";
 import Products from "./pages/Products";
@@ -44,6 +45,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/products" element={<Products />} />
         <Route path="/product" element={<Products />} />
