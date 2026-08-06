@@ -48,19 +48,6 @@ export default function Footer() {
 
       <div className="relative z-10">
 
-        {/* CTA Banner */}
-        <div className="bg-primary/90 py-10 px-6">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-2xl font-bold text-white">Ready to Build Your Next Project?</h3>
-              <p className="text-white/80 mt-1">Partner with Evershine Solution for reliable, high-quality, and cost-effective industrial building and roofing solutions.</p>
-            </div>
-            <Link to="/contact" className="shrink-0 bg-white text-primary font-semibold px-8 py-3 rounded-lg hover:bg-gray-100 transition">
-              Request a Free Consultation →
-            </Link>
-          </div>
-        </div>
-
         {/* Main Footer */}
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
