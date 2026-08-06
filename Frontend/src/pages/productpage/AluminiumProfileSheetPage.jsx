@@ -4,16 +4,11 @@ import {
   CheckCircle, 
   ShieldCheck, 
   Truck, 
-  FileText, 
   Phone, 
   MessageSquare,
-  Award,
   Sparkles,
-  Download,
-  Info,
   X
 } from 'lucide-react';
-import { categoryListData } from '../../data/categoryListData';
 
 // Image imports
 import factoryStackImg from '../../assets/aluminium_profile/alum_factory_stack.jpg';
@@ -29,7 +24,6 @@ export default function AluminiumProfileSheetPage() {
 
   const [activeImage, setActiveImage] = useState(factoryStackImg);
   const [showModal, setShowModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('specs'); // 'specs' | 'image'
   const [formData, setFormData] = useState({ name: '', phone: '', quantity: '', requirements: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
 

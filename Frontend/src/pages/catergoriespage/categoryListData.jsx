@@ -9,8 +9,8 @@ import louvres from "../assets/category/louvres.png";
 export const categoryListData = [
   {
     label: "Air Bubble Insulation",
-    href: "c:\Users\sondh\AppData\Local\Temp\Rar$DIa13704.21258.rartemp\BUBBLE.jpeg",
-    images: [BUBBLE.jpeg],
+    href: "/allproduct/mildsteel/air-bubble-insulation",
+    images: [bubble],
   },
 
   {

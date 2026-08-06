@@ -10,6 +10,7 @@ import CallButton from "./components/home/CallButton";
 
 // Pages
 import Home from "./pages/Homepage/Home";
+import About from "./pages/Aboutpage/About";
 import Categories from "./pages/catergoriespage/Categories";
 import AllCategories from "./pages/catergoriespage/AllCategories";
 import Products from "./pages/Products";

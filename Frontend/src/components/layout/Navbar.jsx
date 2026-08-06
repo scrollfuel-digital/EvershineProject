@@ -2,16 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import evershineLogo from "../../assets/Evershinelogo.png";
 import {
-    HiOutlineChevronDown,
     HiOutlineShoppingCart,
     HiOutlineSearch,
     HiOutlineChevronRight,
     HiOutlineChevronLeft,
-    HiOutlineSupport,
     HiOutlineLocationMarker,
     HiX,
-    HiOutlineMail,
-    HiOutlineLockClosed,
     HiOutlineViewGrid,
 } from "react-icons/hi";
 
@@ -119,15 +115,11 @@ function CategoryCard({ category, onNavigate }) {
 }
 
 export default function Navbar() {
-    const [active, setActive] = useState("Mild Steel");
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [isLocationOpen, setIsLocationOpen] = useState(false);
-    const [pinCode, setPinCode] = useState("");
 
     const [isCartOpen, setIsCartOpen] = useState(false);
-    const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [search, setSearch] = useState("");
-    const [isRegister, setIsRegister] = useState(false);
     
 
 const filteredCategories = categoryListData.filter((item) =>
@@ -370,7 +362,6 @@ const filteredCategories = categoryListData.filter((item) =>
                                 key={cat.label}
                                 category={cat}
                                 onNavigate={() => {
-                                    setActive(cat.label);
                                     setIsMobileOpen(false);
                                 }}
                             />
