@@ -171,9 +171,9 @@ export default function ProductDetails({ initialCategory }) {
     return found ? found.label : null;
   }, [currentSlug]);
 
-  // Active Category State initialized from slug / prop / default
+  // Active Category State initialized from slug / prop / default (null if no category specified)
   const [selectedSubCategory, setSelectedSubCategory] = useState(
-    matchedCategoryFromSlug || initialCategory || 'Deck Sheet'
+    matchedCategoryFromSlug || initialCategory || null
   );
 
   // Sync state when URL slug changes
@@ -201,14 +201,23 @@ export default function ProductDetails({ initialCategory }) {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
 
-  const totalCategories = categoryListData.length;
+  // Separate Accessories (pinned) from sliding sub-categories
+  const accessoriesItem = useMemo(() => {
+    return categoryListData.find(item => item.label.toLowerCase().includes('accessories')) || categoryListData[0];
+  }, []);
+
+  const slidingList = useMemo(() => {
+    return categoryListData.filter(item => !item.label.toLowerCase().includes('accessories'));
+  }, []);
+
+  const totalSliding = slidingList.length;
 
   const handleNextSubCategory = useCallback(() => {
-    setCarouselIndex((prev) => (prev + 1) % totalCategories);
-  }, [totalCategories]);
+    setCarouselIndex((prev) => (prev + 1) % totalSliding);
+  }, [totalSliding]);
 
   const handlePrevSubCategory = () => {
-    setCarouselIndex((prev) => (prev - 1 + totalCategories) % totalCategories);
+    setCarouselIndex((prev) => (prev - 1 + totalSliding) % totalSliding);
   };
 
   useEffect(() => {
@@ -219,15 +228,15 @@ export default function ProductDetails({ initialCategory }) {
     return () => clearInterval(interval);
   }, [isCarouselPaused, handleNextSubCategory]);
 
-  // Compute 8 visible cards continuously wrapped around
-  const visibleCategories = useMemo(() => {
+  // Compute 7 visible sliding categories next to Accessories
+  const visibleSliding = useMemo(() => {
     const items = [];
-    for (let i = 0; i < 8; i++) {
-      const idx = (carouselIndex + i) % totalCategories;
-      items.push({ ...categoryListData[idx], originalIndex: idx });
+    for (let i = 0; i < 7; i++) {
+      const idx = (carouselIndex + i) % totalSliding;
+      items.push({ ...slidingList[idx], originalIndex: idx });
     }
     return items;
-  }, [carouselIndex, totalCategories]);
+  }, [carouselIndex, totalSliding, slidingList]);
   
   // Accordion toggle states
   const [categoryOpen, setCategoryOpen] = useState(true);
@@ -296,7 +305,43 @@ export default function ProductDetails({ initialCategory }) {
 
             {/* Cards Slider Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 flex-1 overflow-hidden py-1">
-              {visibleCategories.map((cat, index) => {
+              {/* Pinned Accessories Card */}
+              {(() => {
+                const isActive = selectedSubCategory === accessoriesItem.label;
+                return (
+                  <div
+                    key="pinned-accessories"
+                    onClick={() => handleSubCategoryClick(accessoriesItem)}
+                    className={`
+                      bg-white rounded-2xl p-3 flex flex-col items-center 
+                      cursor-pointer transition-all duration-300 relative border group
+                      ${isActive 
+                        ? 'border-teal-500 shadow-lg shadow-teal-500/10 ring-2 ring-teal-500/20 scale-[1.02]' 
+                        : 'border-slate-200 hover:border-teal-500 hover:-translate-y-1 hover:shadow-md'
+                      }
+                    `}
+                  >
+                    {isActive && (
+                      <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-white" />
+                    )}
+
+                    <div className="w-full h-24 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-2">
+                      <img 
+                        src={accessoriesItem.images[0]} 
+                        alt={accessoriesItem.label}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 rounded-xl"
+                      />
+                    </div>
+
+                    <span className={`text-xs font-semibold text-center leading-tight line-clamp-2 transition-colors ${isActive ? 'text-teal-600' : 'text-slate-700 group-hover:text-teal-600'}`}>
+                      {accessoriesItem.label}
+                    </span>
+                  </div>
+                );
+              })()}
+
+              {/* Remaining Sliding 7 Categories */}
+              {visibleSliding.map((cat, index) => {
                 const isActive = selectedSubCategory === cat.label;
                 const catImage = cat.images && cat.images[0] ? cat.images[0] : '';
 
@@ -315,29 +360,26 @@ export default function ProductDetails({ initialCategory }) {
                   >
                     {/* Active yellow dot badge */}
                     {isActive && (
-                      <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-white" />
+                      <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-white z-10" />
                     )}
 
-                    {/* Image container inside card */}
-                    <div className="w-full aspect-square bg-slate-100 rounded-xl overflow-hidden mb-2.5 flex items-center justify-center">
-                      <img 
-                        src={catImage} 
-                        alt={cat.label}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&auto=format&fit=crop&q=80';
-                        }}
-                      />
+                    <div className="w-full h-24 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-2">
+                      {catImage ? (
+                        <img 
+                          src={catImage} 
+                          alt={cat.label}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 rounded-xl"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold text-xs">
+                          {cat.label.slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Title & Active underline indicator */}
-                    <div className="text-center w-full">
-                      <span className={`text-xs font-semibold block leading-tight truncate ${isActive ? 'text-teal-700 font-bold' : 'text-slate-700'}`}>
-                        {cat.label}
-                      </span>
-                      <div className={`h-0.5 mx-auto mt-1.5 rounded-full transition-all duration-300 ${isActive ? 'w-6 bg-teal-600' : 'w-0'}`} />
-                    </div>
+                    <span className={`text-xs font-semibold text-center leading-tight line-clamp-2 transition-colors ${isActive ? 'text-teal-600' : 'text-slate-700 group-hover:text-teal-600'}`}>
+                      {cat.label}
+                    </span>
                   </div>
                 );
               })}
@@ -451,18 +493,44 @@ export default function ProductDetails({ initialCategory }) {
                 key={product.id}
                 className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col hover:shadow-lg transition-all duration-200 group"
               >
-                {/* Image Box - full cover */}
+                {/* Image Box - full cover with Floating Breadcrumb Badge */}
                 <div className="w-full h-52 bg-slate-100 flex items-center justify-center relative overflow-hidden">
                   <img 
                     src={product.img} 
                     alt={product.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+
+                  {/* Top Image Floating Breadcrumb Badge (Excluded for Deck Sheet) */}
+                  {!product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
+                    <div className="absolute top-3 left-3 bg-slate-900/85 backdrop-blur-md text-white text-[11px] px-2.5 py-1 rounded-lg font-medium shadow-md flex items-center gap-1 border border-white/10">
+                      <span className="text-slate-300">Mild Steel</span>
+                      <span className="text-teal-400 font-bold">›</span>
+                      <span className="text-amber-300 font-semibold">{product.category || 'Hot rolled'}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Card Content */}
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
+                    {/* Inline Card Breadcrumb Trail (Excluded for Deck Sheet) */}
+                    {!product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium mb-2 flex-wrap">
+                        <span className="hover:text-teal-600 transition">Mild Steel</span>
+                        <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />
+                        <span className="text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded border border-teal-100">
+                          {product.category || 'Hot rolled'}
+                        </span>
+                        {product.grade && (
+                          <>
+                            <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span className="text-slate-600 font-mono text-[10px]">{product.grade}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+
                     <h3 className="font-bold text-slate-900 text-base leading-snug mb-1">
                       {product.title}
                     </h3>
