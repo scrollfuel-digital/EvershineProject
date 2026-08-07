@@ -139,27 +139,27 @@ export default function DeckSheetPage() {
           <span className="font-semibold text-slate-900">Decking Sheet (Composite Profile 51/230)</span>
         </nav>
 
-        {/* HERO BANNER - EVERSHINE BRAND LOGO GRADIENT */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#004060] via-[#003860] to-[#285870] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-white/10">
-          <div className="absolute right-0 top-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        {/* HERO BANNER - EXACT AIR BUBBLE INSULATION COLOR PALETTE */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B192C] via-[#102A43] to-[#0B192C] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-[#1E3A5F]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/15 text-[#B8D8E8] rounded-full text-xs font-bold mb-4 border border-white/20">
-                <Sparkles className="w-4 h-4" /> Composite Metal Floor Deck 51/230 Profile
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#003846] text-[#00D2FF] rounded-full text-xs font-bold mb-4 border border-cyan-800/50 shadow-sm">
+                <Sparkles className="w-4 h-4 text-amber-400" /> Composite Metal Floor Deck 51/230 Profile
               </div>
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3">
-                High-Strength <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B8D8E8] to-amber-300">Decking Sheets</span>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
+                High-Strength <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-amber-300">Decking Sheets</span>
               </h1>
-              <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Engineered 51mm depth profiles in 0.80mm to 2.0mm thickness range for high-rise commercial floors, industrial mezzanines, and composite concrete slab systems.
               </p>
             </div>
 
-            {/* Wholesale Price Card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-xl">
-              <span className="text-xs uppercase tracking-wider text-[#B8D8E8] font-bold block mb-1">Wholesale Factory Rate</span>
-              <div className="text-4xl font-black text-amber-400 my-1">
+            {/* Price Badge Card matching screenshot */}
+            <div className="bg-[#132A3E]/80 backdrop-blur-md border border-[#1E3E5A] rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
+              <span className="text-xs uppercase tracking-wider text-[#00D2FF] font-bold block mb-1">STANDARD WHOLESALE PRICE</span>
+              <div className="text-4xl font-black text-[#FFC107] my-1">
                 ₹66.00 <span className="text-sm font-normal text-slate-200">/ kg</span>
               </div>
               <span className="text-xs text-slate-300 block">Ex-Factory | 275 GSM Zinc Coated</span>
@@ -218,21 +218,22 @@ export default function DeckSheetPage() {
           {/* RIGHT 5 COLS: INTERACTIVE DYNAMIC MATRIX & AREA CALCULATOR */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-6">
             
-            {/* THICKNESS SELECTOR */}
+            {/* THICKNESS SELECTOR & CALCULATOR CARD */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-              <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-teal-600" /> Select Deck Thickness (TCT)
+              <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <Ruler className="w-5 h-5 text-sky-600" /> Select Deck Specifications
               </h2>
 
-              <div className="grid grid-cols-3 gap-2 mb-5">
+              <label className="block text-xs font-bold text-slate-700 mb-2">Deck Thickness (TCT)</label>
+              <div className="grid grid-cols-3 gap-2 mb-4">
                 {['0.8mm', '1.0mm', '1.2mm'].map((thick) => (
                   <button
                     key={thick}
                     onClick={() => setSelectedThickness(thick)}
                     className={`
-                      py-2.5 px-3 rounded-2xl text-xs font-extrabold border text-center transition-all
+                      py-2 px-2 rounded-xl text-xs font-extrabold border text-center transition-all
                       ${selectedThickness === thick 
-                        ? 'bg-teal-600 border-teal-600 text-white shadow-md shadow-teal-600/20 scale-[1.02]' 
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm' 
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -243,33 +244,33 @@ export default function DeckSheetPage() {
               </div>
 
               {/* DYNAMIC METRICS FOR SELECTED THICKNESS */}
-              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
+              <div className="grid grid-cols-2 gap-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4 text-xs">
                 <div>
                   <span className="text-[10px] text-slate-500 block uppercase font-bold">Self Weight</span>
-                  <span className="text-base font-extrabold text-teal-700">{activeSpecs.weightSqM} kg/m²</span>
+                  <span className="font-extrabold text-sky-700">{activeSpecs.weightSqM} kg/m²</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 block uppercase font-bold">Section Modulus (Zx1)</span>
-                  <span className="text-base font-extrabold text-slate-900">{activeSpecs.modulus} mm³/m</span>
+                  <span className="text-[10px] text-slate-500 block uppercase font-bold">Section Modulus</span>
+                  <span className="font-extrabold text-slate-900">{activeSpecs.modulus} mm³/m</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-500 block uppercase font-bold">Inertia Moment (Ix1)</span>
-                  <span className="text-base font-extrabold text-slate-900">{activeSpecs.inertia} mm⁴/m</span>
+                  <span className="text-[10px] text-slate-500 block uppercase font-bold">Inertia Moment</span>
+                  <span className="font-extrabold text-slate-900">{activeSpecs.inertia} mm⁴/m</span>
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-500 block uppercase font-bold">Zinc Mass</span>
-                  <span className="text-base font-extrabold text-amber-600">{activeSpecs.zincCoating}</span>
+                  <span className="font-extrabold text-amber-600">{activeSpecs.zincCoating}</span>
                 </div>
               </div>
 
-              {/* AREA CALCULATOR */}
-              <div className="bg-teal-50/50 p-4 rounded-2xl border border-teal-100 mb-4">
+              {/* ESTIMATOR SUB-BOX MATCHING SCREENSHOT */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-teal-600" /> Total Slab Area (Sq.Ft)
+                  <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (Sq.Ft)
                   </label>
-                  <span className="text-[10px] bg-teal-600 text-white px-2 py-0.5 rounded font-bold">
-                    Est. Calculator
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹66 / kg
                   </span>
                 </div>
                 
@@ -279,26 +280,27 @@ export default function DeckSheetPage() {
                   max="500000"
                   value={areaSqFt}
                   onChange={(e) => setAreaSqFt(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 mb-3"
+                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900 mb-3"
                 />
 
-                <div className="flex items-center justify-between text-xs pt-2 border-t border-teal-200/60">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
-                    <span className="text-[10px] text-slate-500 block">Est. Weight</span>
-                    <span className="font-extrabold text-teal-800">~{estimatedWeightKg.toLocaleString()} kg</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Est. Weight</span>
+                    <span className="font-extrabold text-sky-700 text-sm">~{estTotalKg} kg</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 block">Est. Wholesale Cost</span>
-                    <span className="font-black text-amber-600 text-base">₹{estimatedCostRs.toLocaleString()}</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estTotalPrice.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-2xl text-xs shadow-md shadow-teal-600/20 transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Quote For This Floor Area
+                <MessageSquare className="w-4 h-4" /> Request Quote For Decking Sheets
               </button>
             </div>
 

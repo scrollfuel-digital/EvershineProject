@@ -184,7 +184,7 @@ export default function StandingSeamPage() {
 
               {/* PANEL COVER WIDTH */}
               <label className="block text-xs font-bold text-slate-700 mb-2">Panel Width (12" to 20")</label>
-              <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="grid grid-cols-3 gap-1.5 mb-4">
                 {['305 mm (12")', '400 mm (16")', '510 mm (20")'].map((w) => (
                   <button
                     key={w}
@@ -192,7 +192,7 @@ export default function StandingSeamPage() {
                     className={`
                       py-2 px-1 rounded-xl text-[11px] font-bold border text-center transition-all
                       ${panelWidth === w
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -204,7 +204,7 @@ export default function StandingSeamPage() {
 
               {/* SEAM HEIGHT SELECTOR */}
               <label className="block text-xs font-bold text-slate-700 mb-2">Seam Height (1" to 3")</label>
-              <div className="grid grid-cols-3 gap-2 mb-5">
+              <div className="grid grid-cols-3 gap-1.5 mb-5">
                 {['25 mm (1.0")', '50 mm (2.0")', '65 mm (2.5")'].map((sh) => (
                   <button
                     key={sh}
@@ -212,7 +212,7 @@ export default function StandingSeamPage() {
                     className={`
                       py-2 px-1 rounded-xl text-[11px] font-bold border text-center transition-all
                       ${seamHeight === sh
-                        ? 'bg-sky-700 border-sky-700 text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -222,20 +222,20 @@ export default function StandingSeamPage() {
                 ))}
               </div>
 
-              {/* RMT CALCULATOR */}
+              {/* LIVE RMT CALCULATOR SUB-BOX */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-sky-600" /> Running Meter (RMT) Calculator
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator
                   </label>
-                  <span className="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded font-bold">
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
                     ₹700 / rmt
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Length per sheet (Meters)</label>
+                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Length per sheet (Mtrs)</label>
                     <input
                       type="number"
                       step="0.1"
@@ -250,8 +250,8 @@ export default function StandingSeamPage() {
                     <input
                       type="number"
                       min="1"
-                      value={quantityPieces}
-                      onChange={(e) => setQuantityPieces(e.target.value)}
+                      value={quantitySheets}
+                      onChange={(e) => setQuantitySheets(e.target.value)}
                       className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                     />
                   </div>
@@ -260,20 +260,21 @@ export default function StandingSeamPage() {
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Running Meters</span>
-                    <span className="font-extrabold text-sky-700 text-sm">{totalRmt} rmt</span>
+                    <span className="font-extrabold text-sky-700 text-sm">{totalRunningMeters} rmt</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Cost</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
                     <span className="font-black text-amber-600 text-lg">₹{estCostRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Quote For Standing Seam Roofing
+                <MessageSquare className="w-4 h-4" /> Request Quote For Standing Seam Roofs
               </button>
             </div>
 

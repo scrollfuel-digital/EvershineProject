@@ -89,27 +89,27 @@ export default function BaregalvalumeProfileSheetPage() {
           <span className="font-semibold text-slate-900">Bare Galvalume Roofing Sheets</span>
         </nav>
 
-        {/* HERO BANNER - LIGHT ELEGANT STYLING */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 p-6 sm:p-10 mb-8 shadow-xl text-white">
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* HERO BANNER - EXACT AIR BUBBLE INSULATION COLOR PALETTE */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B192C] via-[#102A43] to-[#0B192C] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-[#1E3A5F]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-500/20 text-teal-300 rounded-full text-xs font-semibold mb-3 border border-teal-500/30">
-                <Zap className="w-3.5 h-3.5" /> High Yield Strength 550 MPa | AZ-150 Coating
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#003846] text-[#00D2FF] rounded-full text-xs font-bold mb-4 border border-cyan-800/50 shadow-sm">
+                <Sparkles className="w-4 h-4 text-amber-400" /> High Yield Strength 550 MPa | AZ-150 Coating
               </div>
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3">
-                Bare Galvalume Roofing Sheets
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
+                Bare Galvalume <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-amber-300">Roofing Sheets</span>
               </h1>
-              <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Hi-Tensile Steel Sheets with AZ-150 Aluminium-Zinc coating designed to withstand severe weather conditions, protecting industrial sheds and commercial structures.
               </p>
             </div>
 
-            {/* Price Badge */}
-            <div className="bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl p-5 sm:p-6 text-center md:text-right shrink-0">
-              <span className="text-xs uppercase tracking-wider text-teal-300 font-bold block mb-1">Wholesale Factory Rate</span>
-              <div className="text-3xl sm:text-4xl font-extrabold text-amber-400 my-1">
+            {/* Price Badge Card matching screenshot */}
+            <div className="bg-[#132A3E]/80 backdrop-blur-md border border-[#1E3E5A] rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
+              <span className="text-xs uppercase tracking-wider text-[#00D2FF] font-bold block mb-1">STANDARD WHOLESALE PRICE</span>
+              <div className="text-4xl font-black text-[#FFC107] my-1">
                 ₹70.00 <span className="text-sm font-normal text-slate-200">/ kg</span>
               </div>
               <span className="text-xs text-slate-300 block">Ex-Factory | GST & Transport extra</span>
@@ -165,104 +165,88 @@ export default function BaregalvalumeProfileSheetPage() {
               ))}
             </div>
           </div>
-
-          {/* RIGHT 5 COLS: INTERACTIVE THICKNESS & ESTIMATOR CALCULATOR */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
+          
+          {/* RIGHT 5 COLS: INTERACTIVE CONFIGURATOR CARD MATCHING EXACT SCREENSHOT */}
+          <div className="lg:col-span-5 flex flex-col justify-between gap-6">
             
-            {/* THICKNESS SELECTOR CARD */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-teal-600" /> Select Thickness (TCT)
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+              <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <Ruler className="w-5 h-5 text-sky-600" /> Select Bare Galvalume Specifications
               </h2>
 
-              <div className="grid grid-cols-2 gap-2.5 mb-5">
-                {['0.47mm', '0.50mm', '0.60mm', '0.80mm'].map((thick) => (
+              {/* THICKNESS SELECTOR */}
+              <label className="block text-xs font-bold text-slate-700 mb-2">Sheet Thickness (TCT)</label>
+              <div className="grid grid-cols-4 gap-1.5 mb-4">
+                {['0.47 mm', '0.50 mm', '0.60 mm', '0.80 mm'].map((thick) => (
                   <button
                     key={thick}
                     onClick={() => setSelectedThickness(thick)}
                     className={`
-                      py-2.5 px-3 rounded-xl text-xs font-bold transition-all border text-center
-                      ${selectedThickness === thick 
-                        ? 'bg-teal-600 border-teal-600 text-white shadow-md shadow-teal-600/20 scale-[1.02]' 
+                      py-2 px-1 rounded-xl text-[11px] font-bold border text-center transition-all
+                      ${selectedThickness === thick
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
                   >
-                    {thick} {thick === '0.47mm' ? '(Standard)' : ''}
+                    {thick}
                   </button>
                 ))}
               </div>
 
-              {/* FEATURES BULLETS */}
-              <div className="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                  <span>Corrosion resistant AZ-150 Al-Zn alloy coating</span>
+              {/* LIVE WEIGHT & PRICE ESTIMATOR SUB-BOX */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <Calculator className="w-4 h-4 text-sky-600" /> Weight & Price Calculator
+                  </label>
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹70 / kg
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                  <span>Engineered to withstand all extreme weather conditions</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                  <span>Smooth metallic finish for commercial & industrial sheds</span>
-                </div>
-              </div>
-            </div>
 
-            {/* LIVE WEIGHT & COST ESTIMATOR CALCULATOR */}
-            <div className="bg-white border border-teal-200/80 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-              <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Calculator className="w-4 h-4 text-teal-600" /> Quantity & Cost Estimator
-                </h3>
-                <span className="text-[10px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded font-semibold">
-                  Live Calculator
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">Sheet Length (Feet)</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="40"
-                    value={lengthFt}
-                    onChange={(e) => setLengthFt(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
-                  />
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Sheet Length (Meters)</label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      min="1"
+                      value={lengthMtrs}
+                      onChange={(e) => setLengthMtrs(e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Quantity (Sheets)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={quantityPieces}
+                      onChange={(e) => setQuantityPieces(e.target.value)}
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">Total Quantity (Sheets)</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="1000"
-                    value={quantitySheets}
-                    onChange={(e) => setQuantitySheets(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-600"
-                  />
+
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
+                  <div>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Weight</span>
+                    <span className="font-extrabold text-sky-700 text-sm">~{estimatedWeightKg} kg</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedCostRs.toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
 
-              {/* ESTIMATED OUTPUT DISPLAY */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center justify-between mb-4">
-                <div>
-                  <span className="text-[10px] text-slate-500 block uppercase font-semibold">Est. Weight</span>
-                  <span className="text-lg font-extrabold text-teal-700">~{estimatedWeightKg} kg</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-[10px] text-slate-500 block uppercase font-semibold">Est. Wholesale Cost</span>
-                  <span className="text-xl font-black text-amber-600">₹{estimatedPriceRs.toLocaleString()}</span>
-                </div>
-              </div>
-
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl text-xs shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Order This Quantity Now
+                <MessageSquare className="w-4 h-4" /> Request Quote For Bare Galvalume Sheets
               </button>
             </div>
 

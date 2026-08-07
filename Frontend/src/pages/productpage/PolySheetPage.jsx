@@ -89,30 +89,30 @@ export default function PolySheetPage() {
           <span className="font-semibold text-slate-900">Polycarbonate Profile Sheet</span>
         </nav>
 
-        {/* HERO BANNER - CRYSTALLINE CYAN POLYCARBONATE GRADIENT */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#004060] via-[#0284C7] to-[#0D9488] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-cyan-400/30">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        {/* HERO BANNER - EXACT AIR BUBBLE INSULATION COLOR PALETTE */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B192C] via-[#102A43] to-[#0B192C] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-[#1E3A5F]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/20 backdrop-blur-md text-cyan-100 rounded-full text-xs font-bold mb-4 border border-white/25">
-                <Sun className="w-4 h-4 text-amber-300" /> Co-Extruded UV Weathering Barrier | Hough Group Polymer
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#003846] text-[#00D2FF] rounded-full text-xs font-bold mb-4 border border-cyan-800/50 shadow-sm">
+                <Sun className="w-4 h-4 text-amber-400" /> Co-Extruded UV Weathering Barrier | Hough Group Polymer
               </div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
-                Polycarbonate <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-amber-300">Profile Sheet</span>
+                Polycarbonate <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-amber-300">Profile Sheet</span>
               </h1>
-              <p className="text-cyan-100 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Highest grade polymer profile sheets with non-delaminating UV protective layer for 100% natural daylight transmission and extreme thermal durability.
               </p>
             </div>
 
-            {/* Price Badge Card */}
-            <div className="bg-white/15 backdrop-blur-md border border-white/30 rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-xl">
-              <span className="text-xs uppercase tracking-wider text-cyan-100 font-bold block mb-1">Wholesale Rate</span>
-              <div className="text-4xl font-black text-amber-300 my-1">
-                ₹980.00 <span className="text-sm font-normal text-slate-100">/ rmt</span>
+            {/* Price Badge Card matching screenshot */}
+            <div className="bg-[#132A3E]/80 backdrop-blur-md border border-[#1E3E5A] rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
+              <span className="text-xs uppercase tracking-wider text-[#00D2FF] font-bold block mb-1">STANDARD WHOLESALE PRICE</span>
+              <div className="text-4xl font-black text-[#FFC107] my-1">
+                ₹980.00 <span className="text-sm font-normal text-slate-200">/ rmt</span>
               </div>
-              <span className="text-xs text-cyan-100 block">Ex-Factory | Any Transportable Length</span>
+              <span className="text-xs text-slate-300 block">Ex-Factory | Any Transportable Length</span>
             </div>
           </div>
         </div>
@@ -164,111 +164,100 @@ export default function PolySheetPage() {
               ))}
             </div>
           </div>
-
+          
           {/* RIGHT 5 COLS: NOMINAL THICKNESS & RUNNING METER ESTIMATOR */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-6">
             
-            <div className="bg-white rounded-3xl p-6 border border-cyan-100 shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-cyan-600" /> Nominal Thickness Options
+                <Ruler className="w-5 h-5 text-sky-600" /> Select Polycarbonate Specs
               </h2>
 
               {/* NOMINAL THICKNESS SELECTOR */}
-              <div className="grid grid-cols-2 gap-3 mb-5">
+              <label className="block text-xs font-bold text-slate-700 mb-2">Nominal Thickness</label>
+              <div className="grid grid-cols-2 gap-2 mb-4">
                 {[
-                  { name: '1.25 mm', desc: 'Standard Light Transmission' },
-                  { name: '2.00 mm', desc: 'Heavy Duty Structural Impact' }
+                  { name: '1.25 mm', desc: 'Standard Transmission' },
+                  { name: '2.00 mm', desc: 'Heavy Duty Structural' }
                 ].map((item) => (
                   <button
                     key={item.name}
                     onClick={() => setNominalThickness(item.name)}
                     className={`
-                      p-3 rounded-2xl text-xs font-bold border text-left transition-all
+                      p-2.5 rounded-xl text-xs font-bold border text-left transition-all
                       ${nominalThickness === item.name
-                        ? 'bg-cyan-700 border-cyan-700 text-white shadow-md'
-                        : 'bg-cyan-50/50 border-cyan-100 text-slate-700 hover:border-cyan-200'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
                   >
-                    <span className="block font-black text-sm text-amber-300 mb-0.5">{item.name}</span>
-                    <span className="text-[10px] opacity-90 block">{item.desc}</span>
+                    <span className="block font-black text-xs text-amber-400 mb-0.5">{item.name}</span>
+                    <span className="text-[9px] opacity-80 block">{item.desc}</span>
                   </button>
                 ))}
               </div>
 
               {/* COLOR SELECTION GRID */}
               <label className="block text-xs font-bold text-slate-700 mb-2">Available Sheet Colors</label>
-              <div className="grid grid-cols-3 gap-2 mb-5">
+              <div className="grid grid-cols-3 gap-1.5 mb-5">
                 {colorsList.map((c) => (
                   <button
                     key={c.name}
                     onClick={() => setSelectedColor(c.name)}
                     className={`
-                      p-2 rounded-xl text-[10px] font-bold border text-center transition-all flex flex-col items-center gap-1
+                      p-1.5 rounded-xl text-[10px] font-bold border text-center transition-all flex flex-col items-center gap-1
                       ${selectedColor === c.name
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                        ? 'bg-sky-700 border-sky-700 text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
                   >
-                    <span className="w-3.5 h-3.5 rounded-full border border-slate-400" style={{ backgroundColor: c.hex }} />
-                    <span className="truncate w-full">{c.name}</span>
+                    <span className="w-3.5 h-3.5 rounded-full border border-slate-400 shrink-0" style={{ backgroundColor: c.hex }} />
+                    <span className="truncate w-full text-[9px]">{c.name}</span>
                   </button>
                 ))}
               </div>
 
-              {/* RUNNING METER CALCULATOR */}
-              <div className="bg-cyan-50/70 p-4 rounded-2xl border border-cyan-200/80 mb-4">
+              {/* ESTIMATOR SUB-BOX MATCHING SCREENSHOT */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-cyan-600" /> Running Meter (RMT) Estimator
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (Sq.m)
                   </label>
-                  <span className="text-[10px] bg-cyan-700 text-white px-2 py-0.5 rounded font-bold">
-                    ₹980 / rmt
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹65 / Sq.m
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Length per piece (Meters)</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="1"
-                      value={lengthRmt}
-                      onChange={(e) => setLengthRmt(e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-900"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Quantity (Pieces)</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={quantityPieces}
-                      onChange={(e) => setQuantityPieces(e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-900"
-                    />
-                  </div>
+                <div className="mb-3">
+                  <label className="block text-[10px] font-semibold text-slate-600 mb-1">Total Coverage Area (Sq.Meters)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={runningMeters}
+                    onChange={(e) => setRunningMeters(e.target.value)}
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
+                  />
                 </div>
 
-                <div className="flex items-center justify-between text-xs pt-2 border-t border-cyan-200">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Running Meters</span>
-                    <span className="font-extrabold text-cyan-900 text-sm">{totalRunningMeters} rmt</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Area</span>
+                    <span className="font-extrabold text-sky-700 text-sm">{runningMeters} Sq.m</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
-                    <span className="font-black text-amber-600 text-lg">₹{estCostRs.toLocaleString()}</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedPriceRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-cyan-700 hover:bg-cyan-800 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Quote For Selected Profile
+                <MessageSquare className="w-4 h-4" /> Request Quote For Polycarbonate Sheets
               </button>
             </div>
 

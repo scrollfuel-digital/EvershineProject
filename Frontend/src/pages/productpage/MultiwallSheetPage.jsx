@@ -118,27 +118,27 @@ export default function MultiwallSheetPage() {
           <span className="font-semibold text-slate-900">Multiwall Polycarbonate Sheet</span>
         </nav>
 
-        {/* HERO BANNER - EVERSHINE BRAND LOGO GRADIENT */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#004060] via-[#003860] to-[#285870] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-white/10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        {/* HERO BANNER - EXACT AIR BUBBLE INSULATION COLOR PALETTE */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B192C] via-[#102A43] to-[#0B192C] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-[#1E3A5F]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/15 text-[#B8D8E8] rounded-full text-xs font-bold mb-4 border border-white/20">
-                <Sun className="w-4 h-4" /> ASTM D 256 Impact Resistant | Co-extruded UV Shield
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#003846] text-[#00D2FF] rounded-full text-xs font-bold mb-4 border border-cyan-800/50 shadow-sm">
+                <Sun className="w-4 h-4 text-amber-400" /> ASTM D 256 Impact Resistant | Co-extruded UV Shield
               </div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
-                Multiwall Polycarbonate <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B8D8E8] to-amber-300">Sheets</span>
+                Multiwall Polycarbonate <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-amber-300">Sheets</span>
               </h1>
-              <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Premium multiwall structured polycarbonate sheets featuring 908 J/m Izod impact resistance, thermal insulation channels, and optional co-extruded UV protection for skylights & architectural canopies.
               </p>
             </div>
 
-            {/* Price Badge Card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-xl">
-              <span className="text-xs uppercase tracking-wider text-[#B8D8E8] font-bold block mb-1">Wholesale Rate</span>
-              <div className="text-4xl font-black text-amber-400 my-1">
+            {/* Price Badge Card matching screenshot */}
+            <div className="bg-[#132A3E]/80 backdrop-blur-md border border-[#1E3E5A] rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
+              <span className="text-xs uppercase tracking-wider text-[#00D2FF] font-bold block mb-1">STANDARD WHOLESALE PRICE</span>
+              <div className="text-4xl font-black text-[#FFC107] my-1">
                 ₹55.00 <span className="text-sm font-normal text-slate-200">/ sq.ft.</span>
               </div>
               <span className="text-xs text-slate-300 block">Ex-Factory | Custom Sizes Available</span>
@@ -199,110 +199,90 @@ export default function MultiwallSheetPage() {
             
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Palette className="w-5 h-5 text-purple-600" /> Color & Thickness Options
+                <Ruler className="w-5 h-5 text-sky-600" /> Color & Thickness Options
               </h2>
 
               {/* COLOR SWATCH SELECTOR */}
               <label className="block text-xs font-bold text-slate-700 mb-2">Select Sheet Color</label>
-              <div className="grid grid-cols-4 gap-2 mb-5">
+              <div className="grid grid-cols-4 gap-1.5 mb-4">
                 {colorsList.map((c) => (
                   <button
                     key={c.name}
                     onClick={() => setSelectedColor(c.name)}
                     className={`
-                      p-2 rounded-xl text-[10px] font-bold border text-center transition-all flex flex-col items-center gap-1
+                      p-1.5 rounded-xl text-[10px] font-bold border text-center transition-all flex flex-col items-center gap-1
                       ${selectedColor === c.name
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-md'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
                   >
-                    <span className="w-4 h-4 rounded-full border border-slate-400" style={{ backgroundColor: c.hex }} />
-                    <span className="truncate w-full">{c.name}</span>
+                    <span className="w-3.5 h-3.5 rounded-full border border-slate-400 shrink-0" style={{ backgroundColor: c.hex }} />
+                    <span className="truncate w-full text-[9px]">{c.name}</span>
                   </button>
                 ))}
               </div>
 
               {/* THICKNESS SELECTOR */}
-              <label className="block text-xs font-bold text-slate-700 mb-2">Sheet Thickness Options</label>
-              <div className="grid grid-cols-5 gap-1.5 mb-5">
-                {['4mm', '6mm', '8mm', '10mm', '16mm'].map((t) => (
+              <label className="block text-xs font-bold text-slate-700 mb-2">Multiwall Thickness (Twin-Wall)</label>
+              <div className="grid grid-cols-4 gap-1.5 mb-5">
+                {['6 mm', '8 mm', '10 mm', '12 mm'].map((thick) => (
                   <button
-                    key={t}
-                    onClick={() => setSelectedThickness(t)}
+                    key={thick}
+                    onClick={() => setSelectedThickness(thick)}
                     className={`
-                      py-2 px-1 rounded-xl text-xs font-bold border text-center transition-all
-                      ${selectedThickness === t
-                        ? 'bg-purple-600 border-purple-600 text-white shadow-sm'
+                      py-2 px-1 rounded-xl text-[11px] font-bold border text-center transition-all
+                      ${selectedThickness === thick
+                        ? 'bg-sky-700 border-sky-700 text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
                   >
-                    {t}
+                    {thick}
                   </button>
                 ))}
               </div>
 
-              {/* UV PROTECTION TOGGLE */}
-              <label className="block text-xs font-bold text-slate-700 mb-2">UV Coating Option</label>
-              <div className="grid grid-cols-2 gap-2 mb-5">
-                {['Single Sided UV', 'Both Sided UV Protection'].map((uv) => (
-                  <button
-                    key={uv}
-                    onClick={() => setUvProtection(uv)}
-                    className={`
-                      py-2 px-2 rounded-xl text-[11px] font-bold border text-center transition-all
-                      ${uvProtection === uv
-                        ? 'bg-purple-700 border-purple-700 text-white shadow-sm'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
-                      }
-                    `}
-                  >
-                    {uv}
-                  </button>
-                ))}
-              </div>
-
-              {/* LIVE AREA CALCULATOR */}
-              <div className="bg-purple-50/50 p-4 rounded-2xl border border-purple-100 mb-4">
+              {/* LIVE AREA ESTIMATOR SUB-BOX */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-purple-600" /> Coverage Area Estimator
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (Sq.Ft)
                   </label>
-                  <span className="text-[10px] bg-purple-600 text-white px-2 py-0.5 rounded font-bold">
-                    Est. Price
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹55 / sq.ft
                   </span>
                 </div>
 
                 <div className="mb-3">
-                  <label className="block text-[10px] font-semibold text-slate-600 mb-1">Total Coverage (Sq. Ft)</label>
+                  <label className="block text-[10px] font-semibold text-slate-600 mb-1">Total Coverage Area (Sq.Ft)</label>
                   <input
                     type="number"
                     min="10"
-                    max="100000"
                     value={areaSqFt}
                     onChange={(e) => setAreaSqFt(e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                   />
                 </div>
 
-                <div className="flex items-center justify-between text-xs pt-2 border-t border-purple-200/60">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Area</span>
-                    <span className="font-extrabold text-purple-900 text-sm">{sqFt.toLocaleString()} sq.ft.</span>
+                    <span className="font-extrabold text-sky-700 text-sm">{areaSqFt} Sq.Ft</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Cost</span>
-                    <span className="font-black text-amber-600 text-lg">₹{estCostRs.toLocaleString()}</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedPriceRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-2xl text-xs shadow-md shadow-purple-600/20 transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Quote For Selected Options
+                <MessageSquare className="w-4 h-4" /> Request Quote For Multiwall Sheets
               </button>
             </div>
 

@@ -170,18 +170,17 @@ export default function ZPurlinCPurlinPage() {
               <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <Ruler className="w-5 h-5 text-sky-600" /> Select Purlin Profile & Size
               </h2>
-
-              {/* SECTION TYPE TOGGLE */}
-              <label className="block text-xs font-bold text-slate-700 mb-2">Section Profile Type</label>
+              {/* SECTION PROFILE TYPE SELECTOR */}
+              <label className="block text-xs font-bold text-slate-700 mb-2">Purlin Profile Geometry</label>
               <div className="grid grid-cols-2 gap-2 mb-4">
-                {['Z Section', 'C Section'].map((sec) => (
+                {['Z Section (Lappable)', 'C Section (Simple Span)'].map((sec) => (
                   <button
                     key={sec}
                     onClick={() => setSectionType(sec)}
                     className={`
-                      py-2 px-2 rounded-xl text-xs font-bold border text-center transition-all
+                      py-2 px-1.5 rounded-xl text-[11px] font-bold border text-center transition-all
                       ${sectionType === sec
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -199,7 +198,7 @@ export default function ZPurlinCPurlinPage() {
                     key={web}
                     onClick={() => setSelectedWebSize(web)}
                     className={`
-                      py-2 px-0.5 rounded-xl text-[11px] font-bold border text-center transition-all
+                      py-1.5 px-0.5 rounded-xl text-[11px] font-bold border text-center transition-all
                       ${selectedWebSize === web
                         ? 'bg-sky-700 border-sky-700 text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
@@ -221,7 +220,7 @@ export default function ZPurlinCPurlinPage() {
                     className={`
                       py-1.5 px-0.5 rounded-xl text-[11px] font-bold border text-center transition-all
                       ${selectedThickness === thk
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -231,13 +230,13 @@ export default function ZPurlinCPurlinPage() {
                 ))}
               </div>
 
-              {/* LIVE WEIGHT & COST ESTIMATOR */}
+              {/* LIVE WEIGHT & COST ESTIMATOR SUB-BOX */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-sky-600" /> Purlin Weight & Price Calculator
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator
                   </label>
-                  <span className="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded font-bold">
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
                     ₹65 / kg
                   </span>
                 </div>
@@ -268,26 +267,25 @@ export default function ZPurlinCPurlinPage() {
 
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Est. Weight</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Weight</span>
                     <span className="font-extrabold text-sky-700 text-sm">~{estimatedWeightKg} kg</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Cost</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
                     <span className="font-black text-amber-600 text-lg">₹{estimatedCostRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Quote For {sectionType} Purlins
+                <MessageSquare className="w-4 h-4" /> Request Quote For Purlins
               </button>
             </div>
-
           </div>
-
         </div>
 
         {/* SECTION 2: DUAL COMPARISON CARDS - C vs Z PURLINS */}
