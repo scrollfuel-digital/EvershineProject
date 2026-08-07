@@ -78,30 +78,30 @@ export default function PEBStructurePage() {
           <span className="font-semibold text-slate-900">Pre-Engineered Building (PEB Structure)</span>
         </nav>
 
-        {/* HERO BANNER - VIBRANT ROYAL BLUE & ELECTRIC TEAL GRADIENT */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-blue-700 via-indigo-800 to-teal-700 text-white p-6 sm:p-10 mb-10 shadow-2xl border border-white/20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
+        {/* HERO BANNER - EXACT AIR BUBBLE INSULATION COLOR PALETTE */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B192C] via-[#102A43] to-[#0B192C] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-[#1E3A5F]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/20 text-cyan-200 rounded-full text-xs font-bold mb-4 border border-white/25 shadow-sm">
-                <Building2 className="w-4 h-4 text-amber-300" /> Turnkey Prefabricated Steel Building Solution
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#003846] text-[#00D2FF] rounded-full text-xs font-bold mb-4 border border-cyan-800/50 shadow-sm">
+                <Building2 className="w-4 h-4 text-amber-400" /> Turnkey Prefabricated Steel Building Solution
               </div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
-                Pre-Engineered <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-yellow-400">Buildings (PEB)</span>
+                Pre-Engineered <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-amber-300">Buildings (PEB)</span>
               </h1>
-              <p className="text-cyan-100 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Custom-designed industrial steel structures engineered for maximum space utilization, rapid construction speed, and significant cost savings over conventional civil construction.
               </p>
             </div>
 
-            {/* Price Badge Card */}
-            <div className="bg-white/15 backdrop-blur-md border border-white/30 rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
-              <span className="text-xs uppercase tracking-wider text-cyan-200 font-bold block mb-1">Structural Steel Rate</span>
-              <div className="text-4xl font-black text-amber-300 my-1">
-                ₹86.00 <span className="text-sm font-normal text-white">/ kg</span>
+            {/* Price Badge Card matching screenshot */}
+            <div className="bg-[#132A3E]/80 backdrop-blur-md border border-[#1E3E5A] rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
+              <span className="text-xs uppercase tracking-wider text-[#00D2FF] font-bold block mb-1">STANDARD WHOLESALE PRICE</span>
+              <div className="text-4xl font-black text-[#FFC107] my-1">
+                ₹86.00 <span className="text-sm font-normal text-slate-200">/ kg</span>
               </div>
-              <span className="text-xs text-cyan-100 block">Ex-Factory | Turnkey Design & Fabrication</span>
+              <span className="text-xs text-slate-300 block">Ex-Factory | Turnkey Design & Fabrication</span>
             </div>
           </div>
         </div>
@@ -155,18 +155,17 @@ export default function PEBStructurePage() {
           <div className="lg:col-span-5 flex flex-col justify-between gap-6">
             
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-              <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                <Calculator className="w-5 h-5 text-[#004060]" /> PEB Structural Weight & Cost Estimator
+              <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <Ruler className="w-5 h-5 text-sky-600" /> Select PEB Structure Specifications
               </h2>
-              <p className="text-xs text-slate-500 mb-4">Calculate total tonnage and structural steel budget based on floor footprint.</p>
 
-              <div className="space-y-4 mb-5">
+              <div className="space-y-3 mb-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Building Application</label>
                   <select
                     value={buildingType}
                     onChange={(e) => setBuildingType(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#004060]"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-sky-600"
                   >
                     <option value="Industrial Warehouse">Industrial Warehouse / Logistics</option>
                     <option value="Manufacturing Factory">Manufacturing Plant / Factory Shed</option>
@@ -174,47 +173,49 @@ export default function PEBStructurePage() {
                     <option value="Aircraft Hangar">Aircraft Hangar / Clear Span Shed</option>
                   </select>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Total Carpet Area (Sq. Ft)</label>
+              {/* ESTIMATOR SUB-BOX MATCHING SCREENSHOT */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (Sq.Ft)
+                  </label>
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹86 / kg
+                  </span>
+                </div>
+
+                <div className="mb-3">
+                  <label className="block text-[10px] font-semibold text-slate-600 mb-1">Total Carpet Area (Sq.Ft)</label>
                   <input
                     type="number"
                     min="1000"
                     max="500000"
                     value={totalSqFt}
                     onChange={(e) => setTotalSqFt(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-[#004060]"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                   />
                 </div>
-              </div>
 
-              {/* ESTIMATION SUMMARY BOX */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5">
-                <div className="flex justify-between items-center text-xs mb-2">
-                  <span className="text-slate-600">Total Structural Footprint:</span>
-                  <span className="font-bold text-slate-900">{totalArea.toLocaleString()} sq.ft.</span>
-                </div>
-                <div className="flex justify-between items-center text-xs mb-3">
-                  <span className="text-slate-600">Est. Steel Weight (~3.2 kg/sq.ft):</span>
-                  <span className="font-black text-[#004060]">{estimatedWeightKg.toLocaleString()} kg ({Math.round(estimatedWeightKg/1000)} MT)</span>
-                </div>
-
-                <div className="border-t border-slate-200 pt-3 flex justify-between items-center">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
-                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Wholesale Steel Cost</span>
-                    <span className="text-2xl font-black text-amber-600">₹{estimatedCostRs.toLocaleString()}</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Steel Weight</span>
+                    <span className="font-extrabold text-sky-700 text-sm">~{estimatedWeightKg.toLocaleString()} kg</span>
                   </div>
-                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">
-                    Rate: ₹86/kg
-                  </span>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedCostRs.toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-[#004060] hover:bg-[#003048] text-white font-bold py-3.5 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Custom PEB Layout & Quotation
+                <MessageSquare className="w-4 h-4" /> Request Quote For PEB Structure
               </button>
             </div>
 

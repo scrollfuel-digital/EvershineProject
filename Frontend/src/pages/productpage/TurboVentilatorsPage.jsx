@@ -186,39 +186,39 @@ export default function TurboVentilatorsPage() {
             
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Gauge className="w-5 h-5 text-sky-600" /> Quantity & Cost Estimator
+                <Ruler className="w-5 h-5 text-sky-600" /> Quantity & Cost Estimator
               </h2>
 
-              {/* LIVE UNIT COST ESTIMATOR */}
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5">
-                <div className="flex items-center justify-between mb-3">
+              {/* LIVE UNIT COST ESTIMATOR SUB-BOX */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
+                <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-sky-600" /> Wholesale Price Estimator
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator
                   </label>
-                  <span className="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded font-bold">
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
                     ₹3,000 / nos.
                   </span>
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-3">
                   <label className="block text-[10px] font-semibold text-slate-600 mb-1">Required Turbo Ventilator Units (Nos)</label>
                   <input
                     type="number"
                     min="1"
                     value={unitQuantity}
                     onChange={(e) => setUnitQuantity(e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-900"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                   />
                 </div>
 
-                <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-200">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Quantity</span>
                     <span className="font-extrabold text-sky-700 text-sm">{units} Units</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Wholesale Price</span>
-                    <span className="font-black text-amber-600 text-xl">₹{estCostRs.toLocaleString()}</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estCostRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -243,9 +243,10 @@ export default function TurboVentilatorsPage() {
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
                 <MessageSquare className="w-4 h-4" /> Request Quote For Turbo Ventilators
               </button>

@@ -98,27 +98,27 @@ export default function LouvresPage() {
           <span className="font-semibold text-slate-900">Industrial Louvers (SS 345 Z-Profile)</span>
         </nav>
 
-        {/* HERO BANNER - EVERSHINE BRAND LOGO GRADIENT */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#004060] via-[#003860] to-[#285870] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-white/10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        {/* HERO BANNER - EXACT AIR BUBBLE INSULATION COLOR PALETTE */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B192C] via-[#102A43] to-[#0B192C] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-[#1E3A5F]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/15 text-[#B8D8E8] rounded-full text-xs font-bold mb-4 border border-white/20">
-                <Wind className="w-4 h-4" /> Natural Building Ventilation System | Evershine Prefab Solutions
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#003846] text-[#00D2FF] rounded-full text-xs font-bold mb-4 border border-cyan-800/50 shadow-sm">
+                <Wind className="w-4 h-4 text-amber-400" /> Natural Building Ventilation System | Evershine Prefab Solutions
               </div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
-                Industrial <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#B8D8E8] to-amber-300">Z-Profile Louvers</span>
+                Industrial <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-amber-300">Z-Profile Louvers</span>
               </h1>
-              <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Engineered wall louvers in SS 345 grade designed to continuously circulate natural air, reduce heat & dust buildup inside warehouses, and maintain healthy building environments.
               </p>
             </div>
 
-            {/* Price Badge Card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-xl">
-              <span className="text-xs uppercase tracking-wider text-[#B8D8E8] font-bold block mb-1">Standard Wholesale Rate</span>
-              <div className="text-4xl font-black text-amber-400 my-1">
+            {/* Price Badge Card matching screenshot */}
+            <div className="bg-[#132A3E]/80 backdrop-blur-md border border-[#1E3E5A] rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
+              <span className="text-xs uppercase tracking-wider text-[#00D2FF] font-bold block mb-1">STANDARD WHOLESALE PRICE</span>
+              <div className="text-4xl font-black text-[#FFC107] my-1">
                 ₹3,800 <span className="text-sm font-normal text-slate-200">/ nos.</span>
               </div>
               <span className="text-xs text-slate-300 block">Ex-Factory | All RAL Colors Available</span>
@@ -179,68 +179,69 @@ export default function LouvresPage() {
             
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-sky-600" /> Select Louver Type & Specs
+                <Ruler className="w-5 h-5 text-sky-600" /> Select Louver Type & Specs
               </h2>
 
               {/* TYPE TOGGLE: FIXED VS ADJUSTABLE */}
-              <div className="grid grid-cols-2 gap-3 mb-5">
+              <label className="block text-xs font-bold text-slate-700 mb-2">Louver Blade Control</label>
+              <div className="grid grid-cols-2 gap-2 mb-4">
                 <button
                   onClick={() => setLouverType('Fixed Z-Profile')}
                   className={`
-                    p-3 rounded-2xl text-xs font-bold border text-left transition-all
+                    p-2.5 rounded-xl text-xs font-bold border text-left transition-all
                     ${louverType === 'Fixed Z-Profile'
-                      ? 'bg-sky-600 border-sky-600 text-white shadow-md shadow-sky-600/20'
+                      ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                       : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                     }
                   `}
                 >
-                  <span className="block font-extrabold text-sm mb-0.5">Fixed Z-Profile</span>
-                  <span className="text-[10px] opacity-90 block">Continuous Air Flow</span>
+                  <span className="block font-extrabold text-xs mb-0.5">Fixed Z-Profile</span>
+                  <span className="text-[9px] opacity-80 block">Continuous Air Flow</span>
                 </button>
 
                 <button
                   onClick={() => setLouverType('Adjustable Louvers')}
                   className={`
-                    p-3 rounded-2xl text-xs font-bold border text-left transition-all
+                    p-2.5 rounded-xl text-xs font-bold border text-left transition-all
                     ${louverType === 'Adjustable Louvers'
-                      ? 'bg-sky-600 border-sky-600 text-white shadow-md shadow-sky-600/20'
+                      ? 'bg-sky-700 border-sky-700 text-white shadow-sm'
                       : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                     }
                   `}
                 >
-                  <span className="block font-extrabold text-sm mb-0.5">Adjustable</span>
-                  <span className="text-[10px] opacity-90 block">Manual/Motorized Control</span>
+                  <span className="block font-extrabold text-xs mb-0.5">Adjustable</span>
+                  <span className="text-[9px] opacity-80 block">Manual Control</span>
                 </button>
               </div>
 
               {/* SIZE SELECTOR */}
-              <label className="block text-xs font-bold text-slate-700 mb-2">Standard Dimensions</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">Standard Panel Dimensions</label>
               <div className="grid grid-cols-2 gap-2 mb-5">
                 {['1 x 1 Mtr', '1.5 x 1.5 Mtr'].map((sz) => (
                   <button
                     key={sz}
                     onClick={() => setLouverSize(sz)}
                     className={`
-                      py-2.5 px-3 rounded-xl text-xs font-extrabold border text-center transition-all
+                      py-2 px-2 rounded-xl text-xs font-bold border text-center transition-all
                       ${louverSize === sz
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
                   >
-                    {sz} {sz === '1.5 x 1.5 Mtr' ? '(Popular)' : ''}
+                    {sz}
                   </button>
                 ))}
               </div>
 
-              {/* AIRFLOW CALCULATOR CARD */}
-              <div className="bg-sky-50/60 p-4 rounded-2xl border border-sky-100 mb-4">
+              {/* LIVE AIRFLOW & COST ESTIMATOR SUB-BOX */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-sky-600" /> Building Airflow Calculator
+                  <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (Sq.m)
                   </label>
-                  <span className="text-[10px] bg-sky-600 text-white px-2 py-0.5 rounded font-bold">
-                    IS Formula
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹1,200 / Sq.m
                   </span>
                 </div>
 

@@ -204,7 +204,7 @@ export default function XLPEPage() {
                     className={`
                       py-2 px-1 rounded-xl text-xs font-bold border text-center transition-all
                       ${foamThickness === t
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -234,13 +234,13 @@ export default function XLPEPage() {
                 ))}
               </div>
 
-              {/* LIVE AREA SQM ESTIMATOR */}
+              {/* LIVE AREA SQM ESTIMATOR SUB-BOX */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (SQM)
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (Sq.m)
                   </label>
-                  <span className="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded font-bold">
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
                     ₹130 / sqm
                   </span>
                 </div>
@@ -250,7 +250,6 @@ export default function XLPEPage() {
                   <input
                     type="number"
                     min="10"
-                    max="100000"
                     value={areaSqm}
                     onChange={(e) => setAreaSqm(e.target.value)}
                     className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
@@ -260,7 +259,7 @@ export default function XLPEPage() {
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Area</span>
-                    <span className="font-extrabold text-sky-700 text-sm">{sqm.toLocaleString()} SQM</span>
+                    <span className="font-extrabold text-sky-700 text-sm">{sqm.toLocaleString()} Sq.m</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
@@ -269,11 +268,12 @@ export default function XLPEPage() {
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Quote For XLPE Insulation
+                <MessageSquare className="w-4 h-4" /> Request Quote For XLPE Foam Insulation
               </button>
             </div>
 

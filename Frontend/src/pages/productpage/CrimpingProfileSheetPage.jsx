@@ -78,27 +78,27 @@ export default function CrimpingProfileSheetPage() {
           <span className="font-semibold text-slate-900">Crimping Profile Sheet</span>
         </nav>
 
-        {/* HERO HEADER - ARCHITECTURAL DYNAMIC WAVE */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-slate-950 via-teal-950 to-slate-900 text-white p-6 sm:p-10 mb-10 shadow-2xl border border-slate-800">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-          
+        {/* HERO BANNER - EXACT AIR BUBBLE INSULATION COLOR PALETTE */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B192C] via-[#102A43] to-[#0B192C] text-white p-6 sm:p-10 mb-10 shadow-2xl border border-[#1E3A5F]">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-teal-500/20 text-teal-300 rounded-full text-xs font-bold mb-4 border border-teal-500/30">
-                <Compass className="w-4 h-4" /> Self-Supporting Curved Architectural Roofing
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#003846] text-[#00D2FF] rounded-full text-xs font-bold mb-4 border border-cyan-800/50 shadow-sm">
+                <Compass className="w-4 h-4 text-amber-400" /> Self-Supporting Curved Architectural Roofing
               </div>
-              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3 leading-tight">
-                Crimping Profile <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-amber-300">Sheets</span>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white mb-3">
+                Crimping Profile <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-300 to-amber-300">Sheets</span>
               </h1>
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                 Precision-engineered curved crimp profile sheets designed for seamless self-supporting arch roofs, canopy ridges, and industrial bullnose corners without additional purlins.
               </p>
             </div>
 
-            {/* Price Badge Card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-xl">
-              <span className="text-xs uppercase tracking-wider text-teal-300 font-bold block mb-1">Standard Wholesale Rate</span>
-              <div className="text-4xl font-black text-amber-400 my-1">
+            {/* Price Badge Card matching screenshot */}
+            <div className="bg-[#132A3E]/80 backdrop-blur-md border border-[#1E3E5A] rounded-3xl p-6 text-center lg:text-right shrink-0 shadow-2xl">
+              <span className="text-xs uppercase tracking-wider text-[#00D2FF] font-bold block mb-1">STANDARD WHOLESALE PRICE</span>
+              <div className="text-4xl font-black text-[#FFC107] my-1">
                 ₹80.00 <span className="text-sm font-normal text-slate-200">/ kg</span>
               </div>
               <span className="text-xs text-slate-300 block">Ex-Factory | IS 277 Certified Standard</span>
@@ -159,43 +159,44 @@ export default function CrimpingProfileSheetPage() {
             
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-teal-600" /> Coating & Alloy Selection
+                <Ruler className="w-5 h-5 text-sky-600" /> Coating & Arc Specification
               </h2>
 
               {/* COATING SELECTOR TOGGLE */}
-              <div className="grid grid-cols-2 gap-3 mb-5">
+              <label className="block text-xs font-bold text-slate-700 mb-2">Coating Alloy Type</label>
+              <div className="grid grid-cols-2 gap-2 mb-4">
                 <button
                   onClick={() => setCoatingType('Galvanized')}
                   className={`
-                    p-3 rounded-2xl text-xs font-bold border text-left transition-all
+                    p-2.5 rounded-xl text-xs font-bold border text-left transition-all
                     ${coatingType === 'Galvanized'
-                      ? 'bg-teal-600 border-teal-600 text-white shadow-md shadow-teal-600/20'
+                      ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                       : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                     }
                   `}
                 >
-                  <span className="block font-extrabold text-sm mb-0.5">Galvanized</span>
-                  <span className="text-[10px] opacity-90 block">Zinc-98% + Alloy-2% (120 GSM)</span>
+                  <span className="block font-extrabold text-xs mb-0.5">Galvanized</span>
+                  <span className="text-[9px] opacity-80 block">Zinc 120 GSM</span>
                 </button>
 
                 <button
                   onClick={() => setCoatingType('Galvalume')}
                   className={`
-                    p-3 rounded-2xl text-xs font-bold border text-left transition-all
+                    p-2.5 rounded-xl text-xs font-bold border text-left transition-all
                     ${coatingType === 'Galvalume'
-                      ? 'bg-teal-600 border-teal-600 text-white shadow-md shadow-teal-600/20'
+                      ? 'bg-sky-700 border-sky-700 text-white shadow-sm'
                       : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                     }
                   `}
                 >
-                  <span className="block font-extrabold text-sm mb-0.5">Galvalume</span>
-                  <span className="text-[10px] opacity-90 block">Al-55% + Zn-43.5% (150 GSM)</span>
+                  <span className="block font-extrabold text-xs mb-0.5">Galvalume</span>
+                  <span className="text-[9px] opacity-80 block">AZ-150 GSM</span>
                 </button>
               </div>
 
               {/* YIELD STRENGTH SELECTOR */}
               <label className="block text-xs font-bold text-slate-700 mb-2">Yield Strength Grade</label>
-              <div className="grid grid-cols-3 gap-2 mb-5">
+              <div className="grid grid-cols-3 gap-1.5 mb-5">
                 {['245 MPA', '345 MPA', '550 MPA'].map((str) => (
                   <button
                     key={str}
@@ -203,7 +204,7 @@ export default function CrimpingProfileSheetPage() {
                     className={`
                       py-2 px-2 rounded-xl text-xs font-bold border text-center transition-all
                       ${yieldStrength === str
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -213,55 +214,62 @@ export default function CrimpingProfileSheetPage() {
                 ))}
               </div>
 
-              {/* LIVE WEIGHT ESTIMATOR */}
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 mb-4">
+              {/* LIVE WEIGHT ESTIMATOR SUB-BOX */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator
+                  </label>
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹80 / kg
+                  </span>
+                </div>
+
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">Arc Length (Ft)</label>
+                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Arc Length (Ft)</label>
                     <input
                       type="number"
                       min="1"
-                      max="50"
                       value={arcLengthFt}
                       onChange={(e) => setArcLengthFt(e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-900"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">Sheet Count</label>
+                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Quantity (Sheets)</label>
                     <input
                       type="number"
                       min="1"
-                      max="1000"
                       value={quantitySheets}
                       onChange={(e) => setQuantitySheets(e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-900"
+                      className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Est. Weight</span>
-                    <span className="text-base font-black text-teal-700">~{estWeightKg} kg</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Weight</span>
+                    <span className="font-extrabold text-sky-700 text-sm">~{estimatedWeightKg} kg</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
-                    <span className="text-xl font-black text-amber-600">₹{estCostRs.toLocaleString()}</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedPriceRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-2xl text-xs shadow-md shadow-teal-600/20 transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
-                <MessageSquare className="w-4 h-4" /> Request Quote For This Arc
+                <MessageSquare className="w-4 h-4" /> Request Quote For Crimping Profile Sheet
               </button>
             </div>
 
           </div>
-
         </div>
 
         {/* SECTION 2: DUAL COMPARISON CARDS (GALVANIZED VS GALVALUME) */}

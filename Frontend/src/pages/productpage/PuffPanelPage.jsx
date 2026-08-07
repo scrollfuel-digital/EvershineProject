@@ -169,12 +169,12 @@ export default function PuffPanelPage() {
             
             <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
               <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Ruler className="w-5 h-5 text-[#004060]" /> Double Skin System Configuration
+                <Ruler className="w-5 h-5 text-sky-600" /> Double Skin Configuration
               </h2>
 
               {/* METAL SKIN TYPE SELECTOR */}
               <label className="block text-xs font-bold text-slate-700 mb-2">Outer/Inner Metal Skin</label>
-              <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="grid grid-cols-3 gap-1.5 mb-4">
                 {['PPGL / PPGI', 'Aluminium', 'Bare Galv (BG)'].map((skin) => (
                   <button
                     key={skin}
@@ -182,7 +182,7 @@ export default function PuffPanelPage() {
                     className={`
                       py-2 px-1 rounded-xl text-[11px] font-bold border text-center transition-all
                       ${metalSkinType === skin
-                        ? 'bg-[#004060] border-[#004060] text-white shadow-sm'
+                        ? 'bg-[#0B192C] border-[#0B192C] text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -194,7 +194,7 @@ export default function PuffPanelPage() {
 
               {/* PROFILE TYPE SELECTOR */}
               <label className="block text-xs font-bold text-slate-700 mb-2">Roof Profile Option</label>
-              <div className="grid grid-cols-3 gap-2 mb-5">
+              <div className="grid grid-cols-3 gap-1.5 mb-5">
                 {['Trapezoidal', 'Clay Tile', 'Standing Seam'].map((prof) => (
                   <button
                     key={prof}
@@ -202,7 +202,7 @@ export default function PuffPanelPage() {
                     className={`
                       py-2 px-1 rounded-xl text-[11px] font-bold border text-center transition-all
                       ${profileType === prof
-                        ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
+                        ? 'bg-sky-700 border-sky-700 text-white shadow-sm'
                         : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }
                     `}
@@ -212,14 +212,14 @@ export default function PuffPanelPage() {
                 ))}
               </div>
 
-              {/* LIVE AREA SQM CALCULATOR */}
+              {/* LIVE AREA SQM ESTIMATOR SUB-BOX */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Calculator className="w-4 h-4 text-[#004060]" /> Roof Coverage Estimator (SQM)
+                    <Calculator className="w-4 h-4 text-sky-600" /> Coverage Estimator (Sq.m)
                   </label>
-                  <span className="text-[10px] bg-[#004060] text-white px-2 py-0.5 rounded font-bold">
-                    ₹1,500 / SQM
+                  <span className="text-[10px] bg-[#0B192C] text-white px-2 py-0.5 rounded font-bold">
+                    ₹1,500 / Sq.m
                   </span>
                 </div>
 
@@ -228,17 +228,16 @@ export default function PuffPanelPage() {
                   <input
                     type="number"
                     min="10"
-                    max="100000"
                     value={areaSqm}
                     onChange={(e) => setAreaSqm(e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-900"
+                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                   />
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Area</span>
-                    <span className="font-extrabold text-[#004060] text-sm">{sqm.toLocaleString()} SQM</span>
+                    <span className="font-extrabold text-sky-700 text-sm">{sqm.toLocaleString()} Sq.m</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
@@ -247,9 +246,10 @@ export default function PuffPanelPage() {
                 </div>
               </div>
 
+              {/* MAIN CTA BUTTON MATCHING SCREENSHOT */}
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full bg-[#004060] hover:bg-[#003048] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
+                className="w-full bg-[#0B192C] hover:bg-[#102A43] text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2"
               >
                 <MessageSquare className="w-4 h-4" /> Request Quote For Double Skin System
               </button>
