@@ -207,13 +207,12 @@ export default function BaregalvalumeProfileSheetPage() {
 
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Sheet Length (Meters)</label>
+                    <label className="block text-[10px] font-semibold text-slate-600 mb-1">Sheet Length (Feet)</label>
                     <input
                       type="number"
-                      step="0.5"
                       min="1"
-                      value={lengthMtrs}
-                      onChange={(e) => setLengthMtrs(e.target.value)}
+                      value={lengthFt}
+                      onChange={(e) => setLengthFt(e.target.value)}
                       className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                     />
                   </div>
@@ -222,8 +221,8 @@ export default function BaregalvalumeProfileSheetPage() {
                     <input
                       type="number"
                       min="1"
-                      value={quantityPieces}
-                      onChange={(e) => setQuantityPieces(e.target.value)}
+                      value={quantitySheets}
+                      onChange={(e) => setQuantitySheets(e.target.value)}
                       className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                     />
                   </div>
@@ -236,7 +235,7 @@ export default function BaregalvalumeProfileSheetPage() {
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
-                    <span className="font-black text-amber-600 text-lg">₹{estimatedCostRs.toLocaleString()}</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedPriceRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
