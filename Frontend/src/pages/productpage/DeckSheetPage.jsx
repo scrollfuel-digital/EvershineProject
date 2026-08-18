@@ -17,7 +17,8 @@ import {
   Clock,
   DollarSign,
   Cpu,
-  Calculator
+  Calculator,
+  Ruler
 } from 'lucide-react';
 
 // Image imports
@@ -286,11 +287,11 @@ export default function DeckSheetPage() {
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Est. Weight</span>
-                    <span className="font-extrabold text-sky-700 text-sm">~{estTotalKg} kg</span>
+                    <span className="font-extrabold text-sky-700 text-sm">~{estimatedWeightKg} kg</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
-                    <span className="font-black text-amber-600 text-lg">₹{estTotalPrice.toLocaleString()}</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedCostRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

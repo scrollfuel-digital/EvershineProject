@@ -153,34 +153,21 @@ export default function Contact() {
 
 
       {/* 2. Middle Form Card Section */}
-      <section className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 overflow-hidden">
+      <section className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         
-        {/* Outer Canvas Background Shapes (matching design image) */}
-        {/* Top Right Light Golden/Beige Circle */}
-        <div className="absolute -top-10 -right-10 sm:-top-16 sm:-right-16 w-72 h-72 sm:w-96 sm:h-96 bg-[#fde8bb] rounded-full pointer-events-none z-0" />
-
-        {/* Top Left Hollow Golden Ring Outline */}
-        <div className="absolute top-12 left-0 sm:left-4 w-32 h-32 sm:w-40 sm:h-40 border-[7px] sm:border-[9px] border-[#e69d00] rounded-full pointer-events-none z-0" />
-
-        {/* Bottom Right Dark Slate Ring Outline */}
-        <div className="absolute -bottom-20 -right-16 sm:-right-10 w-72 h-72 sm:w-96 sm:h-96 border-[24px] sm:border-[32px] border-[#29292c] rounded-full pointer-events-none z-0" />
-
         {/* Main Center White Card */}
         <div className="relative z-10 bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl p-6 sm:p-10 lg:p-12 overflow-hidden max-w-5xl mx-auto border border-slate-100">
           
-          {/* Bottom-Left Beige/Yellow Accent Fill inside White Card */}
-          <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#fde8bb]/80 rounded-tr-[70px] pointer-events-none" />
-
           {/* Form and Info Layout Grid */}
           <div className="grid lg:grid-cols-12 gap-8 items-stretch relative z-10">
             
             {/* Left Side: Form Area */}
             <div className="lg:col-span-7 flex flex-col justify-between pr-0 lg:pr-6 py-2">
               <div>
-                {/* Logo Icon Top-Left (Crescent C icon matching image) */}
+                {/* Logo Icon Top-Left (Brand Crescent Logo) */}
                 <div className="mb-6 flex items-center">
-                  <div className="w-7 h-7 rounded-full border-[3.5px] border-[#29292c] border-t-transparent border-r-transparent -rotate-45 flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#29292c]" />
+                  <div className="w-8 h-8 rounded-full border-[3.5px] border-[#004060] border-t-transparent border-r-transparent -rotate-45 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#004060]" />
                   </div>
                 </div>
 
@@ -188,14 +175,14 @@ export default function Contact() {
                   Contact us
                 </h2>
 
-                <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-md mb-8">
+                <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-md mb-8 font-sans">
                   Please don't hesitate to reach out to us whenever you need assistance. We'll make sure to respond to you promptly.
                 </p>
 
                 {submitted ? (
                   <div className="py-10 text-center space-y-3 animate-fade-in bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                    <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
-                    <h3 className="text-xl font-bold text-slate-900">Thank You!</h3>
+                    <CheckCircle2 className="w-12 h-12 text-[#004060] mx-auto animate-bounce" />
+                    <h3 className="text-xl font-bold text-slate-900 font-display">Thank You!</h3>
                     <p className="text-slate-600 text-xs max-w-xs mx-auto">
                       Your message has been sent successfully. Our team will get back to you shortly.
                     </p>
@@ -210,7 +197,7 @@ export default function Contact() {
                         placeholder="Name"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-slate-900 transition-colors"
+                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
                       />
                     </div>
 
@@ -222,7 +209,7 @@ export default function Contact() {
                         placeholder="Email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-slate-900 transition-colors"
+                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
                       />
                     </div>
 
@@ -234,7 +221,7 @@ export default function Contact() {
                         placeholder="Message"
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-slate-900 transition-colors resize-none"
+                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors resize-none"
                       />
                     </div>
 
@@ -242,7 +229,7 @@ export default function Contact() {
                     <div className="pt-4">
                       <button
                         type="submit"
-                        className="w-full py-3.5 px-6 bg-black hover:bg-slate-800 text-white font-semibold text-xs tracking-wide rounded-full transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
+                        className="w-full py-3.5 px-6 bg-[#004060] hover:bg-[#003860] text-white font-semibold text-xs tracking-wide uppercase rounded-full transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
                       >
                         Message
                       </button>
@@ -255,29 +242,29 @@ export default function Contact() {
             {/* Right Side: Overlapping Info Panel */}
             <div className="lg:col-span-5 relative flex items-center justify-center mt-6 lg:mt-0">
               
-              {/* Golden Yellow Background Accent Block */}
-              <div className="absolute inset-0 bg-[#e69d00] rounded-[28px] transform translate-x-2 translate-y-2 lg:translate-x-4 lg:translate-y-0" />
+              {/* Brand Accent Background Block */}
+              <div className="absolute inset-0 bg-[#285870] rounded-[28px] transform translate-x-2 translate-y-2 lg:translate-x-4 lg:translate-y-0" />
 
-              {/* Dark Overlapping Info Card */}
-              <div className="relative z-10 w-full bg-[#29292c] text-white rounded-[24px] p-6 sm:p-8 shadow-xl my-4 -ml-0 lg:-ml-6">
+              {/* Dark Overlapping Info Card (Brand Primary Navy) */}
+              <div className="relative z-10 w-full bg-[#003860] text-white rounded-[24px] p-6 sm:p-8 shadow-xl my-4 -ml-0 lg:-ml-6 border border-[#B8D8E8]/20">
                 
-                {/* Solid Golden Circle Dot near Bottom Left edge */}
-                <div className="absolute -left-3 bottom-10 w-6 h-6 rounded-full bg-[#e69d00] border-4 border-white shadow-sm" />
+                {/* Brand Light Blue Circle Dot near Bottom Left edge */}
+                <div className="absolute -left-3 bottom-10 w-6 h-6 rounded-full bg-[#B8D8E8] border-4 border-white shadow-sm" />
 
-                <h3 className="text-xl sm:text-2xl font-bold text-[#e69d00] mb-8 font-display">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#B8D8E8] mb-8 font-display">
                   Info
                 </h3>
 
                 <div className="space-y-6 text-xs sm:text-sm font-medium">
                   {/* Email */}
-                  <a href="mailto:evershinengp@gmail.com" className="flex items-center gap-4 text-[#f3e4cb] hover:text-white transition-colors">
-                    <Mail className="w-5 h-5 text-[#e69d00] shrink-0 stroke-[1.5]" />
+                  <a href="mailto:evershinengp@gmail.com" className="flex items-center gap-4 text-[#B8D8E8] hover:text-white transition-colors">
+                    <Mail className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8]" />
                     <span className="truncate">evershinengp@gmail.com</span>
                   </a>
 
                   {/* Phone */}
-                  <a href="tel:+919860118911" className="flex items-center gap-4 text-[#f3e4cb] hover:text-white transition-colors">
-                    <Phone className="w-5 h-5 text-[#e69d00] shrink-0 stroke-[1.5]" />
+                  <a href="tel:+919860118911" className="flex items-center gap-4 text-[#B8D8E8] hover:text-white transition-colors">
+                    <Phone className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8]" />
                     <span>+91 9860118911</span>
                   </a>
 
@@ -286,15 +273,15 @@ export default function Contact() {
                     href="https://www.google.com/maps/search/?api=1&query=133,+Bante+Layout,+Wardha+Road,+Nagpur,+Maharashtra+440025" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex items-start gap-4 text-[#f3e4cb] hover:text-white transition-colors"
+                    className="flex items-start gap-4 text-[#B8D8E8] hover:text-white transition-colors"
                   >
-                    <MapPin className="w-5 h-5 text-[#e69d00] shrink-0 stroke-[1.5] mt-0.5" />
+                    <MapPin className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8] mt-0.5" />
                     <span className="leading-snug">133, Bante Layout, Wardha Road, Nagpur</span>
                   </a>
 
                   {/* Working Hours */}
-                  <div className="flex items-center gap-4 text-[#f3e4cb]">
-                    <Clock className="w-5 h-5 text-[#e69d00] shrink-0 stroke-[1.5]" />
+                  <div className="flex items-center gap-4 text-[#B8D8E8]">
+                    <Clock className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8]" />
                     <span>09:00 - 18:00</span>
                   </div>
                 </div>

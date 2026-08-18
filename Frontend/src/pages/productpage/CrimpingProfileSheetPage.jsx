@@ -13,7 +13,9 @@ import {
   Zap,
   Compass,
   CheckCircle,
-  HelpCircle
+  HelpCircle,
+  Ruler,
+  Calculator
 } from 'lucide-react';
 
 // Image imports

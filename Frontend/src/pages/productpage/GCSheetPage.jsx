@@ -15,7 +15,9 @@ import {
   Grid,
   Maximize,
   Sliders,
-  CheckCircle
+  CheckCircle,
+  Ruler,
+  Calculator
 } from 'lucide-react';
 
 // Image imports

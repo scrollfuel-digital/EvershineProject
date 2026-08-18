@@ -21,8 +21,6 @@ const Home = () => {
 
             <AboutSection />
 
-            <WhyChooseUs />
-
             <Brands />
 
             <Testimonials />
