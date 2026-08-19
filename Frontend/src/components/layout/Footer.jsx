@@ -35,10 +35,10 @@ const services = [
 ];
 
 const socials = [
-  { icon: <FaFacebookF />, label: "Facebook", href: "#", color: "hover:text-blue-500" },
-  { icon: <FaInstagram />, label: "Instagram", href: "#", color: "hover:text-pink-500" },
+  // { icon: <FaFacebookF />, label: "Facebook", href: "#", color: "hover:text-blue-500" },
+  { icon: <FaInstagram />, label: "Instagram", href: "https://www.instagram.com/evershineprefabsolutions?igsh=cW8xeGQ3Nmd5b2R2", color: "hover:text-pink-500" },
   { icon: <FaLinkedin />, label: "LinkedIn", href: "#", color: "hover:text-blue-400" },
-  { icon: <FaYoutube />, label: "YouTube", href: "#", color: "hover:text-red-500" },
+  // { icon: <FaYoutube />, label: "YouTube", href: "#", color: "hover:text-red-500" },
   { icon: <FaWhatsapp />, label: "WhatsApp", href: "https://wa.me/919860118911", color: "hover:text-green-400" },
 ];
 

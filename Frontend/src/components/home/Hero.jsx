@@ -3,14 +3,30 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import CrimpingBanner from "../../assets/banner/crimping_profile_banner.png";
 import GIAngleBanner from "../../assets/banner/GI Banner.png";
-import AluminiumCrimpingBanner from "../../assets/banner/aluminium_crimping_banner.jpg";
+import AluminiumCrimpingBanner from "../../assets/banner/aluminium_crimping_banner.png";
 import PuffPanelsBanner from "../../assets/banner/puff_panels_banner.jpg";
-import DeckSheetsBanner from "../../assets/banner/deck_sheets_banner.jpg";
-import BareGalvalumeBanner from "../../assets/banner/bare_galvalume_banner.jpg";
+import DeckSheetsBanner from "../../assets/banner/deck_sheets_banner.png";
+import BareGalvalumeBanner from "../../assets/banner/bare_galvalume_banner.png";
 import StandingSeamBanner from "../../assets/banner/standing_seam_banner.jpg";
 
-const banners = [CrimpingBanner, GIAngleBanner, AluminiumCrimpingBanner, PuffPanelsBanner, DeckSheetsBanner, BareGalvalumeBanner, StandingSeamBanner];
-const bannerBgColors = ["bg-[#f1f5f9]", "bg-[#0b1329]", "bg-[#f1f5f9]", "bg-[#f1f5f9]", "bg-[#f1f5f9]", "bg-[#f1f5f9]", "bg-[#f1f5f9]"];
+const banners = [
+  CrimpingBanner,
+  GIAngleBanner,
+  AluminiumCrimpingBanner,
+  PuffPanelsBanner,
+  DeckSheetsBanner,
+  BareGalvalumeBanner,
+  StandingSeamBanner,
+];
+const bannerBgColors = [
+  "bg-[#f1f5f9]",
+  "bg-[#0b1329]",
+  "bg-[#f1f5f9]",
+  "bg-[#f1f5f9]",
+  "bg-[#f1f5f9]",
+  "bg-[#f1f5f9]",
+  "bg-[#f1f5f9]",
+];
 
 const AUTOPLAY_DELAY = 4000;
 
@@ -62,7 +78,9 @@ const Hore = () => {
   }, [next]);
 
   return (
-    <section className={`relative w-full mt-[64px] sm:mt-[72px] lg:mt-[84px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] lg:h-[calc(100vh-84px)] overflow-hidden transition-colors duration-500 ${bannerBgColors[current]}`}>
+    <section
+      className={`relative w-full mt-[64px] sm:mt-[72px] lg:mt-[84px] h-[calc(100vh-64px)] sm:h-[calc(100vh-72px)] lg:h-[calc(100vh-84px)] overflow-hidden transition-colors duration-500 ${bannerBgColors[current]}`}
+    >
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={current}
@@ -99,7 +117,11 @@ const Hore = () => {
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
@@ -127,8 +149,11 @@ const Hore = () => {
             key={index}
             onClick={() => goTo(index)}
             aria-label={`Go to slide ${index + 1}`}
-            className={`h-2 rounded-full transition-all duration-300 ${index === current ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/80"
-              }`}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              index === current
+                ? "w-6 bg-white"
+                : "w-2 bg-white/50 hover:bg-white/80"
+            }`}
           />
         ))}
       </div>

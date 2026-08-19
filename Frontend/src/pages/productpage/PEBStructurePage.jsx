@@ -16,7 +16,8 @@ import {
   CheckCircle,
   Clock,
   DollarSign,
-  Wrench
+  Wrench,
+  Ruler
 } from 'lucide-react';
 
 // Image imports

@@ -15,7 +15,8 @@ import {
   Activity,
   Calculator,
   Compass,
-  Palette
+  Palette,
+  Ruler
 } from 'lucide-react';
 
 // Image imports
