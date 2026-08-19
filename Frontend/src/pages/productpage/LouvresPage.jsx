@@ -16,7 +16,8 @@ import {
   SlidersHorizontal,
   Calculator,
   Compass,
-  Building
+  Building,
+  Ruler
 } from 'lucide-react';
 
 // Image imports

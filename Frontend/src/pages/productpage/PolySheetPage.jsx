@@ -234,20 +234,20 @@ export default function PolySheetPage() {
                   <input
                     type="number"
                     min="1"
-                    value={runningMeters}
-                    onChange={(e) => setRunningMeters(e.target.value)}
+                    value={lengthRmt}
+                    onChange={(e) => setLengthRmt(e.target.value)}
                     className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                   />
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
-                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Area</span>
-                    <span className="font-extrabold text-sky-700 text-sm">{runningMeters} Sq.m</span>
+                    <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Running Meters</span>
+                    <span className="font-extrabold text-sky-700 text-sm">{totalRunningMeters} rmt</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
-                    <span className="font-black text-amber-600 text-lg">₹{estimatedPriceRs.toLocaleString()}</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estCostRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

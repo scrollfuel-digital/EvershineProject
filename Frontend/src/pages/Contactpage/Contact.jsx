@@ -10,7 +10,9 @@ import {
   AtSign,
   ArrowRight,
   Send,
-  Sparkles
+  Sparkles,
+  Clock,
+  ChevronDown
 } from 'lucide-react';
 
 import citySkylineBg from '../../assets/contact_header_skyline.png';
@@ -46,9 +48,10 @@ export default function Contact() {
       {/* 1. Hero Header Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#B8D8E8]/35 via-slate-50/70 to-slate-50 pt-14 pb-16 px-4 sm:px-6 lg:px-8">
         {/* City Skyline Background Banner Overlay */}
-        <div 
-          className="absolute inset-0 bg-contain bg-bottom bg-no-repeat opacity-25 pointer-events-none mix-blend-multiply"
-          style={{ backgroundImage: `url(${citySkylineBg})` }}
+        <img
+          src={citySkylineBg}
+          alt="City Skyline Banner Background"
+          className="absolute inset-0 w-full h-full object-cover object-bottom opacity-30 pointer-events-none mix-blend-multiply"
         />
 
         {/* Ambient Glows */}
@@ -151,134 +154,179 @@ export default function Contact() {
 
 
       {/* 2. Middle Form Card Section */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="relative rounded-[32px] bg-[#285870] p-6 sm:p-10 lg:p-12 shadow-2xl border border-white/20 overflow-hidden">
+      <section className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
 
-          {/* Background Lighting Accents */}
-          <div className="absolute -top-24 -left-24 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-[#004060]/40 rounded-full blur-3xl pointer-events-none" />
+        {/* Main Center White Card */}
+        <div className="relative z-10 bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl p-6 sm:p-10 lg:p-12 overflow-hidden max-w-5xl mx-auto border border-slate-100">
 
-          {/* Success Notification */}
-          {submitted ? (
-            <div className="py-16 text-center text-white space-y-4 relative z-10 animate-fade-in">
-              <CheckCircle2 className="w-16 h-16 text-teal-300 mx-auto animate-bounce" />
-              <h3 className="text-2xl font-bold font-display">Thank You!</h3>
-              <p className="text-[#B8D8E8] text-sm max-w-md mx-auto">
-                Your message has been sent successfully. Our technical team will reach out to you shortly.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+          {/* Form and Info Layout Grid */}
+          <div className="grid lg:grid-cols-12 gap-8 items-stretch relative z-10">
 
-              {/* Form Grid */}
-              <div className="grid sm:grid-cols-2 gap-5">
-                {/* Full Name */}
-                <div>
-                  <label className="block text-xs font-semibold text-[#B8D8E8] mb-2">
-                    Full Name <span className="text-teal-300">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-300/60 text-sm focus:outline-none focus:border-[#B8D8E8] focus:ring-2 focus:ring-[#B8D8E8]/30 transition-all duration-200"
-                  />
-                </div>
-
-                {/* Email Address */}
-                <div>
-                  <label className="block text-xs font-semibold text-[#B8D8E8] mb-2">
-                    Email Address <span className="text-teal-300">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="name@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-300/60 text-sm focus:outline-none focus:border-[#B8D8E8] focus:ring-2 focus:ring-[#B8D8E8]/30 transition-all duration-200"
-                  />
-                </div>
-
-                {/* Phone Number */}
-                <div>
-                  <label className="block text-xs font-semibold text-[#B8D8E8] mb-2">
-                    Phone Number <span className="text-teal-300">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+91 98601 18911"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-300/60 text-sm focus:outline-none focus:border-[#B8D8E8] focus:ring-2 focus:ring-[#B8D8E8]/30 transition-all duration-200"
-                  />
-                </div>
-
-                {/* Enquiry Type */}
-                <div>
-                  <label className="block text-xs font-semibold text-[#B8D8E8] mb-2">
-                    Enquiry Type <span className="text-teal-300">*</span>
-                  </label>
-                  <select
-                    value={formData.enquiryType}
-                    onChange={(e) => setFormData({ ...formData, enquiryType: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-[#1d4357] border border-white/20 text-white text-sm focus:outline-none focus:border-[#B8D8E8] focus:ring-2 focus:ring-[#B8D8E8]/30 transition-all duration-200 cursor-pointer"
-                  >
-                    <option value="General Enquiry" className="bg-[#285870]">General Enquiry</option>
-                    <option value="Roofing Sheets Inquiry" className="bg-[#285870]">Roofing Sheets Inquiry</option>
-                    <option value="Purlins & Structure" className="bg-[#285870]">Purlins & Structural Profile</option>
-                    <option value="Custom Project Quote" className="bg-[#285870]">Custom Project Quote</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Message */}
+            {/* Left Side: Form Area */}
+            <div className="lg:col-span-7 flex flex-col justify-between pr-0 lg:pr-6 py-2">
               <div>
-                <label className="block text-xs font-semibold text-[#B8D8E8] mb-2">
-                  Message <span className="text-teal-300">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  placeholder="Tell us about your project requirements..."
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-300/60 text-sm focus:outline-none focus:border-[#B8D8E8] focus:ring-2 focus:ring-[#B8D8E8]/30 transition-all duration-200 resize-none"
-                />
+                {/* Logo Icon Top-Left (Brand Crescent Logo) */}
+                <div className="mb-6 flex items-center">
+                  <div className="w-8 h-8 rounded-full border-[3.5px] border-[#004060] border-t-transparent border-r-transparent -rotate-45 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#004060]" />
+                  </div>
+                </div>
+
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-display mb-3">
+                  Contact us
+                </h2>
+
+                <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-md mb-8 font-sans">
+                  Please don't hesitate to reach out to us whenever you need assistance. We'll make sure to respond to you promptly.
+                </p>
+
+                {submitted ? (
+                  <div className="py-10 text-center space-y-3 animate-fade-in bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <CheckCircle2 className="w-12 h-12 text-[#004060] mx-auto animate-bounce" />
+                    <h3 className="text-xl font-bold text-slate-900 font-display">Thank You!</h3>
+                    <p className="text-slate-600 text-xs max-w-xs mx-auto">
+                      Your message has been sent successfully. Our team will get back to you shortly.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    {/* Name Input */}
+                    <div>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Name *"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
+                      />
+                    </div>
+
+                    {/* Email Input */}
+                    <div>
+                      <input
+                        type="email"
+                        required
+                        placeholder="Email *"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
+                      />
+                    </div>
+
+                    {/* Phone Input */}
+                    <div>
+                      <input
+                        type="tel"
+                        placeholder="Phone Number"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
+                      />
+                    </div>
+
+                    {/* Enquiry Type Dropdown */}
+                    <div className="space-y-1.5 pt-1">
+                      <label className="block text-xs font-semibold text-[#004060] tracking-wide">
+                        Enquiry Type <span className="text-teal-600">*</span>
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={formData.enquiryType}
+                          onChange={(e) => setFormData({ ...formData, enquiryType: e.target.value })}
+                          className="w-full appearance-none bg-slate-50 border border-slate-200 hover:border-[#004060] focus:border-[#004060] focus:bg-white text-slate-800 text-sm font-semibold rounded-xl px-4 py-3 pr-10 focus:outline-none transition-all shadow-sm cursor-pointer"
+                        >
+                          <option value="General Enquiry">General Enquiry</option>
+                          <option value="Product Quote Request">Product Quote Request</option>
+                          <option value="Project Consultation">Project Consultation</option>
+                          <option value="Technical Support">Technical Support</option>
+                          <option value="Bulk / Wholesale Procurement">Bulk / Wholesale Procurement</option>
+                        </select>
+                        <ChevronDown className="w-5 h-5 text-[#004060] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    {/* Message Input */}
+                    <div>
+                      <textarea
+                        rows={3}
+                        required
+                        placeholder="Message *"
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        className="w-full pb-2.5 pt-2 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors resize-none"
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        className="w-full py-3.5 px-6 bg-[#004060] hover:bg-[#003860] text-white font-semibold text-xs tracking-wide uppercase rounded-full transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
+                      >
+                        Send Message
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+
+            {/* Right Side: Overlapping Info Panel */}
+            <div className="lg:col-span-5 relative flex items-center justify-center mt-6 lg:mt-0">
+
+              {/* Brand Accent Background Block */}
+              <div className="absolute inset-0 bg-[#285870] rounded-[28px] transform translate-x-2 translate-y-2 lg:translate-x-4 lg:translate-y-0" />
+
+              {/* Dark Overlapping Info Card (Brand Primary Navy) */}
+              <div className="relative z-10 w-full bg-[#003860] text-white rounded-[24px] p-6 sm:p-8 shadow-xl my-4 -ml-0 lg:-ml-6 border border-[#B8D8E8]/20">
+
+                {/* Brand Light Blue Circle Dot near Bottom Left edge */}
+                <div className="absolute -left-3 bottom-10 w-6 h-6 rounded-full bg-[#B8D8E8] border-4 border-white shadow-sm" />
+
+                <h3 className="text-xl sm:text-2xl font-bold text-[#B8D8E8] mb-8 font-display">
+                  Info
+                </h3>
+
+                <div className="space-y-6 text-xs sm:text-sm font-medium">
+                  {/* Email */}
+                  <a href="mailto:evershinengp@gmail.com" className="flex items-center gap-4 text-[#B8D8E8] hover:text-white transition-colors">
+                    <Mail className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8]" />
+                    <span className="truncate">evershinengp@gmail.com</span>
+                  </a>
+
+                  {/* Phone */}
+                  <a href="tel:+919860118911" className="flex items-center gap-4 text-[#B8D8E8] hover:text-white transition-colors">
+                    <Phone className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8]" />
+                    <span>+91 9860118911</span>
+                  </a>
+
+                  {/* Address */}
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=133,+Bante+Layout,+Wardha+Road,+Nagpur,+Maharashtra+440025"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-4 text-[#B8D8E8] hover:text-white transition-colors"
+                  >
+                    <MapPin className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8] mt-0.5" />
+                    <span className="leading-snug">133, Bante Layout, Wardha Road, Nagpur</span>
+                  </a>
+
+                  {/* Working Hours */}
+                  <div className="flex items-center gap-4 text-[#B8D8E8]">
+                    <Clock className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8]" />
+                    <span>09:00 - 18:00</span>
+                  </div>
+                </div>
+
               </div>
 
-              {/* Agreement Checkbox */}
-              <div className="flex items-center gap-3 pt-1">
-                <input
-                  type="checkbox"
-                  id="agreeCheck"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  className="w-4 h-4 rounded bg-white/10 border-white/20 text-[#004060] focus:ring-[#B8D8E8] focus:ring-offset-0 cursor-pointer"
-                />
-                <label htmlFor="agreeCheck" className="text-xs text-[#B8D8E8]/90 cursor-pointer select-none">
-                  I agree to talk about my project with Evershine Roofing Solutions.
-                </label>
-              </div>
+            </div>
 
-              {/* Submit Button Centered */}
-              <div className="text-center pt-4">
-                <button
-                  type="submit"
-                  className="px-8 py-3.5 rounded-full text-white text-sm font-bold border border-[#B8D8E8]/40 bg-[#004060] hover:bg-[#003350] hover:border-[#B8D8E8] transition-all duration-300 inline-flex items-center justify-center gap-2 group shadow-xl shadow-[#001f38]/50 backdrop-blur-sm cursor-pointer hover:scale-[1.02]"
-                >
-                  <Send className="w-4 h-4" />
-                  Send Message
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
+          </div>
 
-            </form>
-          )}
         </div>
+
       </section>
 
 
@@ -287,24 +335,24 @@ export default function Contact() {
         <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200/80 text-center gap-8 md:gap-0">
 
           {/* Column 1: Call Us -> Phone Dialer */}
-          <a 
-            href="tel:+919860118911" 
+          <a
+            href="tel:+919860118911"
             className="px-6 py-4 flex flex-col items-center group transition-all duration-300 cursor-pointer rounded-2xl hover:bg-slate-100/80"
           >
             <div className="w-14 h-14 rounded-full bg-[#B8D8E8]/40 text-[#004060] flex items-center justify-center mb-4 shadow-sm border border-[#B8D8E8]/60 group-hover:scale-110 group-hover:bg-[#004060] group-hover:text-white transition-all duration-300">
               <Phone className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-slate-900 text-base mb-1 font-display group-hover:text-[#004060] transition">Call Us</h3>
-            <p className="text-xs text-slate-500 mb-2">Mon-Sat from 9am to 6pm</p>
+            <p className="text-xl text-slate-500 mb-2">Mon-Sat from 9am to 6pm</p>
             <span className="text-slate-900 text-sm group-hover:text-[#004060] font-medium transition">
               +91 9860118911
             </span>
           </a>
 
           {/* Column 2: Our Office -> Google Maps */}
-          <a 
-            href="https://www.google.com/maps/search/?api=1&query=133,+Bante+Layout,+Wardha+Road,+Nagpur,+Maharashtra+440025" 
-            target="_blank" 
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=133,+Bante+Layout,+Wardha+Road,+Nagpur,+Maharashtra+440025"
+            target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-4 flex flex-col items-center group transition-all duration-300 cursor-pointer rounded-2xl hover:bg-slate-100/80"
           >
@@ -319,9 +367,9 @@ export default function Contact() {
           </a>
 
           {/* Column 3: Email Us -> Gmail */}
-          <a 
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=evershinengp@gmail.com" 
-            target="_blank" 
+          <a
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=evershinengp@gmail.com"
+            target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-4 flex flex-col items-center group transition-all duration-300 cursor-pointer rounded-2xl hover:bg-slate-100/80"
           >

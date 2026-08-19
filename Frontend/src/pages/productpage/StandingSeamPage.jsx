@@ -250,8 +250,8 @@ export default function StandingSeamPage() {
                     <input
                       type="number"
                       min="1"
-                      value={quantitySheets}
-                      onChange={(e) => setQuantitySheets(e.target.value)}
+                      value={quantityPieces}
+                      onChange={(e) => setQuantityPieces(e.target.value)}
                       className="w-full bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-900"
                     />
                   </div>
@@ -260,7 +260,7 @@ export default function StandingSeamPage() {
                 <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200">
                   <div>
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Total Running Meters</span>
-                    <span className="font-extrabold text-sky-700 text-sm">{totalRunningMeters} rmt</span>
+                    <span className="font-extrabold text-sky-700 text-sm">{totalRmt} rmt</span>
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>

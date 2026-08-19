@@ -302,7 +302,7 @@ export default function GIAnglePage() {
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] text-slate-500 block uppercase font-semibold">Wholesale Price</span>
-                    <span className="font-black text-amber-600 text-lg">₹{estimatedPriceRs.toLocaleString()}</span>
+                    <span className="font-black text-amber-600 text-lg">₹{estimatedCostRs.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

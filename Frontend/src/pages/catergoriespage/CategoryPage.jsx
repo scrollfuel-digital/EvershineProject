@@ -56,9 +56,8 @@ export default function CategoryPage() {
                     src={img}
                     alt={`${category.label} ${i + 1}`}
                     onClick={() => setSelectedImage(img)}
-                    className={`w-24 h-24 object-cover rounded-lg cursor-pointer border-2 transition ${
-                      selectedImage === img ? "border-blue-600" : "border-gray-300"
-                    }`}
+                    className={`w-24 h-24 object-cover rounded-lg cursor-pointer border-2 transition ${selectedImage === img ? "border-blue-600" : "border-gray-300"
+                      }`}
                   />
                 ))}
               </div>
