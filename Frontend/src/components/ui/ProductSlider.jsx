@@ -108,7 +108,7 @@ const ProductCard = ({ product }) => (
       <span className="pointer-events-none absolute inset-0 -translate-x-[120%] rotate-12
                        bg-gradient-to-r from-transparent via-white/40 to-transparent
                        group-hover:translate-x-[120%] transition-transform duration-700 ease-out z-10" />
-      
+
       {/* Real Product Photo */}
       <img
         src={product.image}
@@ -349,7 +349,7 @@ export default function ProductSlider() {
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-16 bg-white font-sans">
       <div className="max-w-7xl mx-auto space-y-16">
-        
+
         {/* Section 1: MS Cold rolled */}
         <div className="relative group">
           <SectionHeader title="MS Cold rolled" progress={100} />

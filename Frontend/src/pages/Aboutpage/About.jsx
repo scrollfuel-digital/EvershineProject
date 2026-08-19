@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Award, Handshake, Leaf, Lightbulb, Eye, Target } from "lucide-react";
 import heroBannerImg from "../../assets/aboutSectionImages/hero_banner.png";
 import evershineTeamImg from "../../assets/aboutSectionImages/evershine_team.png";
 
@@ -298,6 +299,88 @@ const About = () => {
         </div>
       </section>
 
+      {/* Vision and Values */}
+      <section className="bg-slate-50/80 py-16 sm:py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-100">
+        <div className="max-w-6xl mx-auto">
+          {/* Section Header */}
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-center text-[#004060] font-display mb-10">
+            Vision and Values
+          </h2>
+
+          {/* Top Overlapping Values Banner */}
+          <div className="max-w-4xl mx-auto bg-[#004060] text-white rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 shadow-xl relative z-10 -mb-12 sm:-mb-14">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              <div className="flex flex-col items-center">
+                <Award className="w-6 h-6 text-[#B8D8E8] mb-2" />
+                <span className="text-xs sm:text-sm font-bold tracking-wide">
+                  Quality & Durability
+                </span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Handshake className="w-6 h-6 text-[#B8D8E8] mb-2" />
+                <span className="text-xs sm:text-sm font-bold tracking-wide">
+                  Trust & Transparency
+                </span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Leaf className="w-6 h-6 text-[#B8D8E8] mb-2" />
+                <span className="text-xs sm:text-sm font-bold tracking-wide">
+                  Sustainability
+                </span>
+              </div>
+              <div className="flex flex-col items-center">
+                <Lightbulb className="w-6 h-6 text-[#B8D8E8] mb-2" />
+                <span className="text-xs sm:text-sm font-bold tracking-wide">
+                  Innovation
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main White Overlapping Card with Vision & Mission Split */}
+          <div className="max-w-5xl mx-auto bg-white rounded-[24px] sm:rounded-[32px] pt-18 sm:pt-20 pb-10 sm:pb-12 px-6 sm:px-12 shadow-lg border border-slate-200/80 relative z-0">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start relative">
+              {/* Center Vertical Separator Line for Desktop */}
+              <div className="hidden md:block absolute left-1/2 top-2 bottom-2 w-px bg-slate-200 -translate-x-1/2" />
+
+              {/* Left Column: Vision */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#004060]/10 flex items-center justify-center shrink-0">
+                    <Eye className="w-6 h-6 text-[#004060]" />
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-slate-900 font-display">
+                    Vision
+                  </h3>
+                </div>
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-medium pt-1">
+                  To become a preferred industrial solutions partner by
+                  consistently delivering quality, reliability, and customer
+                  satisfaction.
+                </p>
+              </div>
+
+              {/* Right Column: Mission */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#004060]/10 flex items-center justify-center shrink-0">
+                    <Target className="w-6 h-6 text-[#004060]" />
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-slate-900 font-display">
+                    Mission
+                  </h3>
+                </div>
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-medium pt-1">
+                  To provide innovative and dependable industrial solutions that
+                  help businesses achieve operational efficiency and sustainable
+                  growth.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Why Businesses Choose Us */}
       <section className="py-stack-xl bg-surface-container-low border-y border-outline-variant">
         <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
@@ -325,89 +408,8 @@ const About = () => {
         </div>
       </section>
 
-      {/* Growth Timeline */}
-      <section className="py-stack-xl max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-        <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-center text-on-surface">
-          From Steel Supplier to Strategic Partner
-        </h2>
-        <p className="text-center font-body-lg text-sm sm:text-base text-on-surface-variant mb-stack-lg max-w-2xl mx-auto">
-          Our journey of growth and commitment to excellence over the years.
-        </p>
 
-        <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center mt-12 gap-8 md:gap-4 before:hidden md:before:block before:absolute before:top-1/2 before:left-0 before:w-full before:h-0.5 before:bg-outline-variant before:-translate-y-1/2">
-          {timeline.map((item, idx) => (
-            <div
-              key={idx}
-              className="relative z-10 flex flex-col items-center text-center bg-background px-4 w-full md:w-auto"
-            >
-              <div
-                className={`w-4 h-4 rounded-full ${item.dotClass} mb-4 outline outline-4 outline-background`}
-              />
-              <h4 className={`font-headline-md text-xl font-bold ${item.colorClass}`}>
-                {item.year}
-              </h4>
-              <p className="font-body-md text-xs sm:text-sm text-on-surface-variant mt-2 max-w-[160px]">
-                {item.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Our Capabilities */}
-      <section className="py-stack-xl bg-surface-container-highest">
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-          <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-bold mb-stack-lg text-center text-on-surface">
-            Our Capabilities
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {capabilities.map((cap, idx) => (
-              <div
-                key={idx}
-                className="bg-surface-container-lowest p-6 sm:p-8 rounded-xl shadow-sm border border-outline-variant hover:border-primary-container transition-all duration-300 hover:shadow-md"
-              >
-                <span className="material-symbols-outlined text-4xl text-on-tertiary-container mb-4 block">
-                  {cap.icon}
-                </span>
-                <h3 className="font-headline-md text-xl sm:text-2xl font-bold mb-3 text-on-surface">
-                  {cap.title}
-                </h3>
-                <p className="font-body-md text-sm sm:text-base text-on-surface-variant leading-relaxed">
-                  {cap.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Industry Coverage */}
-      <section className="py-stack-xl max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-        <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-bold mb-stack-lg text-center text-on-surface">
-          Industry Coverage
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {industries.map((ind, idx) => (
-            <div
-              key={idx}
-              className="relative h-64 rounded-xl overflow-hidden group shadow-md"
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
-                style={{ backgroundImage: `url(${ind.image})` }}
-              />
-              <div className="absolute inset-0 bg-secondary-container opacity-20 group-hover:opacity-10 transition-opacity z-10"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-primary-container/40 to-transparent opacity-85 z-10"></div>
-              <div className="absolute bottom-6 left-6 z-20">
-                <h3 className="font-headline-md text-xl sm:text-2xl font-bold text-on-primary">
-                  {ind.title}
-                </h3>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-      
       {/* Final CTA */}
       <section className="py-stack-xl bg-surface-container-highest border-b border-outline-variant">
         <div className="max-w-3xl mx-auto text-center px-margin-mobile md:px-margin-desktop">

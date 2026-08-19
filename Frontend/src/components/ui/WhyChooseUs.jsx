@@ -68,7 +68,7 @@ export default function WhyChooseUs() {
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/80 border-t border-slate-100 overflow-hidden">
       <div className="max-w-6xl mx-auto">
-        
+
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#004060] tracking-tight font-display mb-3">
@@ -81,7 +81,7 @@ export default function WhyChooseUs() {
 
         {/* Carousel Container with Side Navigation Arrows */}
         <div className="relative items-center">
-          
+
           {/* Left Arrow Button */}
           <button
             onClick={prevSlide}
@@ -139,11 +139,10 @@ export default function WhyChooseUs() {
                 key={pageIdx}
                 onClick={() => setStartIndex(pageIdx * (itemsPerPage - 1))}
                 aria-label={`Go to slide page ${pageIdx + 1}`}
-                className={`transition-all duration-300 cursor-pointer ${
-                  isCurrent
+                className={`transition-all duration-300 cursor-pointer ${isCurrent
                     ? 'w-7 h-2.5 bg-[#004060] rounded-full'
                     : 'w-2.5 h-2.5 bg-[#B8D8E8] hover:bg-[#285870] rounded-full'
-                }`}
+                  }`}
               />
             );
           })}

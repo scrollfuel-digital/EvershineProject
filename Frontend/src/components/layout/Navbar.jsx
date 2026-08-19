@@ -120,11 +120,11 @@ export default function Navbar() {
 
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [search, setSearch] = useState("");
-    
 
-const filteredCategories = categoryListData.filter((item) =>
-  item.label.toLowerCase().includes(search.toLowerCase())
-);
+
+    const filteredCategories = categoryListData.filter((item) =>
+        item.label.toLowerCase().includes(search.toLowerCase())
+    );
 
     // Mock cart data grouped by category — replace with real cart state later
     const cartData = [
@@ -139,8 +139,8 @@ const filteredCategories = categoryListData.filter((item) =>
             category: "TMT",
             items: [{ name: "TMT Fe 500D 12mm", qty: 5, price: "₹22,000" }],
         },
-        
-        
+
+
     ];
 
     return (
@@ -171,70 +171,70 @@ const filteredCategories = categoryListData.filter((item) =>
                     </div>
 
                     {/* CENTER — SEARCH BAR (tablet & up) */}
-<div className="hidden md:flex flex-1 justify-center min-w-0">
-    <div className="relative w-full max-w-[620px] lg:max-w-[800px] xl:max-w-[920px]">
+                    <div className="hidden md:flex flex-1 justify-center min-w-0">
+                        <div className="relative w-full max-w-[620px] lg:max-w-[800px] xl:max-w-[920px]">
 
-        <div className="flex items-center bg-light-gray rounded-lg border border-transparent px-3 lg:px-4 h-[38px] lg:h-[46px] transition-all duration-300 hover:border-light focus-within:border-primary focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(0,64,96,0.08)]">
+                            <div className="flex items-center bg-light-gray rounded-lg border border-transparent px-3 lg:px-4 h-[38px] lg:h-[46px] transition-all duration-300 hover:border-light focus-within:border-primary focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(0,64,96,0.08)]">
 
-            <HiOutlineSearch className="text-gray text-base lg:text-lg shrink-0" />
+                                <HiOutlineSearch className="text-gray text-base lg:text-lg shrink-0" />
 
-            <input
-                type="text"
-                placeholder="Search Categories..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 min-w-0 pl-2 lg:pl-3 pr-2 text-sm bg-transparent text-dark placeholder-gray outline-none"
-            />
-
-        </div>
-
-        {search && (
-            <div className="absolute top-14 left-0 w-full bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-96 overflow-y-auto">
-
-                {filteredCategories.length > 0 ? (
-
-                    filteredCategories.map((item) => (
-
-                        <Link
-                            key={item.label}
-                            to={item.href}
-                            onClick={() => setSearch("")}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition"
-                        >
-
-                            {item.images && item.images.length > 0 ? (
-                                <img
-                                    src={item.images[0]}
-                                    alt={item.label}
-                                    className="w-12 h-12 rounded-md object-cover"
+                                <input
+                                    type="text"
+                                    placeholder="Search Categories..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="flex-1 min-w-0 pl-2 lg:pl-3 pr-2 text-sm bg-transparent text-dark placeholder-gray outline-none"
                                 />
-                            ) : (
-                                <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
-                                    <HiOutlineViewGrid className="text-primary text-xl" />
+
+                            </div>
+
+                            {search && (
+                                <div className="absolute top-14 left-0 w-full bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-96 overflow-y-auto">
+
+                                    {filteredCategories.length > 0 ? (
+
+                                        filteredCategories.map((item) => (
+
+                                            <Link
+                                                key={item.label}
+                                                to={item.href}
+                                                onClick={() => setSearch("")}
+                                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition"
+                                            >
+
+                                                {item.images && item.images.length > 0 ? (
+                                                    <img
+                                                        src={item.images[0]}
+                                                        alt={item.label}
+                                                        className="w-12 h-12 rounded-md object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
+                                                        <HiOutlineViewGrid className="text-primary text-xl" />
+                                                    </div>
+                                                )}
+
+                                                <span className="font-medium text-dark">
+                                                    {item.label}
+                                                </span>
+
+                                            </Link>
+
+                                        ))
+
+                                    ) : (
+
+                                        <div className="px-4 py-3 text-gray-500">
+                                            No Category Found
+                                        </div>
+
+                                    )}
+
                                 </div>
                             )}
 
-                            <span className="font-medium text-dark">
-                                {item.label}
-                            </span>
-
-                        </Link>
-
-                    ))
-
-                ) : (
-
-                    <div className="px-4 py-3 text-gray-500">
-                        No Category Found
+                        </div>
                     </div>
-
-                )}
-
-            </div>
-        )}
-
-    </div>
-</div>
                     {/* RIGHT — CATEGORIES + PRODUCTS + CART (tablet & up) */}
                     <div className="hidden md:flex items-center gap-3 lg:gap-5 xl:gap-6 shrink-0">
 
@@ -434,9 +434,9 @@ const filteredCategories = categoryListData.filter((item) =>
                         </div>
                     </div>
                 </div>
-            
-           
-                
+
+
+
             )}
 
             <style>{`

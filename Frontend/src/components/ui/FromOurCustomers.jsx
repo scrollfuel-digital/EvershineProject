@@ -228,11 +228,10 @@ export default function FromOurCustomers() {
                 <button
                   key={i}
                   onClick={() => setCurrentIndex(i)}
-                  className={`transition-all duration-300 cursor-pointer ${
-                    i === currentIndex
+                  className={`transition-all duration-300 cursor-pointer ${i === currentIndex
                       ? "w-2.5 h-2.5 rounded-full bg-[#0F766E]"
                       : "w-1.5 h-1.5 rounded-full bg-gray-300 hover:bg-gray-400"
-                  }`}
+                    }`}
                   aria-label={`Go to slide ${i + 1}`}
                 />
               ))}

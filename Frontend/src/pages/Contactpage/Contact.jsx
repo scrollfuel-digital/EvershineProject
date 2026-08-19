@@ -11,7 +11,8 @@ import {
   ArrowRight,
   Send,
   Sparkles,
-  Clock
+  Clock,
+  ChevronDown
 } from 'lucide-react';
 
 import citySkylineBg from '../../assets/contact_header_skyline.png';
@@ -47,7 +48,7 @@ export default function Contact() {
       {/* 1. Hero Header Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-[#B8D8E8]/35 via-slate-50/70 to-slate-50 pt-14 pb-16 px-4 sm:px-6 lg:px-8">
         {/* City Skyline Background Banner Overlay */}
-        <img 
+        <img
           src={citySkylineBg}
           alt="City Skyline Banner Background"
           className="absolute inset-0 w-full h-full object-cover object-bottom opacity-30 pointer-events-none mix-blend-multiply"
@@ -154,13 +155,13 @@ export default function Contact() {
 
       {/* 2. Middle Form Card Section */}
       <section className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        
+
         {/* Main Center White Card */}
         <div className="relative z-10 bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl p-6 sm:p-10 lg:p-12 overflow-hidden max-w-5xl mx-auto border border-slate-100">
-          
+
           {/* Form and Info Layout Grid */}
           <div className="grid lg:grid-cols-12 gap-8 items-stretch relative z-10">
-            
+
             {/* Left Side: Form Area */}
             <div className="lg:col-span-7 flex flex-col justify-between pr-0 lg:pr-6 py-2">
               <div>
@@ -188,13 +189,13 @@ export default function Contact() {
                     </p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Name Input */}
                     <div>
                       <input
                         type="text"
                         required
-                        placeholder="Name"
+                        placeholder="Name *"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
@@ -206,32 +207,64 @@ export default function Contact() {
                       <input
                         type="email"
                         required
-                        placeholder="Email"
+                        placeholder="Email *"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
                       />
                     </div>
 
+                    {/* Phone Input */}
+                    <div>
+                      <input
+                        type="tel"
+                        placeholder="Phone Number"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors"
+                      />
+                    </div>
+
+                    {/* Enquiry Type Dropdown */}
+                    <div className="space-y-1.5 pt-1">
+                      <label className="block text-xs font-semibold text-[#004060] tracking-wide">
+                        Enquiry Type <span className="text-teal-600">*</span>
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={formData.enquiryType}
+                          onChange={(e) => setFormData({ ...formData, enquiryType: e.target.value })}
+                          className="w-full appearance-none bg-slate-50 border border-slate-200 hover:border-[#004060] focus:border-[#004060] focus:bg-white text-slate-800 text-sm font-semibold rounded-xl px-4 py-3 pr-10 focus:outline-none transition-all shadow-sm cursor-pointer"
+                        >
+                          <option value="General Enquiry">General Enquiry</option>
+                          <option value="Product Quote Request">Product Quote Request</option>
+                          <option value="Project Consultation">Project Consultation</option>
+                          <option value="Technical Support">Technical Support</option>
+                          <option value="Bulk / Wholesale Procurement">Bulk / Wholesale Procurement</option>
+                        </select>
+                        <ChevronDown className="w-5 h-5 text-[#004060] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
+
                     {/* Message Input */}
                     <div>
                       <textarea
-                        rows={2}
+                        rows={3}
                         required
-                        placeholder="Message"
+                        placeholder="Message *"
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full pb-2.5 pt-1 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors resize-none"
+                        className="w-full pb-2.5 pt-2 bg-transparent border-b border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:outline-none focus:border-[#004060] transition-colors resize-none"
                       />
                     </div>
 
                     {/* Submit Button */}
-                    <div className="pt-4">
+                    <div className="pt-2">
                       <button
                         type="submit"
                         className="w-full py-3.5 px-6 bg-[#004060] hover:bg-[#003860] text-white font-semibold text-xs tracking-wide uppercase rounded-full transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer"
                       >
-                        Message
+                        Send Message
                       </button>
                     </div>
                   </form>
@@ -241,13 +274,13 @@ export default function Contact() {
 
             {/* Right Side: Overlapping Info Panel */}
             <div className="lg:col-span-5 relative flex items-center justify-center mt-6 lg:mt-0">
-              
+
               {/* Brand Accent Background Block */}
               <div className="absolute inset-0 bg-[#285870] rounded-[28px] transform translate-x-2 translate-y-2 lg:translate-x-4 lg:translate-y-0" />
 
               {/* Dark Overlapping Info Card (Brand Primary Navy) */}
               <div className="relative z-10 w-full bg-[#003860] text-white rounded-[24px] p-6 sm:p-8 shadow-xl my-4 -ml-0 lg:-ml-6 border border-[#B8D8E8]/20">
-                
+
                 {/* Brand Light Blue Circle Dot near Bottom Left edge */}
                 <div className="absolute -left-3 bottom-10 w-6 h-6 rounded-full bg-[#B8D8E8] border-4 border-white shadow-sm" />
 
@@ -269,9 +302,9 @@ export default function Contact() {
                   </a>
 
                   {/* Address */}
-                  <a 
-                    href="https://www.google.com/maps/search/?api=1&query=133,+Bante+Layout,+Wardha+Road,+Nagpur,+Maharashtra+440025" 
-                    target="_blank" 
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=133,+Bante+Layout,+Wardha+Road,+Nagpur,+Maharashtra+440025"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-start gap-4 text-[#B8D8E8] hover:text-white transition-colors"
                   >
@@ -310,7 +343,7 @@ export default function Contact() {
               <Phone className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-slate-900 text-base mb-1 font-display group-hover:text-[#004060] transition">Call Us</h3>
-            <p className="text-xs text-slate-500 mb-2">Mon-Sat from 9am to 6pm</p>
+            <p className="text-xl text-slate-500 mb-2">Mon-Sat from 9am to 6pm</p>
             <span className="text-slate-900 text-sm group-hover:text-[#004060] font-medium transition">
               +91 9860118911
             </span>
