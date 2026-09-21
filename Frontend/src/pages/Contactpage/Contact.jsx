@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 
 import citySkylineBg from '../../assets/contact_header_skyline.png';
+import HomeFAQ from '../../pages/Contactpage/HomeFAQ';
 
 export default function Contact() {
   useEffect(() => {
@@ -62,10 +63,7 @@ export default function Contact() {
 
           {/* Hero Left Content */}
           <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-[#004060]/10 border border-[#004060]/20 px-3.5 py-1 rounded-full text-xs font-semibold text-[#004060]">
-              <Sparkles className="w-3.5 h-3.5 text-[#285870]" />
-              <span>We'd Love to Hear From You</span>
-            </div>
+            
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight font-display">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#004060] via-[#285870] to-[#003860]">Contact</span> Us
@@ -154,7 +152,7 @@ export default function Contact() {
 
 
       {/* 2. Middle Form Card Section */}
-      <section className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <section id="contact-form" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
 
         {/* Main Center White Card */}
         <div className="relative z-10 bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl p-6 sm:p-10 lg:p-12 overflow-hidden max-w-5xl mx-auto border border-slate-100">
@@ -315,7 +313,7 @@ export default function Contact() {
                   {/* Working Hours */}
                   <div className="flex items-center gap-4 text-[#B8D8E8]">
                     <Clock className="w-5 h-5 text-[#B8D8E8] shrink-0 stroke-[1.8]" />
-                    <span>09:00 - 18:00</span>
+                    <span>Mon-Sat from 9am to 6pm</span>
                   </div>
                 </div>
 
@@ -329,8 +327,9 @@ export default function Contact() {
 
       </section>
 
+      {/* 3. Frequently Asked Questions Section */}
 
-      {/* 3. Bottom Contact Details Section (3 Cards) */}
+      {/* 4. Bottom Contact Details Section (3 Cards) */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200/80 text-center gap-8 md:gap-0">
 
@@ -343,8 +342,8 @@ export default function Contact() {
               <Phone className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-slate-900 text-base mb-1 font-display group-hover:text-[#004060] transition">Call Us</h3>
-            <p className="text-xl text-slate-500 mb-2">Mon-Sat from 9am to 6pm</p>
-            <span className="text-slate-900 text-sm group-hover:text-[#004060] font-medium transition">
+            <p className="text-xl text-slate-500 mb-2"></p>
+            <span className="text-slate-900 text-xl group-hover:text-[#004060] font-medium transition">
               +91 9860118911
             </span>
           </a>
@@ -360,8 +359,8 @@ export default function Contact() {
               <MapPin className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-slate-900 text-base mb-1 font-display group-hover:text-[#004060] transition">Our Office</h3>
-            <p className="text-xs text-slate-500 mb-2">Come say hello at our office location.</p>
-            <span className="text-slate-900 text-sm max-w-xs leading-snug group-hover:text-[#004060] font-medium transition">
+            <p className="text-xs text-slate-500 mb-2"></p>
+            <span className="text-slate-900 text-lg max-w-xs leading-snug group-hover:text-[#004060] font-medium transition">
               133, Bante Layout, Wardha Road, Nagpur, Maharashtra – 440025
             </span>
           </a>
@@ -377,14 +376,15 @@ export default function Contact() {
               <Mail className="w-6 h-6" />
             </div>
             <h3 className="font-bold text-slate-900 text-base mb-1 font-display group-hover:text-[#004060] transition">Email Us</h3>
-            <p className="text-xs text-slate-500 mb-2">Drop us an email anytime</p>
-            <span className="text-slate-900 text-sm group-hover:text-[#004060] font-medium transition">
+            <p className="text-xs text-slate-500 mb-2">    </p>
+            <span className="text-slate-900 text-xl group-hover:text-[#004060] font-medium transition">
               evershinengp@gmail.com
             </span>
           </a>
 
         </div>
       </section>
+      <HomeFAQ />
 
     </div>
   );

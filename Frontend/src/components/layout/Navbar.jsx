@@ -246,10 +246,10 @@ export default function Navbar() {
                             <span>Products</span>
                         </Link>
 
-                        {/* CATEGORIES — navigates to /categories page */}
+                        {/* CATEGORIES — navigates to AllCategories page */}
                         <div className="relative">
                             <Link
-                                to="/categories"
+                                to="/all-categories"
                                 className="flex items-center gap-2 text-primary font-medium text-sm transition-all duration-200 hover:text-secondary hover:-translate-y-0.5"
                                 title="All Categories"
                             >
