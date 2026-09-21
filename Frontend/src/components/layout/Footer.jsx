@@ -6,11 +6,10 @@ import logo from "../../assets/Evershinelogo.png";
 const quickLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Our Services", href: "/services" },
-  { label: "Industries We Serve", href: "/industries" },
   { label: "Projects", href: "/projects" },
   { label: "Contact Us", href: "/contact" },
   { label: "Request a Quote", href: "/contact" },
+ 
 ];
 
 const products = [
@@ -111,10 +110,15 @@ export default function Footer() {
             <div>
               <h4 className="text-gray-800 font-semibold text-lg mb-5 border-b border-gray-200 pb-3">Contact Information</h4>
               <div className="space-y-4 text-gray-500 text-sm">
-                <div className="flex gap-3">
-                  <FaMapMarkerAlt className="text-primary mt-1 shrink-0" />
+                <a
+                  href="https://www.google.com/maps/place/Snehal+Malpani+-+Your+Partner+in+the+journey+called+TRANSFORMATION/@21.0968237,79.0651397,17z/data=!4m14!1m7!3m6!1s0x3bd4c07c1fef4f17:0xbc05bedbdaf9183c!2zRXZlcnNoaW5lIFByZWZhYiBTb2x1dGlvbnMg4KSP4KS14KWN4KS54KSw4KS24KS-4KSI4KSoIOCkquCljeCksOClgOCkq-CliOCkrCDgpLjgpYvgpLLgpY3gpK_gpYHgpLbgpKjgpY3gpLg!8m2!3d21.0968237!4d79.0651397!16s%2Fg%2F1q6cvvl5t!3m5!1s0x3bd4bfcc8b70cf6d:0x418bd9f1e482b5f4!8m2!3d21.0953378!4d79.0640245!16s%2Fg%2F11l5v7r5rw!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDkwOS4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex gap-3 items-start hover:text-primary transition group"
+                >
+                  <FaMapMarkerAlt className="text-primary mt-1 shrink-0 group-hover:scale-110 transition-transform" />
                   <span>133, Bante Layout, Wardha Road, Nagpur, Maharashtra – 440025</span>
-                </div>
+                </a>
                 <div className="flex gap-3 items-center">
                   <FaPhoneAlt className="text-primary shrink-0" />
                   <a href="tel:+919860118911" className="hover:text-primary transition">+91 9860118911</a>

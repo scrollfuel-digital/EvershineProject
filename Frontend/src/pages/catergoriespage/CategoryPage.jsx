@@ -6,8 +6,8 @@ import { categoryDetails } from "../../data/categoryDetails";
 export default function CategoryPage() {
   const { slug } = useParams();
 
-  const category = categoryListData.find((c) => c.href === `/${slug}`);
-  const details = categoryDetails[`/${slug}`] || null;
+  const category = categoryListData.find((c) => c.href === `/allproduct/${slug}`);
+  const details = categoryDetails[`/allproduct/${slug}`] || null;
 
   const [selectedImage, setSelectedImage] = useState(
     category ? category.images[0] : null

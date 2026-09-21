@@ -17,8 +17,8 @@ function ScrollToTop() {
 }
 
 // Floating Buttons
-import WhatsAppButton from "./components/home/WhatsappButton";
-import CallButton from "./components/home/CallButton";
+import WhatsAppButton from "./components/layout/WhatsappButton";
+import CallButton from "./components/layout/CallButton";
 
 // Pages
 import Home from "./pages/Homepage/Home";
@@ -29,25 +29,25 @@ import AllCategories from "./pages/catergoriespage/AllCategories";
 import Products from "./pages/Products";
 
 // Dedicated Product Pages in productpage folder
-import AccessoriesPage from "./pages/productpage/AccessoriesPage";
-import Airbubbleinsulation from "./pages/productpage/Airbubbleinsulation";
-import AluminiumProfileSheetPage from "./pages/productpage/AluminiumProfileSheetPage";
-import BaregalvalumeProfileSheetPage from "./pages/productpage/BaregalvalumeProfileSheetPage";
-import CrimpingProfileSheetPage from "./pages/productpage/CrimpingProfileSheetPage";
-import DeckSheetPage from "./pages/productpage/DeckSheetPage";
-import GCSheetPage from "./pages/productpage/GCSheetPage";
-import GIAnglePage from "./pages/productpage/GIAnglePage";
-import LouvresPage from "./pages/productpage/LouvresPage";
-import MultiwallSheetPage from "./pages/productpage/MultiwallSheetPage";
-import PEBStructurePage from "./pages/productpage/PEBStructurePage";
-import PolySheetPage from "./pages/productpage/PolySheetPage";
-import PPGLPPGIPage from "./pages/productpage/PPGLPPGIPage";
-import PuffPanelPage from "./pages/productpage/PuffPanelPage";
-import StandingSeamPage from "./pages/productpage/StandingSeamPage";
-import TileProfilePage from "./pages/productpage/TileProfilePage";
-import TurboVentilatorsPage from "./pages/productpage/TurboVentilatorsPage";
-import XLPEPage from "./pages/productpage/XLPEPage";
-import ZPurlinCPurlinPage from "./pages/productpage/ZPurlinCPurlinPage";
+import AccessoriesPage from "./pages/productpage/MoreProducts/AccessoriesPage";
+import Airbubbleinsulation from "./pages/productpage/MoreProducts/Airbubbleinsulation";
+import AluminiumProfileSheetPage from "./pages/productpage/MoreProducts/AluminiumProfileSheetPage";
+import BaregalvalumeProfileSheetPage from "./pages/productpage/MoreProducts/BaregalvalumeProfileSheetPage";
+import CrimpingProfileSheetPage from "./pages/productpage/MoreProducts/CrimpingProfileSheetPage";
+import DeckSheetPage from "./pages/productpage/MoreProducts/DeckSheetPage";
+import GCSheetPage from "./pages/productpage/MoreProducts/GCSheetPage";
+import GIAnglePage from "./pages/productpage/MoreProducts/GIAnglePage";
+import LouvresPage from "./pages/productpage/MoreProducts/LouvresPage";
+import MultiwallSheetPage from "./pages/productpage/MoreProducts/MultiwallSheetPage";
+import PEBStructurePage from "./pages/productpage/MoreProducts/PEBStructurePage";
+import PolySheetPage from "./pages/productpage/MoreProducts/PolySheetPage";
+import PPGLPPGIPage from "./pages/productpage/MoreProducts/PPGLPPGIPage";
+import PuffPanelPage from "./pages/productpage/MoreProducts/PuffPanelPage";
+import StandingSeamPage from "./pages/productpage/MoreProducts/StandingSeamPage";
+import TileProfilePage from "./pages/productpage/MoreProducts/TileProfilePage";
+import TurboVentilatorsPage from "./pages/productpage/MoreProducts/TurboVentilatorsPage";
+import XLPEPage from "./pages/productpage/MoreProducts/XLPEPage";
+import ZPurlinCPurlinPage from "./pages/productpage/MoreProducts/ZPurlinCPurlinPage";
 
 function App() {
   return (
@@ -128,6 +128,7 @@ function App() {
 
         {/* Specialty Pages & Catch-All Fallback */}
         <Route path="/all-categories" element={<AllCategories />} />
+        <Route path="/allcategories" element={<AllCategories />} />
         <Route path="*" element={<Products />} />
       </Routes>
 

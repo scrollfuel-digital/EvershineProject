@@ -1,32 +1,36 @@
-import Categories from "../catergoriespage/Categories";
-import Hero from "../../components/home/Hero";
-import FromOurCustomers from "../../components/ui/FromOurCustomers";
-import ProductSlider from "../../components/ui/ProductSlider";
+import React from "react";
+
+// Home Page Section Components
+import Hero from "./Home/Hero";
+import BrandShowcase from "./Home/BrandShowcase";
+import CategoryShowcase from "./Home/CategoryShowcase";
+import ProductSlider from "./Home/ProductSlider";
+import FromOurCustomers from "./Home/FromOurCustomers";
+import QuickQuoteCalculator from "./Home/QuickQuoteCalculator";
+
 
 const Home = () => {
-    return (
-        <>
-            <Hero />
+  return (
+    <div className="flex flex-col w-full overflow-x-hidden">
+      {/* 1. Dynamic Dual-Column Hero with Synchronized Material Spotlight */}
+      <Hero />
 
-            <Categories />
+      {/* 2. Interactive Category Catalog Matrix with Sector Tabs (Full Product Matrix) */}
+      <CategoryShowcase />
 
-            <FromOurCustomers />
+      {/* 3. Official Brand Partners & Direct Mill Sourcing Network */}
+      <BrandShowcase />
 
-            <ProductSlider />
+      {/* 4. Streamlined Material Specification Slider */}
+      <ProductSlider />
 
-            {/* <Products />
+      {/* 5. Customer Video Spotlight & Verified Testimonials */}
+      <FromOurCustomers />
 
-            <AboutSection />
-
-            <Brands />
-
-            <Testimonials />
-
-            <FAQ />
-
-            <ContactSection /> */}
-        </>
-    );
+      {/* 6. Interactive B2B Steel Requirement & Price Calculator */}
+      <QuickQuoteCalculator />
+    </div>
+  );
 };
 
 export default Home;

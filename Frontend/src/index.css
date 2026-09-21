@@ -1,4 +1,4 @@
-@import "tailwindcss";        
+@import "tailwindcss";
 
 @theme {
   /* Fonts */
@@ -16,7 +16,7 @@
   --font-label-sm: 'Inter', sans-serif;
 
   /* Brand Colors */
-  --color-primary: #004060;   
+  --color-primary: #004060;
   --color-secondary: #003860;
   --color-accent: #285870;
   --color-light: #B8D8E8;
@@ -82,4 +82,15 @@
   --spacing-margin-desktop: 64px;
   --spacing-container-max: 1280px;
   --spacing-gutter: 24px;
+}
+
+/* Prevent layout shaking, horizontal overflow, and scrollbar flicker */
+html {
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
 }

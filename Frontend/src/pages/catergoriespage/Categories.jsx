@@ -76,18 +76,18 @@ const AnimatedLabel = ({ children, className = "" }) => (
 
 const CategoryCard = ({ item }) => (
     <Link to={item.href} className="group">
-        <div className="relative bg-white border border-[#E7E5DE] rounded-2xl p-4 overflow-hidden
+        <div className="relative bg-white border border-[#CBD5DE] rounded-none p-3 overflow-hidden
                        transition-all duration-300 ease-out
                        group-hover:-translate-y-1.5 group-hover:scale-[1.03]
-                       group-hover:border-[#0F766E]
-                       group-hover:shadow-[0_16px_28px_-14px_rgba(20,21,43,0.28)]">
+                       group-hover:border-[#1B587A]
+                       group-hover:shadow-[0_12px_22px_-14px_rgba(8,24,39,0.35)]">
             <span className="pointer-events-none absolute inset-0 -translate-x-[120%] rotate-12
                              bg-gradient-to-r from-transparent via-white/60 to-transparent
                              group-hover:translate-x-[120%] transition-transform duration-700 ease-out" />
             <img
                 src={item.images.length ? item.images[0] : "/images/no-image.png"}
                 alt={item.label}
-                className="relative w-full h-24 object-contain transition-transform duration-500 ease-out group-hover:scale-110"
+                className="relative w-full h-24 object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             />
             <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#F2B807]
                              opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100
@@ -104,7 +104,16 @@ const CategoryCard = ({ item }) => (
 const Categories = () => {
     const navigate = useNavigate();
     const accessories = categoryListData[0];
-    const slidingData = categoryListData.slice(1);
+    const featuredCategoryLabels = [
+        "Crimping Profile Sheet",
+        "Deck Sheet",
+        "GC Sheet",
+        "GI Angle",
+        "Lovres",
+        "Multiwall Sheet",
+        "PEB Structure",
+    ];
+    const slidingData = categoryListData.filter((item) => featuredCategoryLabels.includes(item.label));
 
     const total = slidingData.length;
     const [startIndex, setStartIndex] = useState(0);
@@ -131,7 +140,7 @@ const Categories = () => {
 
     return (
         <>
-            <section className="bg-[#FAFAF7] pt-[110px] sm:pt-[130px] lg:pt-[140px] pb-8">
+            <section className="bg-[#F4F6F7] pt-[110px] sm:pt-[130px] lg:pt-[140px] pb-10">
                 <div className="max-w-7xl mx-auto px-4">
 
                     <SectionHeader
@@ -162,40 +171,7 @@ const Categories = () => {
                 </div>
             </section>
 
-            <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4">
-
-                    <SectionHeader
-                        title="Top brands"
-                        progress={100}
-                    />
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-                        {brands.map((brand) => (
-                            <div key={brand.id} className="text-center group cursor-pointer">
-                                <div className="relative w-28 h-28 mx-auto rounded-full border border-[#E7E5DE] bg-[#FAFAF7] flex items-center justify-center transition-all duration-300 group-hover:border-[#0F766E] group-hover:shadow-[0_0_0_6px_rgba(15,118,110,0.1)]">
-                                    {brand.image ? (
-                                        <img
-                                            src={brand.image}
-                                            alt={brand.name}
-                                            className="w-16 h-16 object-contain transition-all duration-300 group-hover:scale-110"
-                                        />
-                                    ) : (
-                                        <span className="font-semibold text-sm text-[#14152B] group-hover:text-[#0F766E] transition-colors px-2 text-center leading-5">
-                                            {brand.name}
-                                        </span>
-                                    )}
-                                </div>
-                                <h3 className="mt-4">
-                                    <AnimatedLabel className="font-['Inter',sans-serif] text-sm font-medium text-[#14152B] group-hover:text-[#0F766E] transition-colors">
-                                        {brand.name}
-                                    </AnimatedLabel>
-                                </h3>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            
         </>
     );
 };
