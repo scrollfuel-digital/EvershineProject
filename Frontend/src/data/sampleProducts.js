@@ -7,6 +7,10 @@ import { CHANNELS_PRODUCTS } from './channelsData';
 import { BEAMS_COLUMNS_PRODUCTS } from './beamsColumnsData';
 import { COLOUR_COATED_PRODUCTS } from './colourCoatedData';
 import { MS_COLD_ROLLED_PRODUCTS } from './msColdRolledData';
+import { COATED_STEEL_PRODUCTS } from './coatedSteelData';
+import { MS_HOT_ROLLED_PRODUCTS } from './msHotRolledData';
+import { WIRE_RODS_PRODUCTS } from './wireRodsData';
+import { ROOFING_CLADDING_PRODUCTS } from './roofingCladdingData';
 
 // Sample Product Catalog Items
 export const SAMPLE_PRODUCTS = [
@@ -15,8 +19,11 @@ export const SAMPLE_PRODUCTS = [
   ...BEAMS_COLUMNS_PRODUCTS,
   ...COLOUR_COATED_PRODUCTS,
   ...MS_COLD_ROLLED_PRODUCTS,
+  ...COATED_STEEL_PRODUCTS,
+  ...MS_HOT_ROLLED_PRODUCTS,
+  ...WIRE_RODS_PRODUCTS,
+  ...ROOFING_CLADDING_PRODUCTS,
 
- 
   {
     id: 13,
     title: 'Primary Mill Mild Steel Equal Angles 50x50x5mm',
@@ -35,4 +42,4 @@ export const SAMPLE_PRODUCTS = [
   },
 ];
 
-export { ANGLES_PRODUCTS, CHANNELS_PRODUCTS, BEAMS_COLUMNS_PRODUCTS, COLOUR_COATED_PRODUCTS, MS_COLD_ROLLED_PRODUCTS };
+export { ANGLES_PRODUCTS, CHANNELS_PRODUCTS, BEAMS_COLUMNS_PRODUCTS, COLOUR_COATED_PRODUCTS, MS_COLD_ROLLED_PRODUCTS, COATED_STEEL_PRODUCTS, MS_HOT_ROLLED_PRODUCTS, WIRE_RODS_PRODUCTS, ROOFING_CLADDING_PRODUCTS };

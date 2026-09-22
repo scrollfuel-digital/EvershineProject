@@ -659,7 +659,11 @@ export default function ProductDetails({ initialCategory = null }) {
                     product.category?.toLowerCase() === 'beams and columns' ||
                     product.category?.toLowerCase() === 'colour coated' ||
                     product.category?.toLowerCase() === 'ms cold rolled' ||
-                    product.group === 'Structural Steel';
+                    product.category?.toLowerCase() === 'coated steel' ||
+                    product.category?.toLowerCase() === 'ms hot rolled' ||
+                    product.category?.toLowerCase() === 'wire rods' ||
+                    product.group === 'Structural Steel' ||
+                    product.group === 'Roofing & Cladding';
 
                   return (
                     <div
@@ -676,44 +680,23 @@ export default function ProductDetails({ initialCategory = null }) {
 
                         {/* Top Floating Badge (for non-catalog/general products) */}
                         {!isCleanLayout && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
-                          <div className="absolute top-3 left-3 bg-slate-900/85 backdrop-blur-md text-white text-[11px] px-2.5 py-1 rounded-lg font-medium shadow-md flex items-center gap-1 border border-white/10">
-                            <span className="text-slate-300">{product.group || 'Mild Steel'}</span>
-                            <span className="text-teal-400 font-bold">›</span>
-                            <span className="text-amber-300 font-semibold">{product.category || 'Hot rolled'}</span>
+                          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 shadow-sm border border-slate-100 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-teal-500"></span>
+                            {product.category}
                           </div>
                         )}
                       </div>
 
                       {/* Card Content */}
-                      <div className="p-5 flex-1 flex flex-col justify-between">
+                      <div className="p-5 flex flex-col flex-1 justify-between">
                         <div>
-                          {/* Inline Card Breadcrumb Trail (for non-catalog/general products) */}
-                          {!isCleanLayout && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
-                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium mb-2 flex-wrap">
-                              <span className="hover:text-teal-600 transition">{product.group || 'Mild Steel'}</span>
-                              <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span className="text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded border border-teal-100">
-                                {product.category || 'Hot rolled'}
-                              </span>
-                              {product.grade && (
-                                <>
-                                  <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />
-                                  <span className="text-slate-600 font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">{product.grade}</span>
-                                </>
-                              )}
-                              {product.subGrade && (
-                                <>
-                                  <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />
-                                  <span className="text-blue-700 font-mono text-[10px] bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">{product.subGrade}</span>
-                                </>
-                              )}
-                            </div>
-                          )}
-
-                          <h3 className="font-bold text-slate-900 text-base leading-snug mb-1">
+                          {/* Title */}
+                          <h3 className="font-bold text-slate-800 text-sm mb-1.5 line-clamp-2 min-h-[40px] group-hover:text-blue-600 transition-colors">
                             {product.title}
                           </h3>
-                          <p className="text-xs text-slate-500 mb-4 flex items-center gap-2 flex-wrap">
+
+                          {/* Brand Info */}
+                          <p className="text-xs text-slate-500 mb-3 flex items-center gap-2">
                             <span>Brand: <strong className="text-slate-700 font-medium">{product.brand}</strong></span>
                             {!isCleanLayout && product.subBrand && (
                               <>
@@ -724,44 +707,52 @@ export default function ProductDetails({ initialCategory = null }) {
                           </p>
 
                           {/* Specification Attributes */}
-                          <div className="space-y-1.5 text-xs text-slate-600 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                            {product.specs?.thickness && (
-                              <div className="flex justify-between">
-                                <span className="text-slate-400">Thickness</span>
-                                <span className="font-semibold text-slate-800">{product.specs.thickness}</span>
-                              </div>
-                            )}
-                            {product.specs?.sectionalWeight && (
-                              <div className="flex justify-between">
-                                <span className="text-slate-400">Sectional weight</span>
-                                <span className="font-semibold text-slate-800">{product.specs.sectionalWeight}</span>
-                              </div>
-                            )}
-                            {product.specs?.webDepth && (
-                              <div className="flex justify-between">
-                                <span className="text-slate-400">Web depth</span>
-                                <span className="font-semibold text-slate-800">{product.specs.webDepth}</span>
-                              </div>
-                            )}
-                            {product.specs?.flangeWidth && (
-                              <div className="flex justify-between">
-                                <span className="text-slate-400">Flange width</span>
-                                <span className="font-semibold text-slate-800">{product.specs.flangeWidth}</span>
-                              </div>
-                            )}
-                            {product.specs?.length && (
-                              <div className="flex justify-between">
-                                <span className="text-slate-400">Length</span>
-                                <span className="font-semibold text-slate-800">{product.specs.length}</span>
-                              </div>
-                            )}
-                            {product.specs?.width && (
-                              <div className="flex justify-between">
-                                <span className="text-slate-400">Width</span>
-                                <span className="font-semibold text-slate-800">{product.specs.width}</span>
-                              </div>
-                            )}
-                          </div>
+                          {product.specs && Object.keys(product.specs).length > 0 && (
+                            <div className="space-y-1.5 text-xs text-slate-600 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                              {product.specs?.thickness && (
+                                <div className="flex justify-between">
+                                  <span className="text-slate-400">Thickness</span>
+                                  <span className="font-semibold text-slate-800">{product.specs.thickness}</span>
+                                </div>
+                              )}
+                              {product.specs?.diameter && (
+                                <div className="flex justify-between">
+                                  <span className="text-slate-400">Diameter</span>
+                                  <span className="font-semibold text-slate-800">{product.specs.diameter}</span>
+                                </div>
+                              )}
+                              {product.specs?.sectionalWeight && (
+                                <div className="flex justify-between">
+                                  <span className="text-slate-400">Sectional weight</span>
+                                  <span className="font-semibold text-slate-800">{product.specs.sectionalWeight}</span>
+                                </div>
+                              )}
+                              {product.specs?.webDepth && (
+                                <div className="flex justify-between">
+                                  <span className="text-slate-400">Web depth</span>
+                                  <span className="font-semibold text-slate-800">{product.specs.webDepth}</span>
+                                </div>
+                              )}
+                              {product.specs?.flangeWidth && (
+                                <div className="flex justify-between">
+                                  <span className="text-slate-400">Flange width</span>
+                                  <span className="font-semibold text-slate-800">{product.specs.flangeWidth}</span>
+                                </div>
+                              )}
+                              {product.specs?.length && (
+                                <div className="flex justify-between">
+                                  <span className="text-slate-400">Length</span>
+                                  <span className="font-semibold text-slate-800">{product.specs.length}</span>
+                                </div>
+                              )}
+                              {product.specs?.width && (
+                                <div className="flex justify-between">
+                                  <span className="text-slate-400">Width</span>
+                                  <span className="font-semibold text-slate-800">{product.specs.width}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
 
                         {/* Bottom Action Area */}
@@ -870,6 +861,12 @@ export default function ProductDetails({ initialCategory = null }) {
                     <div className="flex justify-between">
                       <span className="text-slate-500">Thickness:</span>
                       <span className="font-semibold">{activeModalProduct.specs.thickness}</span>
+                    </div>
+                  )}
+                  {activeModalProduct.specs?.diameter && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Diameter:</span>
+                      <span className="font-semibold">{activeModalProduct.specs.diameter}</span>
                     </div>
                   )}
                   {activeModalProduct.specs?.sectionalWeight && (
