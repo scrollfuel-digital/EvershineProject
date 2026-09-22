@@ -11,7 +11,8 @@ import {
   ShoppingCart,
   CheckCircle,
   RotateCcw,
-  Search
+  Search,
+  Tag
 } from 'lucide-react';
 import { categoryListData } from '../../data/categoryListData';
 import { CATEGORY_GROUPS } from '../../data/filterData';
@@ -652,9 +653,12 @@ export default function ProductDetails({ initialCategory = null }) {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {paginatedProducts.map(product => {
-                  const isStructuralSteel =
+                  const isCleanLayout =
                     product.category?.toLowerCase() === 'angles' ||
                     product.category?.toLowerCase() === 'channels' ||
+                    product.category?.toLowerCase() === 'beams and columns' ||
+                    product.category?.toLowerCase() === 'colour coated' ||
+                    product.category?.toLowerCase() === 'ms cold rolled' ||
                     product.group === 'Structural Steel';
 
                   return (
@@ -670,8 +674,8 @@ export default function ProductDetails({ initialCategory = null }) {
                           className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                         />
 
-                        {/* Top Floating Badge (for non-structural products) */}
-                        {!isStructuralSteel && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
+                        {/* Top Floating Badge (for non-catalog/general products) */}
+                        {!isCleanLayout && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
                           <div className="absolute top-3 left-3 bg-slate-900/85 backdrop-blur-md text-white text-[11px] px-2.5 py-1 rounded-lg font-medium shadow-md flex items-center gap-1 border border-white/10">
                             <span className="text-slate-300">{product.group || 'Mild Steel'}</span>
                             <span className="text-teal-400 font-bold">›</span>
@@ -683,8 +687,8 @@ export default function ProductDetails({ initialCategory = null }) {
                       {/* Card Content */}
                       <div className="p-5 flex-1 flex flex-col justify-between">
                         <div>
-                          {/* Inline Card Breadcrumb Trail (for non-structural products) */}
-                          {!isStructuralSteel && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
+                          {/* Inline Card Breadcrumb Trail (for non-catalog/general products) */}
+                          {!isCleanLayout && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
                             <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium mb-2 flex-wrap">
                               <span className="hover:text-teal-600 transition">{product.group || 'Mild Steel'}</span>
                               <ChevronRight className="w-3 h-3 text-slate-400 shrink-0" />
@@ -711,7 +715,7 @@ export default function ProductDetails({ initialCategory = null }) {
                           </h3>
                           <p className="text-xs text-slate-500 mb-4 flex items-center gap-2 flex-wrap">
                             <span>Brand: <strong className="text-slate-700 font-medium">{product.brand}</strong></span>
-                            {product.subBrand && (
+                            {!isCleanLayout && product.subBrand && (
                               <>
                                 <span className="text-slate-300">•</span>
                                 <span>Sub-brand: <strong className="text-blue-700 font-medium">{product.subBrand}</strong></span>
@@ -770,7 +774,7 @@ export default function ProductDetails({ initialCategory = null }) {
                           </button>
 
                           <div className="flex items-center gap-2 text-xs text-slate-500 pt-2 border-t border-slate-100">
-                            <Truck className="w-4 h-4 text-teal-600 flex-shrink-0" />
+                            <Tag className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                             <span>{product.delivery}</span>
                           </div>
                         </div>

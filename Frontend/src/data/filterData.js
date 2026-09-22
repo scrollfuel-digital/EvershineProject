@@ -48,6 +48,7 @@ export const GRADES_LIST = [
   'EN 10149',
   'S275',
   'ASTM A653',
+  'ASTM A792',
   '7887_1992',
   '7904:2018'
 ];
@@ -157,6 +158,7 @@ export const BRANDS_LIST = [
   'PULKIT TMT',
   'Gajkesari',
   'Bharathi Cement',
+  'Urjaa Metalics',
   'VSP / RINL'
 ];
 
@@ -211,6 +213,8 @@ export const SUB_GRADES_LIST = [
   'FE 550D CRS',
   'E250A Chequered',
   'FE 550D',
+  'CS Type B',
+  'HSLA 340',
   'E300BR'
 ];
 
