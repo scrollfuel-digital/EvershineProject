@@ -24,6 +24,7 @@ export function useProductFilters(
   const [selectedCategories, setSelectedCategories] = useState(
     Array.isArray(initialCategories) ? initialCategories : []
   );
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [selectedSubBrands, setSelectedSubBrands] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -46,6 +47,12 @@ export function useProductFilters(
   const handleToggleCategory = (category) => {
     setSelectedCategories(prev =>
       prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+  };
+
+  const handleToggleSubCategory = (subCat) => {
+    setSelectedSubCategories(prev =>
+      prev.includes(subCat) ? prev.filter(s => s !== subCat) : [...prev, subCat]
     );
   };
 
@@ -76,6 +83,7 @@ export function useProductFilters(
   // Clear all filters
   const handleClearFilters = () => {
     setSelectedCategories([]);
+    setSelectedSubCategories([]);
     setSelectedGrades([]);
     setSelectedSubBrands([]);
     setSelectedBrands([]);
@@ -127,8 +135,20 @@ export function useProductFilters(
         if (!matchesCategory) return false;
       }
 
+      // 1b. Filter by Sub-category Checkboxes (e.g. Hot rolled sheets, coils, HRPO)
+      if (selectedSubCategories.length > 0) {
+        const matchesSubCategory = selectedSubCategories.some(sc => {
+          const scLower = sc.toLowerCase();
+          return (
+            p.subCategory?.toLowerCase() === scLower ||
+            p.title?.toLowerCase().includes(scLower)
+          );
+        });
+        if (!matchesSubCategory) return false;
+      }
+
       // 2. Filter by top sub-category slider (if selected and no checkbox override)
-      if (selectedSubCategory && selectedCategories.length === 0) {
+      if (selectedSubCategory && selectedCategories.length === 0 && selectedSubCategories.length === 0) {
         const sub = selectedSubCategory.toLowerCase();
         const matchesSub =
           p.category?.toLowerCase().includes(sub) ||
@@ -173,6 +193,7 @@ export function useProductFilters(
   }, [
     products,
     selectedCategories,
+    selectedSubCategories,
     selectedSubCategory,
     selectedGrades,
     selectedSubBrands,
@@ -182,6 +203,7 @@ export function useProductFilters(
 
   const hasActiveFilters =
     selectedCategories.length > 0 ||
+    selectedSubCategories.length > 0 ||
     selectedGrades.length > 0 ||
     selectedSubBrands.length > 0 ||
     selectedBrands.length > 0 ||
@@ -193,6 +215,10 @@ export function useProductFilters(
     selectedCategories,
     setSelectedCategories,
     handleToggleCategory,
+
+    selectedSubCategories,
+    setSelectedSubCategories,
+    handleToggleSubCategory,
 
     selectedGrades,
     setSelectedGrades,

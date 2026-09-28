@@ -15,7 +15,7 @@ import {
   Tag
 } from 'lucide-react';
 import { categoryListData } from '../../data/categoryListData';
-import { CATEGORY_GROUPS } from '../../data/filterData';
+import { CATEGORY_GROUPS, MS_HOT_ROLLED_SUB_CATEGORIES, COLOUR_COATED_SUB_CATEGORIES, COATED_STEEL_SUB_CATEGORIES, MS_COLD_ROLLED_SUB_CATEGORIES } from '../../data/filterData';
 import { SAMPLE_PRODUCTS } from '../../data/sampleProducts';
 import { useProductFilters } from '../../hooks/useProductFilters';
 import CategoryCarousel from './CategoryCarousel';
@@ -57,6 +57,8 @@ export default function ProductDetails({ initialCategory = null }) {
   const {
     selectedCategories,
     handleToggleCategory,
+    selectedSubCategories,
+    handleToggleSubCategory,
     selectedGrades,
     handleToggleGrade,
     selectedSubBrands,
@@ -115,6 +117,7 @@ export default function ProductDetails({ initialCategory = null }) {
     setCurrentPage(1);
   }, [
     selectedCategories,
+    selectedSubCategories,
     selectedGrades,
     selectedSubBrands,
     selectedBrands,
@@ -145,138 +148,6 @@ export default function ProductDetails({ initialCategory = null }) {
           selectedSubCategory={selectedSubCategory}
           onSubCategoryClick={handleSubCategoryClick}
         />
-
-        {/* Catalog Header Bar with Products Count & Reset */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-slate-900">
-              {selectedCategories.length > 0
-                ? selectedCategories.join(', ')
-                : selectedSubCategory || 'All Products'}
-            </h1>
-            <span className="text-sm font-medium text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">
-              Found <strong className="text-slate-800">{filteredProducts.length}</strong> results
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleClearFilters}
-              className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1.5 transition cursor-pointer"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Clear filters
-            </button>
-          </div>
-        </div>
-
-        {/* Active Filter Badges / Chips */}
-        {hasActiveFilters && (
-          <div className="flex flex-wrap items-center gap-2 mb-6 p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs">
-            <span className="text-xs font-semibold text-slate-500 mr-1">Active Filters:</span>
-
-            {selectedCategories.map(cat => (
-              <span
-                key={`chip-cat-${cat}`}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
-              >
-                <span>{cat}</span>
-                <button
-                  onClick={() => handleToggleCategory(cat)}
-                  className="hover:text-blue-900 transition cursor-pointer"
-                  aria-label={`Remove ${cat}`}
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            ))}
-
-            {selectedGrades.map(grade => (
-              <span
-                key={`chip-grade-${grade}`}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0]"
-              >
-                <span>Grade: {grade}</span>
-                <button
-                  onClick={() => handleToggleGrade(grade)}
-                  className="hover:text-green-900 transition cursor-pointer"
-                  aria-label={`Remove ${grade}`}
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            ))}
-
-            {selectedSubBrands.map(sb => (
-              <span
-                key={`chip-sb-${sb}`}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"
-              >
-                <span>Sub-brand: {sb}</span>
-                <button
-                  onClick={() => handleToggleSubBrand(sb)}
-                  className="hover:text-amber-900 transition cursor-pointer"
-                  aria-label={`Remove ${sb}`}
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            ))}
-
-            {selectedBrands.map(brand => (
-              <span
-                key={`chip-brand-${brand}`}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FAF5FF] text-[#6B21A8] border border-[#E9D5FF]"
-              >
-                <span>Brand: {brand}</span>
-                <button
-                  onClick={() => handleToggleBrand(brand)}
-                  className="hover:text-purple-900 transition cursor-pointer"
-                  aria-label={`Remove ${brand}`}
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            ))}
-
-            {selectedSubGrades.map(sg => (
-              <span
-                key={`chip-subgrade-${sg}`}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]"
-              >
-                <span>Sub-grade: {sg}</span>
-                <button
-                  onClick={() => handleToggleSubGrade(sg)}
-                  className="hover:text-red-900 transition cursor-pointer"
-                  aria-label={`Remove ${sg}`}
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            ))}
-
-            {userCategoryOverride && (
-              <span
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200"
-              >
-                <span>Slider: {userCategoryOverride}</span>
-                <button
-                  onClick={() => setUserCategoryOverride(null)}
-                  className="hover:text-purple-900 transition cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </span>
-            )}
-
-            <button
-              onClick={handleClearFilters}
-              className="text-xs font-bold text-red-600 hover:text-red-700 hover:underline ml-auto pl-2 cursor-pointer"
-            >
-              Reset All
-            </button>
-          </div>
-        )}
 
         {/* Main Grid: Sidebar + Product Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
@@ -328,16 +199,200 @@ export default function ProductDetails({ initialCategory = null }) {
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#4B5563] mb-2">
                         {group.groupName}
                       </h4>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-2">
                         {group.items.map((item) => {
                           const isChecked = selectedCategories.includes(item);
+                          if (item === 'Colour coated') {
+                            return (
+                              <div key={item} className="w-full flex flex-col gap-2">
+                                <span
+                                  onClick={() => handleToggleCategory(item)}
+                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
+                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                    }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => { }}
+                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                  />
+                                  <span>{item}</span>
+                                </span>
+
+                                {/* Ordered list of Sub-categories with clickable checkboxes directly below Colour coated */}
+                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
+                                  {COLOUR_COATED_SUB_CATEGORIES.map((subCat) => {
+                                    const isSubChecked = selectedSubCategories.includes(subCat);
+                                    return (
+                                      <span
+                                        key={subCat}
+                                        onClick={() => handleToggleSubCategory(subCat)}
+                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
+                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                          }`}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={isSubChecked}
+                                          onChange={() => { }}
+                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                        />
+                                        <span>{subCat}</span>
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          }
+                          if (item === 'MS Hot rolled') {
+                            return (
+                              <div key={item} className="w-full flex flex-col gap-2">
+                                <span
+                                  onClick={() => handleToggleCategory(item)}
+                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
+                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                    }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => { }}
+                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                  />
+                                  <span>{item}</span>
+                                </span>
+
+                                {/* Ordered list of Sub-categories with clickable checkboxes directly below MS hot rolled */}
+                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
+                                  {MS_HOT_ROLLED_SUB_CATEGORIES.map((subCat) => {
+                                    const isSubChecked = selectedSubCategories.includes(subCat);
+                                    return (
+                                      <span
+                                        key={subCat}
+                                        onClick={() => handleToggleSubCategory(subCat)}
+                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
+                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                          }`}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={isSubChecked}
+                                          onChange={() => { }}
+                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                        />
+                                        <span>{subCat}</span>
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          }
+                          if (item === 'Coated Steel') {
+                            return (
+                              <div key={item} className="w-full flex flex-col gap-2">
+                                <span
+                                  onClick={() => handleToggleCategory(item)}
+                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
+                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                    }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => { }}
+                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                  />
+                                  <span>{item}</span>
+                                </span>
+
+                                {/* Ordered list of Sub-categories with clickable checkboxes directly below Coated Steel */}
+                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
+                                  {COATED_STEEL_SUB_CATEGORIES.map((subCat) => {
+                                    const isSubChecked = selectedSubCategories.includes(subCat);
+                                    return (
+                                      <span
+                                        key={subCat}
+                                        onClick={() => handleToggleSubCategory(subCat)}
+                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
+                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                          }`}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={isSubChecked}
+                                          onChange={() => { }}
+                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                        />
+                                        <span>{subCat}</span>
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          }
+                          if (item === 'MS Cold rolled') {
+                            return (
+                              <div key={item} className="w-full flex flex-col gap-2">
+                                <span
+                                  onClick={() => handleToggleCategory(item)}
+                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
+                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                    }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => { }}
+                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                  />
+                                  <span>{item}</span>
+                                </span>
+
+                                {/* Ordered list of Sub-categories with clickable checkboxes directly below MS Cold rolled */}
+                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
+                                  {MS_COLD_ROLLED_SUB_CATEGORIES.map((subCat) => {
+                                    const isSubChecked = selectedSubCategories.includes(subCat);
+                                    return (
+                                      <span
+                                        key={subCat}
+                                        onClick={() => handleToggleSubCategory(subCat)}
+                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
+                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
+                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                          }`}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={isSubChecked}
+                                          onChange={() => { }}
+                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                                        />
+                                        <span>{subCat}</span>
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          }
                           return (
                             <span
                               key={item}
                               onClick={() => handleToggleCategory(item)}
-                              className={`inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
+                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
                                   ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                  : 'bg-white text-[#1E293B] border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                  : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                                 }`}
                             >
                               <input
@@ -394,7 +449,7 @@ export default function ProductDetails({ initialCategory = null }) {
                     </div>
                   </div>
 
-                  <div className="p-3 flex flex-wrap gap-1.5">
+                  <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedGrades.length === 0 ? (
                       <p className="text-xs text-slate-400 py-2 w-full text-center">No grades matching "{gradeSearch}"</p>
                     ) : (
@@ -404,9 +459,9 @@ export default function ProductDetails({ initialCategory = null }) {
                           <span
                             key={grade}
                             onClick={() => handleToggleGrade(grade)}
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono cursor-pointer transition-all border select-none ${isChecked
+                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
                                 ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-[#1E293B] border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                               }`}
                           >
                             <input
@@ -462,7 +517,7 @@ export default function ProductDetails({ initialCategory = null }) {
                     </div>
                   </div>
 
-                  <div className="p-3 flex flex-wrap gap-1.5">
+                  <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedSubBrands.length === 0 ? (
                       <p className="text-xs text-slate-400 py-2 w-full text-center">No sub-brands matching "{subBrandSearch}"</p>
                     ) : (
@@ -472,9 +527,9 @@ export default function ProductDetails({ initialCategory = null }) {
                           <span
                             key={subBrand}
                             onClick={() => handleToggleSubBrand(subBrand)}
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs cursor-pointer transition-all border select-none ${isChecked
+                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
                                 ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-[#1E293B] border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                               }`}
                           >
                             <input
@@ -530,7 +585,7 @@ export default function ProductDetails({ initialCategory = null }) {
                     </div>
                   </div>
 
-                  <div className="p-3 flex flex-wrap gap-1.5">
+                  <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedBrands.length === 0 ? (
                       <p className="text-xs text-slate-400 py-2 w-full text-center">No brands matching "{brandSearch}"</p>
                     ) : (
@@ -540,9 +595,9 @@ export default function ProductDetails({ initialCategory = null }) {
                           <span
                             key={brand}
                             onClick={() => handleToggleBrand(brand)}
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs cursor-pointer transition-all border select-none ${isChecked
+                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
                                 ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-[#1E293B] border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                               }`}
                           >
                             <input
@@ -598,7 +653,7 @@ export default function ProductDetails({ initialCategory = null }) {
                     </div>
                   </div>
 
-                  <div className="p-3 flex flex-wrap gap-1.5">
+                  <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedSubGrades.length === 0 ? (
                       <p className="text-xs text-slate-400 py-2 w-full text-center">No sub-grades matching "{subGradeSearch}"</p>
                     ) : (
@@ -608,9 +663,9 @@ export default function ProductDetails({ initialCategory = null }) {
                           <span
                             key={subGrade}
                             onClick={() => handleToggleSubGrade(subGrade)}
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-mono cursor-pointer transition-all border select-none ${isChecked
+                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
                                 ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-[#1E293B] border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                               }`}
                           >
                             <input
@@ -633,6 +688,157 @@ export default function ProductDetails({ initialCategory = null }) {
 
           {/* Right Column: Product Cards Grid */}
           <div className="lg:col-span-3">
+
+            {/* Catalog Header Bar with Products Count & Reset */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl font-bold text-slate-900">
+                  {selectedSubCategories.length > 0
+                    ? selectedSubCategories.join(', ')
+                    : selectedCategories.length > 0
+                    ? selectedCategories.join(', ')
+                    : selectedSubCategory || 'All Products'}
+                </h1>
+                <span className="text-sm font-medium text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">
+                  Found <strong className="text-slate-800">{filteredProducts.length}</strong> results
+                </span>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={handleClearFilters}
+                  className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Clear filters
+                </button>
+              </div>
+            </div>
+
+            {/* Active Filter Badges / Chips */}
+            {hasActiveFilters && (
+              <div className="flex flex-wrap items-center gap-2 mb-6 p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs">
+                <span className="text-xs font-semibold text-slate-500 mr-1">Active Filters:</span>
+
+                {selectedCategories.map(cat => (
+                  <span
+                    key={`chip-cat-${cat}`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
+                  >
+                    <span>{cat}</span>
+                    <button
+                      onClick={() => handleToggleCategory(cat)}
+                      className="hover:text-blue-900 transition cursor-pointer"
+                      aria-label={`Remove ${cat}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+
+                {selectedSubCategories.map(subCat => (
+                  <span
+                    key={`chip-subcat-${subCat}`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
+                  >
+                    <span>{subCat}</span>
+                    <button
+                      onClick={() => handleToggleSubCategory(subCat)}
+                      className="hover:text-blue-900 transition cursor-pointer"
+                      aria-label={`Remove ${subCat}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+
+                {selectedGrades.map(grade => (
+                  <span
+                    key={`chip-grade-${grade}`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0]"
+                  >
+                    <span>Grade: {grade}</span>
+                    <button
+                      onClick={() => handleToggleGrade(grade)}
+                      className="hover:text-green-900 transition cursor-pointer"
+                      aria-label={`Remove ${grade}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+
+                {selectedSubBrands.map(sb => (
+                  <span
+                    key={`chip-sb-${sb}`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"
+                  >
+                    <span>Sub-brand: {sb}</span>
+                    <button
+                      onClick={() => handleToggleSubBrand(sb)}
+                      className="hover:text-amber-900 transition cursor-pointer"
+                      aria-label={`Remove ${sb}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+
+                {selectedBrands.map(brand => (
+                  <span
+                    key={`chip-brand-${brand}`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FAF5FF] text-[#6B21A8] border border-[#E9D5FF]"
+                  >
+                    <span>Brand: {brand}</span>
+                    <button
+                      onClick={() => handleToggleBrand(brand)}
+                      className="hover:text-purple-900 transition cursor-pointer"
+                      aria-label={`Remove ${brand}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+
+                {selectedSubGrades.map(sg => (
+                  <span
+                    key={`chip-subgrade-${sg}`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]"
+                  >
+                    <span>Sub-grade: {sg}</span>
+                    <button
+                      onClick={() => handleToggleSubGrade(sg)}
+                      className="hover:text-red-900 transition cursor-pointer"
+                      aria-label={`Remove ${sg}`}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+
+                {userCategoryOverride && (
+                  <span
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200"
+                  >
+                    <span>Slider: {userCategoryOverride}</span>
+                    <button
+                      onClick={() => setUserCategoryOverride(null)}
+                      className="hover:text-purple-900 transition cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                )}
+
+                <button
+                  onClick={handleClearFilters}
+                  className="text-xs font-bold text-red-600 hover:text-red-700 hover:underline ml-auto pl-2 cursor-pointer"
+                >
+                  Reset All
+                </button>
+              </div>
+            )}
+
             {filteredProducts.length === 0 ? (
               <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">

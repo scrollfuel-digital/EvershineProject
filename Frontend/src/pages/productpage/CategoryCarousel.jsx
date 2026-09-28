@@ -1,191 +1,160 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { categoryListData as defaultCategories } from "../../data/categoryListData";
+import React, { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { categoryListData } from "../../data/categoryListData";
 
-/**
- * Top sub-category slider with pinned Accessories card and continuous sliding categories.
- *
- * @param {Array} categories - List of categories with labels, hrefs, and images
- * @param {string|null} selectedSubCategory - Label of the currently active sub-category
- * @param {Function} onSubCategoryClick - Handler called when a category card is clicked
- */
-export default function CategoryCarousel({
-  categories = defaultCategories,
-  selectedSubCategory = null,
-  onSubCategoryClick = () => {}
-}) {
-  const [carouselIndex, setCarouselIndex] = useState(0);
-  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+// Shelf edge with animated progress bar
+const ShelfEdge = ({ progress = 0 }) => (
+  <div className="relative mt-3 mb-8 h-[3px] w-full bg-[#E5E7EB] overflow-hidden rounded-full">
+    <div
+      className="absolute inset-y-0 left-0 bg-[#004060] transition-all duration-500 ease-out"
+      style={{ width: `${Math.max(8, progress)}%` }}
+    />
+    <div className="absolute inset-0 flex justify-between px-[2px] pointer-events-none">
+      {Array.from({ length: 28 }).map((_, i) => (
+        <span key={i} className="w-px h-full bg-white/60" />
+      ))}
+    </div>
+  </div>
+);
 
-  // Separate Accessories (pinned) from sliding sub-categories
-  const accessoriesItem = useMemo(() => {
-    return (
-      categories.find(item => item.label.toLowerCase().includes('accessories')) ||
-      categories[0]
-    );
-  }, [categories]);
-
-  const slidingList = useMemo(() => {
-    return categories.filter(
-      item => !item.label.toLowerCase().includes('accessories')
-    );
-  }, [categories]);
-
-  const totalSliding = slidingList.length;
-
-  const handleNextSubCategory = useCallback(() => {
-    if (totalSliding === 0) return;
-    setCarouselIndex(prev => (prev + 1) % totalSliding);
-  }, [totalSliding]);
-
-  const handlePrevSubCategory = useCallback(() => {
-    if (totalSliding === 0) return;
-    setCarouselIndex(prev => (prev - 1 + totalSliding) % totalSliding);
-  }, [totalSliding]);
-
-  // Autoplay interval
-  useEffect(() => {
-    if (isCarouselPaused || totalSliding === 0) return;
-    const interval = setInterval(() => {
-      handleNextSubCategory();
-    }, 2800);
-    return () => clearInterval(interval);
-  }, [isCarouselPaused, handleNextSubCategory, totalSliding]);
-
-  // Compute 7 visible sliding categories next to Accessories
-  const visibleSliding = useMemo(() => {
-    if (totalSliding === 0) return [];
-    const items = [];
-    const count = Math.min(7, totalSliding);
-    for (let i = 0; i < count; i++) {
-      const idx = (carouselIndex + i) % totalSliding;
-      items.push({ ...slidingList[idx], originalIndex: idx });
-    }
-    return items;
-  }, [carouselIndex, totalSliding, slidingList]);
+// Individual Category Card matching the user's design
+const CategoryCard = ({ item }) => {
+  const imageSrc =
+    item.images && item.images.length > 0 ? item.images[0] : "/images/no-image.png";
 
   return (
-    <section className="mb-8 relative">
-      <div
-        className="flex items-center gap-3"
-        onMouseEnter={() => setIsCarouselPaused(true)}
-        onMouseLeave={() => setIsCarouselPaused(false)}
-      >
-        {/* Prev Arrow */}
-        <button
-          onClick={handlePrevSubCategory}
-          aria-label="Previous categories"
-          className="w-9 h-9 shrink-0 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-slate-700 hover:border-teal-600 hover:text-teal-600 hover:shadow-md transition duration-200 cursor-pointer"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
+    <Link to={item.href} className="group flex flex-col items-center">
+      {/* Card Box */}
+      <div className="relative w-full aspect-square rounded-2xl border border-slate-200/90 bg-white p-3.5 sm:p-4 overflow-hidden shadow-xs transition-all duration-300 ease-out group-hover:-translate-y-1.5 group-hover:border-[#004060] group-hover:shadow-xl group-hover:shadow-[#004060]/10 flex items-center justify-center">
+        {/* Subtle Sheen Light Sweep on Hover */}
+        <span className="pointer-events-none absolute inset-0 -translate-x-[120%] rotate-12 bg-gradient-to-r from-transparent via-white/70 to-transparent group-hover:translate-x-[120%] transition-transform duration-700 ease-out z-10" />
 
-        {/* Cards Slider Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 flex-1 overflow-hidden py-1">
-          {/* Pinned Accessories Card */}
-          {accessoriesItem && (() => {
-            const isActive = selectedSubCategory === accessoriesItem.label;
-            const accImg = accessoriesItem.images && accessoriesItem.images[0] ? accessoriesItem.images[0] : '';
-            return (
-              <div
-                key="pinned-accessories"
-                onClick={() => onSubCategoryClick(accessoriesItem)}
-                className={`
-                  bg-white rounded-2xl p-3 flex flex-col items-center 
-                  cursor-pointer transition-all duration-300 relative border group select-none
-                  ${isActive
-                    ? 'border-teal-500 shadow-lg shadow-teal-500/10 ring-2 ring-teal-500/20 scale-[1.02]'
-                    : 'border-slate-200 hover:border-teal-500 hover:-translate-y-1 hover:shadow-md'
-                  }
-                `}
+        {/* Product Image */}
+        <img
+          src={imageSrc}
+          alt={item.label}
+          className="w-full h-full object-contain transition-transform duration-500 ease-out group-hover:scale-108"
+          loading="lazy"
+        />
+
+        {/* Corner Indicator Accent on Hover */}
+        <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#E3A72F] opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300" />
+      </div>
+
+      {/* Label under Card */}
+      <h3 className="mt-2.5 text-center w-full px-1 h-8 sm:h-9 flex items-start justify-center">
+        <span className="font-['Inter',sans-serif] text-xs sm:text-[13px] font-semibold text-slate-800 group-hover:text-[#004060] transition-colors leading-tight line-clamp-2 block">
+          {item.label}
+        </span>
+      </h3>
+    </Link>
+  );
+};
+
+const VISIBLE_COUNT = 16;
+const AUTOPLAY_DELAY = 4000;
+
+export default function CategoryShowcase() {
+  const total = categoryListData.length;
+  const [startIndex, setStartIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const step = useCallback(
+    (dir) => {
+      setStartIndex((prev) => (prev + (dir === "next" ? 2 : total - 2)) % total);
+    },
+    [total]
+  );
+
+  useEffect(() => {
+    if (isPaused || total === 0) return;
+    const interval = setInterval(() => {
+      setStartIndex((prev) => (prev + 2) % total);
+    }, AUTOPLAY_DELAY);
+    return () => clearInterval(interval);
+  }, [isPaused, total]);
+
+  // Generate the currently visible items (wrapping around)
+  const visibleItems = [];
+  for (let i = 0; i < VISIBLE_COUNT; i++) {
+    visibleItems.push(categoryListData[(startIndex + i) % total]);
+  }
+
+  const progress = total ? (((startIndex % total) + 1) / total) * 100 : 0;
+
+  return (
+    <section id="categories" className="bg-[#f8fafc] py-10 sm:py-1 lg:py-2 border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Section Header with Actions */}
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            
+            <h2 className="font-['Sora',sans-serif] text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0B1729] tracking-tight">
+              Browse Categories
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Navigation Arrows in Header */}
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => step("prev")}
+                aria-label="Previous categories"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-700 hover:text-[#004060] hover:border-[#004060] hover:shadow-xs transition-all duration-200 cursor-pointer"
               >
-                {isActive && (
-                  <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-white z-10" />
-                )}
+                <ChevronLeft className="w-5 h-5" />
+              </button>
 
-                <div className="w-full h-24 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-2">
-                  {accImg ? (
-                    <img
-                      src={accImg}
-                      alt={accessoriesItem.label}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 rounded-xl"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold text-xs">
-                      {accessoriesItem.label.slice(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-
-                <span
-                  className={`text-xs font-semibold text-center leading-tight line-clamp-2 transition-colors ${
-                    isActive ? 'text-teal-600' : 'text-slate-700 group-hover:text-teal-600'
-                  }`}
-                >
-                  {accessoriesItem.label}
-                </span>
-              </div>
-            );
-          })()}
-
-          {/* Remaining Sliding 7 Categories */}
-          {visibleSliding.map((cat, index) => {
-            const isActive =
-              selectedSubCategory === cat.label ||
-              (selectedSubCategory?.toLowerCase().includes('angle') && cat.label.toLowerCase().includes('angle'));
-            const catImage = cat.images && cat.images[0] ? cat.images[0] : '';
-
-            return (
-              <div
-                key={`${cat.href}-${cat.originalIndex}-${index}`}
-                onClick={() => onSubCategoryClick(cat)}
-                className={`
-                  bg-white rounded-2xl p-3 flex flex-col items-center 
-                  cursor-pointer transition-all duration-300 relative border group select-none
-                  ${isActive
-                    ? 'border-teal-500 shadow-lg shadow-teal-500/10 ring-2 ring-teal-500/20 scale-[1.02]'
-                    : 'border-slate-200 hover:border-teal-500 hover:-translate-y-1 hover:shadow-md'
-                  }
-                `}
+              <button
+                onClick={() => step("next")}
+                aria-label="Next categories"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-700 hover:text-[#004060] hover:border-[#004060] hover:shadow-xs transition-all duration-200 cursor-pointer"
               >
-                {isActive && (
-                  <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-white z-10" />
-                )}
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
 
-                <div className="w-full h-24 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden mb-2">
-                  {catImage ? (
-                    <img
-                      src={catImage}
-                      alt={cat.label}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 rounded-xl"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold text-xs">
-                      {cat.label.slice(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-
-                <span
-                  className={`text-xs font-semibold text-center leading-tight line-clamp-2 transition-colors ${
-                    isActive ? 'text-teal-600' : 'text-slate-700 group-hover:text-teal-600'
-                  }`}
-                >
-                  {cat.label}
-                </span>
-              </div>
-            );
-          })}
+            <Link
+              to="/all-categories"
+              className="group hidden sm:inline-flex items-center gap-1.5 font-['Inter',sans-serif] text-xs sm:text-sm font-bold text-[#004060] hover:text-[#E3A72F] transition-colors pl-2"
+            >
+              <span>View all</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
 
-        {/* Next Arrow */}
-        <button
-          onClick={handleNextSubCategory}
-          aria-label="Next categories"
-          className="w-9 h-9 shrink-0 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-slate-700 hover:border-teal-600 hover:text-teal-600 hover:shadow-md transition duration-200 cursor-pointer"
+        {/* Shelf Edge Progress Line */}
+        <ShelfEdge progress={progress} />
+
+        {/* Cards Grid: Full width on mobile without side buttons crowding */}
+        <div
+          className="relative"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
-          <ChevronRight className="w-5 h-5" />
-        </button>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4 py-1">
+            {visibleItems.map((item, index) => (
+              <CategoryCard
+                key={`${item.href}-${index}`}
+                item={item}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile View All Link */}
+        <div className="mt-6 text-center sm:hidden">
+          <Link
+            to="/all-categories"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#004060] bg-white border border-slate-200 rounded-lg px-5 py-2.5 shadow-xs hover:border-[#004060]"
+          >
+            <span>View All Categories</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
     </section>
   );

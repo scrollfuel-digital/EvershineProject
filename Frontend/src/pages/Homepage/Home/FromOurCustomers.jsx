@@ -143,15 +143,19 @@ const initialTestimonials = [
 
 const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
   const isCenter = position === 0;
+  const isHidden = Math.abs(position) > 2;
 
   return (
     <div
-      onClick={() => handleMove(position)}
+      onClick={() => !isHidden && handleMove(position)}
+      aria-hidden={isHidden}
+      tabIndex={isHidden ? -1 : 0}
       className={cn(
         "absolute left-1/2 top-1/2 cursor-pointer border-2 p-7 sm:p-8 transition-all duration-500 ease-in-out select-none",
         isCenter
           ? "z-30 bg-[#E5E7EB] text-slate-900 border-[#E5E7EB]"
-          : "z-10 bg-[#FFFFFF] text-slate-800 border-slate-300 hover:border-slate-400 shadow-md"
+          : "z-10 bg-[#FFFFFF] text-slate-800 border-slate-300 hover:border-slate-400 shadow-md",
+        isHidden && "opacity-0 pointer-events-none"
       )}
       style={{
         width: cardSize,
@@ -182,10 +186,10 @@ const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
       <img
         src={testimonial.imgSrc}
         alt={`${testimonial.by.split(",")[0]}`}
-        className="mb-4 h-14 w-12 bg-muted object-cover object-top border border-slate-200"
-        style={{
-          boxShadow: isCenter ? "3px 3px 0px #0F172A" : "3px 3px 0px #94A3B8"
-        }}
+        className={cn(
+          "mb-4 h-14 w-14 rounded-full object-cover object-top border-2 shadow-sm",
+          isCenter ? "border-slate-400" : "border-slate-200"
+        )}
       />
       <h3
         className={cn(

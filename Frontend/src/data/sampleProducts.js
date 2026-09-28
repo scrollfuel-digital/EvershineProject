@@ -16,19 +16,16 @@ import { ROOFING_CLADDING_PRODUCTS } from './roofingCladdingData';
 export const SAMPLE_PRODUCTS = [
   ...ANGLES_PRODUCTS,
   ...CHANNELS_PRODUCTS,
-  ...BEAMS_COLUMNS_PRODUCTS,
   ...COLOUR_COATED_PRODUCTS,
   ...MS_COLD_ROLLED_PRODUCTS,
   ...COATED_STEEL_PRODUCTS,
   ...MS_HOT_ROLLED_PRODUCTS,
-  ...WIRE_RODS_PRODUCTS,
   ...ROOFING_CLADDING_PRODUCTS,
 
   {
     id: 13,
     title: 'Primary Mill Mild Steel Equal Angles 50x50x5mm',
     brand: 'Evershine',
-    subBrand: 'Super',
     category: 'Angles',
     grade: 'IS 2062:2011',
     subGrade: 'E250A',
