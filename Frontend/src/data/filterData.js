@@ -122,7 +122,6 @@ export const SUB_GRADES_LIST = [
   'GR1',
   'GR2',
   'GR3',
-  'GR70',
   'ISH600LA',
   'HR3',
   'SAPH 440',

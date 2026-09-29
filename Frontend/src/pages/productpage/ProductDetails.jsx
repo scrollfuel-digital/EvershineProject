@@ -89,6 +89,11 @@ export default function ProductDetails({ initialCategory = null }) {
     displayedSubBrands,
     displayedBrands,
     displayedSubGrades,
+    isCategoryActive,
+    availableGrades,
+    availableSubBrands,
+    availableBrands,
+    availableSubGrades,
     filteredProducts,
     handleClearFilters: clearFiltersHook,
     hasActiveFilters
@@ -418,7 +423,9 @@ export default function ProductDetails({ initialCategory = null }) {
                 onClick={() => setGradeOpen(!gradeOpen)}
                 className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A]">Grade</span>
+                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                  Grade {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableGrades.length})</span>}
+                </span>
                 {gradeOpen ? (
                   <ChevronUp className="w-5 h-5 text-[#0F172A]" />
                 ) : (
@@ -451,7 +458,9 @@ export default function ProductDetails({ initialCategory = null }) {
 
                   <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedGrades.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">No grades matching "{gradeSearch}"</p>
+                      <p className="text-xs text-slate-400 py-2 w-full text-center">
+                        {gradeSearch ? `No grades matching "${gradeSearch}"` : "No grades available for selected category"}
+                      </p>
                     ) : (
                       displayedGrades.map((grade) => {
                         const isChecked = selectedGrades.includes(grade);
@@ -486,7 +495,9 @@ export default function ProductDetails({ initialCategory = null }) {
                 onClick={() => setSubBrandOpen(!subBrandOpen)}
                 className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A]">Sub brand</span>
+                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                  Sub brand {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableSubBrands.length})</span>}
+                </span>
                 {subBrandOpen ? (
                   <ChevronUp className="w-5 h-5 text-[#0F172A]" />
                 ) : (
@@ -519,7 +530,9 @@ export default function ProductDetails({ initialCategory = null }) {
 
                   <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedSubBrands.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">No sub-brands matching "{subBrandSearch}"</p>
+                      <p className="text-xs text-slate-400 py-2 w-full text-center">
+                        {subBrandSearch ? `No sub-brands matching "${subBrandSearch}"` : "No sub-brands available for selected category"}
+                      </p>
                     ) : (
                       displayedSubBrands.map((subBrand) => {
                         const isChecked = selectedSubBrands.includes(subBrand);
@@ -554,7 +567,9 @@ export default function ProductDetails({ initialCategory = null }) {
                 onClick={() => setBrandOpen(!brandOpen)}
                 className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A]">Brand</span>
+                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                  Brand {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableBrands.length})</span>}
+                </span>
                 {brandOpen ? (
                   <ChevronUp className="w-5 h-5 text-[#0F172A]" />
                 ) : (
@@ -587,7 +602,9 @@ export default function ProductDetails({ initialCategory = null }) {
 
                   <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedBrands.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">No brands matching "{brandSearch}"</p>
+                      <p className="text-xs text-slate-400 py-2 w-full text-center">
+                        {brandSearch ? `No brands matching "${brandSearch}"` : "No brands available for selected category"}
+                      </p>
                     ) : (
                       displayedBrands.map((brand) => {
                         const isChecked = selectedBrands.includes(brand);
@@ -622,7 +639,9 @@ export default function ProductDetails({ initialCategory = null }) {
                 onClick={() => setSubGradeOpen(!subGradeOpen)}
                 className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A]">Sub grade</span>
+                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                  Sub grade {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableSubGrades.length})</span>}
+                </span>
                 {subGradeOpen ? (
                   <ChevronUp className="w-5 h-5 text-[#0F172A]" />
                 ) : (
@@ -655,7 +674,9 @@ export default function ProductDetails({ initialCategory = null }) {
 
                   <div className="p-3.5 flex flex-wrap gap-2">
                     {displayedSubGrades.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">No sub-grades matching "{subGradeSearch}"</p>
+                      <p className="text-xs text-slate-400 py-2 w-full text-center">
+                        {subGradeSearch ? `No sub-grades matching "${subGradeSearch}"` : "No sub-grades available for selected category"}
+                      </p>
                     ) : (
                       displayedSubGrades.map((subGrade) => {
                         const isChecked = selectedSubGrades.includes(subGrade);

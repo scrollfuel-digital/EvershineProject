@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   ChevronRight, 
   CheckCircle2, 
@@ -126,9 +127,9 @@ export default function DeckSheetPage() {
 
         {/* BREADCRUMB NAVIGATION */}
         <nav className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-6 flex-wrap">
-          <a href="/" className="hover:text-teal-600 transition">Home</a>
+          <Link to="/" className="hover:text-teal-600 transition">Home</Link>
           <ChevronRight className="w-4 h-4 text-slate-400" />
-          <a href="/allproduct/mildsteel/deck-sheet" className="hover:text-teal-600 transition">All Products</a>
+          <Link to="/products" className="hover:text-teal-600 transition">All Products</Link>
           <ChevronRight className="w-4 h-4 text-slate-400" />
           <span className="font-semibold text-slate-900">Decking Sheet (Composite Profile 51/230)</span>
         </nav>
