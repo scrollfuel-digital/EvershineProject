@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ChevronRight,
   ChevronLeft,
@@ -18,11 +18,13 @@ import { categoryListData } from '../../data/categoryListData';
 import { CATEGORY_GROUPS, MS_HOT_ROLLED_SUB_CATEGORIES, COLOUR_COATED_SUB_CATEGORIES, COATED_STEEL_SUB_CATEGORIES, MS_COLD_ROLLED_SUB_CATEGORIES } from '../../data/filterData';
 import { SAMPLE_PRODUCTS } from '../../data/sampleProducts';
 import { useProductFilters } from '../../hooks/useProductFilters';
-import CategoryCarousel from './CategoryCarousel';
 
 export default function ProductDetails({ initialCategory = null }) {
   const { slug, categoryName, categorySlug } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const queryCategory = searchParams.get('category');
+  const querySubCategory = searchParams.get('subCategory');
 
   const currentSlug = slug || categoryName || categorySlug;
 
@@ -38,9 +40,17 @@ export default function ProductDetails({ initialCategory = null }) {
     return found ? found.label : null;
   }, [currentSlug]);
 
-  // Track explicit user selection with fallback to URL slug / initialCategory
+  // Track explicit user selection with fallback to URL slug / initialCategory / query params
   const [userCategoryOverride, setUserCategoryOverride] = useState(null);
-  const selectedSubCategory = userCategoryOverride ?? (matchedCategoryFromSlug || initialCategory || null);
+  const selectedSubCategory = userCategoryOverride ?? (querySubCategory || matchedCategoryFromSlug || initialCategory || null);
+
+  useEffect(() => {
+    if (querySubCategory) {
+      setUserCategoryOverride(querySubCategory);
+    } else if (queryCategory) {
+      setUserCategoryOverride(null);
+    }
+  }, [queryCategory, querySubCategory]);
 
   const handleSubCategoryClick = (cat) => {
     const isCurrentlyActive = selectedSubCategory === cat.label;
@@ -54,6 +64,18 @@ export default function ProductDetails({ initialCategory = null }) {
   };
 
   // Filter and Accordion State via useProductFilters custom hook
+  const effectiveInitialCategories = useMemo(() => {
+    if (queryCategory) return [queryCategory];
+    if (matchedCategoryFromSlug) return [matchedCategoryFromSlug];
+    if (initialCategory) return [initialCategory];
+    return [];
+  }, [queryCategory, matchedCategoryFromSlug, initialCategory]);
+
+  const effectiveInitialSubCategories = useMemo(() => {
+    if (querySubCategory) return [querySubCategory];
+    return [];
+  }, [querySubCategory]);
+
   const {
     selectedCategories,
     handleToggleCategory,
@@ -100,8 +122,9 @@ export default function ProductDetails({ initialCategory = null }) {
   } = useProductFilters(
     SAMPLE_PRODUCTS,
     selectedSubCategory,
-    userCategoryOverride !== null,
-    matchedCategoryFromSlug ? [matchedCategoryFromSlug] : (initialCategory ? [initialCategory] : [])
+    userCategoryOverride !== null || Boolean(querySubCategory),
+    effectiveInitialCategories,
+    effectiveInitialSubCategories
   );
 
   const handleClearFilters = () => {
@@ -144,15 +167,9 @@ export default function ProductDetails({ initialCategory = null }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pt-[90px] lg:pt-[110px] pb-12 px-4 md:px-8">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pt-[80px] md:pt-[125px] lg:pt-[138px] pb-12 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
 
-        {/* Sub-Category Horizontal Showcase Carousel - Continuous Slider */}
-        <CategoryCarousel
-          categories={categoryListData}
-          selectedSubCategory={selectedSubCategory}
-          onSubCategoryClick={handleSubCategoryClick}
-        />
 
         {/* Main Grid: Sidebar + Product Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
@@ -898,7 +915,7 @@ export default function ProductDetails({ initialCategory = null }) {
                       className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col hover:shadow-lg transition-all duration-200 group"
                     >
                       {/* Image Box */}
-                      <div className="w-full h-52 bg-white flex items-center justify-center relative overflow-hidden p-4 border-b border-slate-100">
+                      <div className="w-full h-36 bg-white flex items-center justify-center relative overflow-hidden p-2.5 border-b border-slate-100">
                         <img
                           src={product.img}
                           alt={product.title}
@@ -907,7 +924,7 @@ export default function ProductDetails({ initialCategory = null }) {
 
                         {/* Top Floating Badge (for non-catalog/general products) */}
                         {!isCleanLayout && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
-                          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-slate-700 shadow-sm border border-slate-100 flex items-center gap-1.5">
+                          <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-full text-xs font-semibold text-slate-700 shadow-sm border border-slate-100 flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-teal-500"></span>
                             {product.category}
                           </div>
@@ -915,15 +932,15 @@ export default function ProductDetails({ initialCategory = null }) {
                       </div>
 
                       {/* Card Content */}
-                      <div className="p-5 flex flex-col flex-1 justify-between">
+                      <div className="p-3.5 flex flex-col flex-1 justify-between">
                         <div>
                           {/* Title */}
-                          <h3 className="font-bold text-slate-800 text-sm mb-1.5 line-clamp-2 min-h-[40px] group-hover:text-blue-600 transition-colors">
+                          <h3 className="font-bold text-slate-800 text-sm mb-1 line-clamp-2 min-h-[38px] group-hover:text-blue-600 transition-colors">
                             {product.title}
                           </h3>
 
                           {/* Brand Info */}
-                          <p className="text-xs text-slate-500 mb-3 flex items-center gap-2">
+                          <p className="text-xs text-slate-500 mb-2 flex items-center gap-2">
                             <span>Brand: <strong className="text-slate-700 font-medium">{product.brand}</strong></span>
                             {!isCleanLayout && product.subBrand && (
                               <>
@@ -935,7 +952,7 @@ export default function ProductDetails({ initialCategory = null }) {
 
                           {/* Specification Attributes */}
                           {product.specs && Object.keys(product.specs).length > 0 && (
-                            <div className="space-y-1.5 text-xs text-slate-600 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <div className="space-y-1 text-xs text-slate-600 mb-2.5 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                               {product.specs?.thickness && (
                                 <div className="flex justify-between">
                                   <span className="text-slate-400">Thickness</span>
@@ -986,12 +1003,12 @@ export default function ProductDetails({ initialCategory = null }) {
                         <div>
                           <button
                             onClick={() => setActiveModalProduct(product)}
-                            className="w-full py-2.5 bg-[#F1F5F9] hover:bg-blue-50 text-blue-600 font-bold text-xs rounded-lg transition border border-transparent hover:border-blue-200 text-left px-3 mb-3 cursor-pointer"
+                            className="w-full py-2 bg-[#F1F5F9] hover:bg-blue-50 text-blue-600 font-bold text-xs rounded-lg transition border border-transparent hover:border-blue-200 text-left px-3 mb-2 cursor-pointer"
                           >
                             Purchase now
                           </button>
 
-                          <div className="flex items-center gap-2 text-xs text-slate-500 pt-2 border-t border-slate-100">
+                          <div className="flex items-center gap-2 text-xs text-slate-500 pt-1.5 border-t border-slate-100">
                             <Tag className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                             <span>{product.delivery}</span>
                           </div>

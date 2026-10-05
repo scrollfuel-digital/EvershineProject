@@ -1,17 +1,220 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import evershineLogo from "../../assets/Evershinelogo.png";
 import {
     HiOutlineShoppingCart,
     HiOutlineSearch,
     HiOutlineChevronRight,
     HiOutlineChevronLeft,
+    HiOutlineChevronDown,
     HiOutlineLocationMarker,
+    HiOutlinePhone,
+    HiOutlineMail,
+    HiOutlineClock,
     HiX,
     HiOutlineViewGrid,
 } from "react-icons/hi";
+import { Headphones } from "lucide-react";
 
 import { categoryListData } from "../../data/categoryListData.js";
+
+// Sub-navbar dropdown data (Excluding wire rods & Beams and columns as requested)
+export const MILD_STEEL_CATEGORIES = [
+    {
+        id: "colour-coated",
+        label: "Colour coated",
+        categoryFilter: "Colour coated",
+        subCategories: [
+            { label: "Pre-painted Galvanized sheets", href: "/products?subCategory=Pre-painted+Galvanized+sheets" },
+            { label: "Pre-painted Galvanized coils", href: "/products?subCategory=Pre-painted+Galvanized+coils" },
+            { label: "Pre-painted Galvalume coils", href: "/products?subCategory=Pre-painted+Galvalume+coils" },
+            { label: "Pre-painted Galvalume sheets", href: "/products?subCategory=Pre-painted+Galvalume+sheets" },
+        ],
+    },
+    {
+        id: "ms-hot-rolled",
+        label: "MS Hot rolled",
+        categoryFilter: "MS Hot rolled",
+        subCategories: [
+            { label: "Hot rolled sheets", href: "/products?subCategory=Hot+rolled+sheets" },
+            { label: "Hot rolled coils", href: "/products?subCategory=Hot+rolled+coils" },
+            { label: "HRPO coils", href: "/products?subCategory=HRPO+coils" },
+            { label: "HRPO sheets", href: "/products?subCategory=HRPO+sheets" },
+        ],
+    },
+    {
+        id: "ms-cold-rolled",
+        label: "MS Cold rolled",
+        categoryFilter: "MS Cold rolled",
+        subCategories: [
+            { label: "Cold rolled sheets", href: "/products?subCategory=Cold+rolled+sheets" },
+            { label: "Cold rolled coils", href: "/products?subCategory=Cold+rolled+coils" },
+        ],
+    },
+    {
+        id: "coated-steel",
+        label: "Coated Steel",
+        categoryFilter: "Coated Steel",
+        subCategories: [
+            { label: "Galvalume coils", href: "/products?subCategory=Galvalume+coils" },
+            { label: "Galvalume sheets", href: "/products?subCategory=Galvalume+sheets" },
+            { label: "Galvanized coils", href: "/products?subCategory=Galvanized+coils" },
+            { label: "Galvanized sheets", href: "/products?subCategory=Galvanized+sheets" },
+        ],
+    },
+    {
+        id: "purlins-girts",
+        label: "Purlins & Girts",
+        categoryFilter: "Purlins & Girts",
+        subCategories: [
+           
+        ],
+    },
+];
+
+export const STRUCTURAL_STEEL_ITEMS = [
+    { label: "Angles", href: "/products?category=Angles" },
+    { label: "Channels", href: "/products?category=Channels" },
+];
+
+export const INSULATION_ITEMS = [
+    { label: "Puff Panal", href: "/puff-panel" },
+    { label: "Air Bubble Insulation", href: "/air-bubble-insulation" },
+    {
+        label: "XLPE Insulation",
+        href: "/xlpe",
+        subItems: [
+            { label: "Single side Aluminium foil", href: "/xlpe" },
+            { label: "Both side without Aluminium foil", href: "/xlpe" },
+        ],
+    },
+];
+
+export const ACCESSORIES_ITEMS = [
+    { label: "Ridges", href: "/accessories" },
+    { label: "Flashings", href: "/accessories" },
+    { label: "Turbo Ventilators", href: "/turbo-ventilators" },
+    {
+        label: "Louvers",
+        href: "/louvres",
+        subItems: [
+            { label: "GI Louvers", href: "/louvres" },
+            { label: "Poly Louvers", href: "/louvres" },
+        ],
+    },
+    { label: "Crimping", href: "/crimping-profile-sheet" },
+];
+
+export const POLYCARBONATE_ITEMS = [
+    {
+        label: "Polycarbonate Sheets",
+        href: "/poly-sheet",
+        subItems: [
+            { label: "Polycarbonate Trapezoidial Sheets", href: "/poly-sheet" },
+            { label: "Polycarbonate Plain Sheets", href: "/poly-sheet" },
+        ],
+    },
+    { label: "Multi-Wall Sheets", href: "/multiwall-sheet" },
+];
+
+export const UPVA_ITEMS = [
+    {
+        label: "UPVC Sheets",
+        href: "/products?subCategory=UPVC+Sheets",
+        subItems: [
+            { label: "Tile sheets", href: "/products?subCategory=Tile+sheets" },
+            { label: "Trapezoidal Profile sheet", href: "/products?subCategory=Trapezoidal+Profile+sheet" },
+            { label: "Round Profile sheets", href: "/products?subCategory=Round+Profile+sheets" },
+            { label: "Plain sheets", href: "/products?subCategory=Plain+sheets" },
+        ],
+    },
+    {
+        label: "UPVC Accessories",
+        href: "/products?subCategory=UPVC+Accessories",
+        isWideSubMenu: true,
+        subItems: [
+            { label: "Main Ridge", href: "/products?subCategory=Main+Ridge" },
+            { label: "Main Ridge Cap", href: "/products?subCategory=Main+Ridge+Cap" },
+            { label: "Side Ridge Cap", href: "/products?subCategory=Side+Ridge+Cap" },
+            { label: "Wall Flashing Board", href: "/products?subCategory=Wall+Flashing+Board" },
+            { label: "Tile Sheet Plain Ridges", href: "/products?subCategory=Tile+Sheet+Plain+Ridges" },
+            { label: "3 Way Ridge", href: "/products?subCategory=3+Way+Ridge" },
+            { label: "4 Way Ridge", href: "/products?subCategory=4+Way+Ridge" },
+            { label: "Fascia Board", href: "/products?subCategory=Fascia+Board" },
+            { label: "Gutter Drop Outlet", href: "/products?subCategory=Gutter+Drop+Outlet" },
+            { label: "Gutter Drain End Cap", href: "/products?subCategory=Gutter+Drain+End+Cap" },
+            { label: "End Cap", href: "/products?subCategory=End+Cap" },
+            { label: "Polycarbonate Base Plates", href: "/products?subCategory=Polycarbonate+Base+Plates" },
+            { label: "Gutter Joiner", href: "/products?subCategory=Gutter+Joiner" },
+            { label: "UPVC Gutter", href: "/products?subCategory=UPVC+Gutter" },
+            { label: "Face Curve sheets", href: "/products?subCategory=Face+Curve+sheets" },
+            { label: "Transparent sheets", href: "/products?subCategory=Transparent+sheets" },
+            { label: "UPVC Ridge", href: "/products?subCategory=UPVC+Ridge" },
+            { label: "UPVC Corner", href: "/products?subCategory=UPVC+Corner" },
+            { label: "Fixer Set", href: "/products?subCategory=Fixer+Set" },
+            { label: "Air Ventilator", href: "/products?subCategory=Air+Ventilator" },
+        ],
+    },
+];
+
+export const ALUMINIUM_SHEETS_ITEMS = [
+    {
+        label: "Carrugated Sheets",
+        href: "/aluminium-profile-sheet",
+        subItems: [
+            { label: "Circular Corrugated sheets", href: "/aluminium-profile-sheet" },
+        ],
+    },
+    {
+        label: "Trapezodial Sheets",
+        href: "/aluminium-profile-sheet",
+        subItems: [
+            { label: "Modern Trough sheets", href: "/aluminium-profile-sheet" },
+            { label: "Troughed sheets", href: "/aluminium-profile-sheet" },
+            { label: "Hi-Crest sheets", href: "/aluminium-profile-sheet" },
+            { label: "Tiled Profile sheets", href: "/aluminium-profile-sheet" },
+        ],
+    },
+];
+
+export const SINGLE_DROPDOWN_MENUS = [
+    {
+        id: "structural-steel",
+        label: "Structural Steel",
+        mainHref: "/products?category=Structural+Steel",
+        items: STRUCTURAL_STEEL_ITEMS,
+    },
+    {
+        id: "insulation",
+        label: "Insulation",
+        mainHref: "/puff-panel",
+        items: INSULATION_ITEMS,
+    },
+    {
+        id: "accessories",
+        label: "Accessories",
+        mainHref: "/accessories",
+        items: ACCESSORIES_ITEMS,
+    },
+    {
+        id: "polycarbonate",
+        label: "Polycarbonate",
+        mainHref: "/poly-sheet",
+        items: POLYCARBONATE_ITEMS,
+    },
+    {
+        id: "upva",
+        label: "UPVA",
+        mainHref: "/products?category=UPVC",
+        items: UPVA_ITEMS,
+    },
+    {
+        id: "aluminium-sheets",
+        label: "Aluminium Sheets",
+        mainHref: "/aluminium-profile-sheet",
+        items: ALUMINIUM_SHEETS_ITEMS,
+    },
+];
 
 /* ---------------- Reusable image slider used inside the Accessories card ---------------- */
 function ImageSlider({ images, alt }) {
@@ -121,6 +324,40 @@ export default function Navbar() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [search, setSearch] = useState("");
 
+    // Sub-navbar dropdown and mobile states
+    const [activeDropdown, setActiveDropdown] = useState(null); // 'mild-steel' | menu.id | 'help-support' | null
+    const [activeMildCategory, setActiveMildCategory] = useState("colour-coated");
+    const [mobileMildOpen, setMobileMildOpen] = useState(false);
+    const [mobileAccordionState, setMobileAccordionState] = useState({});
+    const closeTimeout = useRef(null);
+    const location = useLocation();
+
+    const toggleMobileMenu = (id) => {
+        setMobileAccordionState((prev) => ({
+            ...prev,
+            [id]: !prev[id],
+        }));
+    };
+
+    // Auto-close dropdowns when URL path or query params change
+    useEffect(() => {
+        setActiveDropdown(null);
+        setIsMobileOpen(false);
+    }, [location.pathname, location.search]);
+
+    const handleMouseEnter = (menuName) => {
+        if (closeTimeout.current) clearTimeout(closeTimeout.current);
+        setActiveDropdown(menuName);
+    };
+
+    const handleMouseLeave = () => {
+        closeTimeout.current = setTimeout(() => {
+            setActiveDropdown(null);
+        }, 140);
+    };
+
+    const currentMildCategoryObj =
+        MILD_STEEL_CATEGORIES.find((c) => c.id === activeMildCategory) || MILD_STEEL_CATEGORIES[0];
 
     const filteredCategories = categoryListData.filter((item) =>
         item.label.toLowerCase().includes(search.toLowerCase())
@@ -328,6 +565,316 @@ export default function Navbar() {
                 </div>
             </div>
 
+            {/* ================= SUB NAVBAR ================= */}
+            <div className="w-full bg-white border-b border-slate-200 hidden lg:block select-none">
+                <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 h-[44px] flex items-center justify-between text-sm relative">
+
+                    {/* LEFT NAV ITEMS: Mild Steel, Structural Steel, Insulation, Accessories, Polycarbonate, UPVA, Aluminium Sheets */}
+                    <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 h-full">
+
+                        {/* 1. Mild Steel (Dropdown on hover with cascading flyout) */}
+                        <div
+                            className="relative h-full flex items-center"
+                            onMouseEnter={() => handleMouseEnter("mild-steel")}
+                            onMouseLeave={handleMouseLeave}
+                        >
+                            <Link
+                                to="/products?category=Mild+Steel"
+                                className={`flex items-center gap-1 h-full px-1 text-[13px] xl:text-[13.5px] font-medium transition-colors duration-150 whitespace-nowrap ${
+                                    activeDropdown === "mild-steel"
+                                        ? "text-[#1849A9]"
+                                        : "text-slate-700 hover:text-[#1849A9]"
+                                }`}
+                            >
+                                <span>Mild Steel</span>
+                                <HiOutlineChevronDown
+                                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                                        activeDropdown === "mild-steel" ? "rotate-180 text-[#1849A9]" : "text-slate-500"
+                                    }`}
+                                />
+                                {activeDropdown === "mild-steel" && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#1849A9] rounded-t-sm" />
+                                )}
+                            </Link>
+
+                            {/* Cascading 2-tier Flyout Menu for Mild Steel */}
+                            {activeDropdown === "mild-steel" && (
+                                <div
+                                    className="absolute left-0 top-full pt-1 z-50 animate-[popIn_0.15s_ease-out]"
+                                    onMouseEnter={() => handleMouseEnter("mild-steel")}
+                                    onMouseLeave={handleMouseLeave}
+                                >
+                                    <div className="bg-white rounded-xl shadow-[0_16px_40px_rgba(15,23,42,0.14)] border border-slate-200/90 flex overflow-hidden">
+                                        {/* Left Column: Categories (No Wire rods) */}
+                                        <div className="w-52 py-2 border-r border-slate-100 flex flex-col bg-slate-50/50">
+                                            {MILD_STEEL_CATEGORIES.map((cat) => {
+                                                const isSelected = activeMildCategory === cat.id;
+                                                return (
+                                                    <Link
+                                                        key={cat.id}
+                                                        to={`/products?category=${encodeURIComponent(cat.categoryFilter)}`}
+                                                        onMouseEnter={() => setActiveMildCategory(cat.id)}
+                                                        onClick={() => setActiveDropdown(null)}
+                                                        className={`flex items-center justify-between px-4 py-3 text-[13.5px] transition-colors cursor-pointer ${
+                                                            isSelected
+                                                                ? "bg-[#EEF4FF] text-[#1849A9] font-semibold"
+                                                                : "text-slate-700 hover:bg-slate-100/70 hover:text-slate-900 font-normal"
+                                                        }`}
+                                                    >
+                                                        <span>{cat.label}</span>
+                                                        <HiOutlineChevronRight
+                                                            className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+                                                                isSelected ? "text-[#1849A9]" : "text-slate-400"
+                                                            }`}
+                                                        />
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Right Column: Subcategories for Active Category */}
+                                        <div className="w-60 py-2.5 px-2 bg-white flex flex-col justify-start min-h-[190px]">
+                                            {currentMildCategoryObj.subCategories.map((sub) => (
+                                                <Link
+                                                    key={sub.label}
+                                                    to={sub.href}
+                                                    onClick={() => setActiveDropdown(null)}
+                                                    className="px-3.5 py-2.5 rounded-lg text-[13.5px] text-slate-700 hover:text-[#1849A9] hover:bg-slate-50 transition-colors block font-normal"
+                                                >
+                                                    {sub.label}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 2 to 7. Dropdown Menus: Structural Steel, Insulation, Accessories, Polycarbonate, UPVA, Aluminium Sheets */}
+                        {SINGLE_DROPDOWN_MENUS.map((menu) => (
+                            <div
+                                key={menu.id}
+                                className="relative h-full flex items-center"
+                                onMouseEnter={() => handleMouseEnter(menu.id)}
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                <Link
+                                    to={menu.mainHref}
+                                    className={`flex items-center gap-1 h-full px-1 text-[13px] xl:text-[13.5px] font-medium transition-colors duration-150 whitespace-nowrap ${
+                                        activeDropdown === menu.id
+                                            ? "text-[#1849A9]"
+                                            : "text-slate-700 hover:text-[#1849A9]"
+                                    }`}
+                                >
+                                    <span>{menu.label}</span>
+                                    <HiOutlineChevronDown
+                                        className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                                            activeDropdown === menu.id ? "rotate-180 text-[#1849A9]" : "text-slate-500"
+                                        }`}
+                                    />
+                                    {activeDropdown === menu.id && (
+                                        <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#1849A9] rounded-t-sm" />
+                                    )}
+                                </Link>
+
+                                {/* Dropdown Menu Panel */}
+                                {activeDropdown === menu.id && (
+                                    <div
+                                        className="absolute left-0 top-full pt-1 z-50 animate-[popIn_0.15s_ease-out]"
+                                        onMouseEnter={() => handleMouseEnter(menu.id)}
+                                        onMouseLeave={handleMouseLeave}
+                                    >
+                                        <div className="w-56 min-w-[210px] bg-white rounded-xl shadow-[0_16px_40px_rgba(15,23,42,0.14)] border border-slate-200/90 py-2">
+                                            {menu.items.map((item) => {
+                                                const hasSubItems = item.subItems && item.subItems.length > 0;
+                                                return hasSubItems ? (
+                                                    <div
+                                                        key={item.label}
+                                                        className="relative group/sub"
+                                                    >
+                                                        <Link
+                                                            to={item.href}
+                                                            onClick={() => setActiveDropdown(null)}
+                                                            className="flex items-center justify-between px-4 py-2.5 text-[13.5px] text-slate-700 hover:text-[#1849A9] hover:bg-[#EEF4FF]/50 transition-colors font-normal whitespace-nowrap group-hover/sub:bg-[#EEF4FF]/50 group-hover/sub:text-[#1849A9]"
+                                                        >
+                                                            <span>{item.label}</span>
+                                                            <HiOutlineChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover/sub:text-[#1849A9] shrink-0 ml-3" />
+                                                        </Link>
+
+                                                        {/* Flyout Submenu */}
+                                                        <div
+                                                            className={`absolute top-0 hidden group-hover/sub:block z-50 animate-[popIn_0.12s_ease-out] ${
+                                                                menu.flyoutAlignLeft
+                                                                    ? "right-full mr-1.5"
+                                                                    : "left-full ml-1.5"
+                                                            }`}
+                                                        >
+                                                            {/* Invisible Bridge */}
+                                                            <div
+                                                                className={`absolute top-0 bottom-0 w-3.5 pointer-events-auto ${
+                                                                    menu.flyoutAlignLeft ? "-right-3.5" : "-left-3.5"
+                                                                }`}
+                                                            />
+                                                            <div
+                                                                className={`bg-white rounded-xl shadow-[0_16px_40px_rgba(15,23,42,0.16)] border border-slate-200/90 ${
+                                                                    item.isWideSubMenu
+                                                                        ? "w-[360px] sm:w-[420px] p-2.5 max-h-[380px] overflow-y-auto"
+                                                                        : "w-64 min-w-[230px] py-2"
+                                                                }`}
+                                                            >
+                                                                {item.isWideSubMenu ? (
+                                                                    <div>
+                                                                        <div className="px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-100 mb-1.5">
+                                                                            {item.label}
+                                                                        </div>
+                                                                        <div className="grid grid-cols-2 gap-1">
+                                                                            {item.subItems.map((sub) => (
+                                                                                <Link
+                                                                                    key={sub.label}
+                                                                                    to={sub.href}
+                                                                                    onClick={() => setActiveDropdown(null)}
+                                                                                    className="px-2.5 py-1.5 text-[12.5px] rounded-md text-slate-700 hover:text-[#1849A9] hover:bg-slate-50 transition-colors block font-normal truncate"
+                                                                                    title={sub.label}
+                                                                                >
+                                                                                    • {sub.label}
+                                                                                </Link>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    item.subItems.map((sub) => (
+                                                                        <Link
+                                                                            key={sub.label}
+                                                                            to={sub.href}
+                                                                            onClick={() => setActiveDropdown(null)}
+                                                                            className="px-4 py-2 text-[13px] text-slate-700 hover:text-[#1849A9] hover:bg-[#EEF4FF]/50 transition-colors block font-normal whitespace-nowrap"
+                                                                        >
+                                                                            {sub.label}
+                                                                        </Link>
+                                                                    ))
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <Link
+                                                        key={item.label}
+                                                        to={item.href}
+                                                        onClick={() => setActiveDropdown(null)}
+                                                        className="px-4 py-2.5 text-[13.5px] text-slate-700 hover:text-[#1849A9] hover:bg-[#EEF4FF]/50 transition-colors block font-normal whitespace-nowrap"
+                                                    >
+                                                        {item.label}
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+
+                    </div>
+
+                    {/* RIGHT NAV ITEM — Help & support */}
+                    <div
+                        className="relative h-full flex items-center ml-auto"
+                        onMouseEnter={() => handleMouseEnter("help-support")}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => setActiveDropdown(activeDropdown === "help-support" ? null : "help-support")}
+                            className={`flex items-center gap-2 h-full px-1 text-[13.5px] lg:text-[14px] font-medium transition-colors duration-150 cursor-pointer ${
+                                activeDropdown === "help-support"
+                                    ? "text-[#1849A9]"
+                                    : "text-slate-700 hover:text-[#1849A9]"
+                            }`}
+                        >
+                            <Headphones className={`w-4 h-4 transition-colors ${
+                                activeDropdown === "help-support" ? "text-[#1849A9]" : "text-slate-700"
+                            }`} />
+                            <span>Help & support</span>
+                            <HiOutlineChevronDown
+                                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                                    activeDropdown === "help-support" ? "rotate-180 text-[#1849A9]" : "text-slate-500"
+                                }`}
+                            />
+                            {activeDropdown === "help-support" && (
+                                <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#1849A9] rounded-t-sm" />
+                            )}
+                        </button>
+
+                        {/* Help & Support Dropdown Card */}
+                        {activeDropdown === "help-support" && (
+                            <div
+                                className="absolute right-0 top-full pt-1 z-50 animate-[popIn_0.15s_ease-out]"
+                                onMouseEnter={() => handleMouseEnter("help-support")}
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                <div className="w-80 bg-white rounded-xl shadow-[0_16px_40px_rgba(15,23,42,0.14)] border border-slate-200/90 p-5 overflow-hidden">
+                                    <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                                        <div>
+                                            <h4 className="text-sm font-semibold text-slate-900">Help & Support</h4>
+                                            <p className="text-xs text-slate-500">We're here to assist you</p>
+                                        </div>
+                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                            Available
+                                        </span>
+                                    </div>
+
+                                    <div className="py-3 space-y-2.5">
+                                        <a
+                                            href="tel:+919860118911"
+                                            className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors group"
+                                        >
+                                            <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#1849A9] flex items-center justify-center shrink-0 group-hover:bg-[#1849A9] group-hover:text-white transition-colors">
+                                                <HiOutlinePhone className="text-lg" />
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-xs text-slate-500">Customer Helpline</p>
+                                                <p className="text-sm font-semibold text-slate-800 group-hover:text-[#1849A9] transition-colors">
+                                                    +91 9860118911
+                                                </p>
+                                            </div>
+                                        </a>
+
+                                        <a
+                                            href="mailto:evershinengp@gmail.com"
+                                            className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors group"
+                                        >
+                                            <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                                <HiOutlineMail className="text-lg" />
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-xs text-slate-500">Email Support</p>
+                                                <p className="text-sm font-semibold text-slate-800 group-hover:text-emerald-700 transition-colors">
+                                                    evershinengp@gmail.com
+                                                </p>
+                                            </div>
+                                        </a>
+
+                                        <div className="flex items-center gap-3 p-2.5 text-xs text-slate-600 bg-slate-50 rounded-lg">
+                                            <HiOutlineClock className="text-base text-slate-400 shrink-0" />
+                                            <span>Mon – Sat: 09:00 AM – 06:00 PM</span>
+                                        </div>
+                                    </div>
+
+                                    <Link
+                                        to="/contact"
+                                        onClick={() => setActiveDropdown(null)}
+                                        className="w-full mt-1 flex items-center justify-center py-2.5 px-4 bg-[#1849A9] hover:bg-[#123985] text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
+                                    >
+                                        Contact Support Page
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                </div>
+            </div>
+
             {/* ================= MOBILE MENU ================= */}
             <div
                 className={`md:hidden overflow-hidden bg-white border-t border-light-gray transition-all duration-300 ease-out ${isMobileOpen ? "max-h-[calc(100vh-64px)] opacity-100 overflow-y-auto" : "max-h-0 opacity-0"
@@ -352,6 +899,116 @@ export default function Navbar() {
                         <HiOutlineLocationMarker className="text-xl shrink-0" />
                         <span>Select delivery location</span>
                     </button>
+
+                    <div className="h-px bg-light-gray" />
+
+                    {/* MOBILE SUB-NAV SECTIONS */}
+                    <div className="flex flex-col gap-2.5">
+                        {/* Mild Steel mobile accordion */}
+                        <div className="border border-slate-200 rounded-lg overflow-hidden">
+                            <button
+                                onClick={() => setMobileMildOpen(!mobileMildOpen)}
+                                className="w-full flex items-center justify-between px-3.5 py-2.5 bg-slate-50 text-sm font-semibold text-slate-800"
+                            >
+                                <span>Mild Steel</span>
+                                <HiOutlineChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileMildOpen ? "rotate-180" : ""}`} />
+                            </button>
+                            {mobileMildOpen && (
+                                <div className="p-3 bg-white space-y-3 border-t border-slate-100">
+                                    {MILD_STEEL_CATEGORIES.map((cat) => (
+                                        <div key={cat.id}>
+                                            <Link
+                                                to={`/products?category=${encodeURIComponent(cat.categoryFilter)}`}
+                                                onClick={() => setIsMobileOpen(false)}
+                                                className="text-xs font-bold text-[#1849A9] block mb-1"
+                                            >
+                                                {cat.label}
+                                            </Link>
+                                            <div className="pl-2 space-y-1">
+                                                {cat.subCategories.map((sub) => (
+                                                    <Link
+                                                        key={sub.label}
+                                                        to={sub.href}
+                                                        onClick={() => setIsMobileOpen(false)}
+                                                        className="text-xs text-slate-600 block py-0.5 hover:text-[#1849A9]"
+                                                    >
+                                                        • {sub.label}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Single Dropdown Menus mobile accordions: Structural Steel, Insulation, Accessories, Polycarbonate, UPVA, Aluminium Sheets */}
+                        {SINGLE_DROPDOWN_MENUS.map((menu) => {
+                            const isOpen = Boolean(mobileAccordionState[menu.id]);
+                            return (
+                                <div key={menu.id} className="border border-slate-200 rounded-lg overflow-hidden">
+                                    <button
+                                        onClick={() => toggleMobileMenu(menu.id)}
+                                        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-slate-50 text-sm font-semibold text-slate-800"
+                                    >
+                                        <span>{menu.label}</span>
+                                        <HiOutlineChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+                                    </button>
+                                    {isOpen && (
+                                        <div className="p-3 bg-white space-y-2.5 border-t border-slate-100">
+                                            {menu.items.map((item) => {
+                                                if (item.subItems && item.subItems.length > 0) {
+                                                    return (
+                                                        <div key={item.label} className="space-y-1">
+                                                            <Link
+                                                                to={item.href}
+                                                                onClick={() => setIsMobileOpen(false)}
+                                                                className="text-xs font-bold text-[#1849A9] block"
+                                                            >
+                                                                {item.label}
+                                                            </Link>
+                                                            <div className="pl-2.5 space-y-1 border-l border-slate-100 ml-1">
+                                                                {item.subItems.map((sub) => (
+                                                                    <Link
+                                                                        key={sub.label}
+                                                                        to={sub.href}
+                                                                        onClick={() => setIsMobileOpen(false)}
+                                                                        className="text-xs text-slate-600 block py-0.5 hover:text-[#1849A9]"
+                                                                    >
+                                                                        • {sub.label}
+                                                                    </Link>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+                                                return (
+                                                    <Link
+                                                        key={item.label}
+                                                        to={item.href}
+                                                        onClick={() => setIsMobileOpen(false)}
+                                                        className="text-xs font-medium text-slate-700 block py-1 hover:text-[#1849A9]"
+                                                    >
+                                                        • {item.label}
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+
+
+                        {/* Help & Support Button */}
+                        <a
+                            href="tel:+919860118911"
+                            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-blue-50 text-[#1849A9] text-xs font-semibold"
+                        >
+                            <Headphones className="w-4 h-4" />
+                            <span>Help: +91 9860118911</span>
+                        </a>
+                    </div>
 
                     <div className="h-px bg-light-gray" />
 

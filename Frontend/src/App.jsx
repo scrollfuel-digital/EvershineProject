@@ -27,6 +27,7 @@ import Contact from "./pages/Contactpage/Contact";
 import Categories from "./pages/catergoriespage/Categories";
 import AllCategories from "./pages/catergoriespage/AllCategories";
 import Products from "./pages/Products";
+import Blogs from "./pages/Blogspage/Blogs";
 
 // Dedicated Product Pages in productpage folder
 import AccessoriesPage from "./pages/productpage/MoreProducts/AccessoriesPage";
@@ -58,6 +59,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/blogs" element={<Blogs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/products" element={<Products />} />
@@ -103,6 +105,7 @@ function App() {
         <Route path="/aluminium-profile-sheet" element={<AluminiumProfileSheetPage />} />
         <Route path="/baregalvalume-profile-sheet" element={<BaregalvalumeProfileSheetPage />} />
         <Route path="/crimping-profile-sheet" element={<CrimpingProfileSheetPage />} />
+        <Route path="/crimping" element={<CrimpingProfileSheetPage />} />
         <Route path="/deck-sheet" element={<DeckSheetPage />} />
         <Route path="/gc-sheet" element={<GCSheetPage />} />
         <Route path="/gi-angle" element={<GIAnglePage />} />
@@ -110,15 +113,22 @@ function App() {
         <Route path="/louvres" element={<LouvresPage />} />
         <Route path="/louvers" element={<LouvresPage />} />
         <Route path="/multiwall-sheet" element={<MultiwallSheetPage />} />
+        <Route path="/multi-wall-sheets" element={<MultiwallSheetPage />} />
         <Route path="/peb-structure" element={<PEBStructurePage />} />
         <Route path="/poly-sheet" element={<PolySheetPage />} />
+        <Route path="/polycarbonate-sheets" element={<PolySheetPage />} />
         <Route path="/ppgl-ppgi" element={<PPGLPPGIPage />} />
         <Route path="/puff-panel" element={<PuffPanelPage />} />
+        <Route path="/puff-panal" element={<PuffPanelPage />} />
         <Route path="/standing-seam" element={<StandingSeamPage />} />
         <Route path="/tile-profile" element={<TileProfilePage />} />
         <Route path="/turbo-ventilators" element={<TurboVentilatorsPage />} />
         <Route path="/xlpe" element={<XLPEPage />} />
         <Route path="/z-purlin-cpurlin" element={<ZPurlinCPurlinPage />} />
+        <Route path="/carrugated-sheets" element={<AluminiumProfileSheetPage />} />
+        <Route path="/corrugated-sheets" element={<AluminiumProfileSheetPage />} />
+        <Route path="/trapezodial-sheets" element={<AluminiumProfileSheetPage />} />
+        <Route path="/trapezoidal-sheets" element={<AluminiumProfileSheetPage />} />
 
         {/* Dynamic Nested Hierarchical Product Routes (Wildcard Fallbacks) */}
         <Route path="/allproduct/mildsteel" element={<Products />} />
