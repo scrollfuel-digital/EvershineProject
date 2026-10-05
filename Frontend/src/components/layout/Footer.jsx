@@ -6,10 +6,10 @@ import logo from "../../assets/Evershinelogo.png";
 const quickLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Projects", href: "/projects" },
+  { label: "Products", href: "/products" },
+  { label: "Blogs", href: "/blogs" },
   { label: "Contact Us", href: "/contact" },
   { label: "Request a Quote", href: "/contact" },
- 
 ];
 
 const products = [
@@ -20,6 +20,7 @@ const products = [
   { label: "Decking Sheets", href: "/deck-sheet" },
   { label: "Structural Components", href: "/gi-angle" },
   { label: "Building Accessories", href: "/accessories" },
+  { label: "Blogs", href: "/blogs" },
 ];
 
 const services = [

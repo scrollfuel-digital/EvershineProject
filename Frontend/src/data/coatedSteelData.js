@@ -74,13 +74,13 @@ export const COATED_STEEL_PRODUCTS = [
   },
   {
     id: 605,
-    title: 'JSW Steel Galvalume Steel Sheets IS 15961:2012 YS550',
+    title: 'JSW Steel Galvalume Steel Sheets 15961_2012 YS_550',
     brand: 'JSW Steel',
     category: 'Coated Steel',
     subCategory: 'Galvalume sheets',
     group: 'Mild Steel',
-    grade: 'IS 15961:2012',
-    subGrade: 'YS 550',
+    grade: '15961_2012',
+    subGrade: 'YS_550',
     specs: {
       thickness: '0.3 - 1.2 mm',
       length: '500 - 12000 mm',
@@ -240,23 +240,6 @@ export const COATED_STEEL_PRODUCTS = [
     specs: {
       thickness: '0.3 - 3 mm',
       length: '1500 - 6000 mm',
-      width: '900 - 1500 mm'
-    },
-    delivery: 'Delivery in 2 - 5 days',
-    img: galvanizedSheetsImg
-  },
-  {
-    id: 615,
-    title: 'JSW Steel Galvalume Steel Sheets IS 15961:2012 YS 550',
-    brand: 'JSW',
-    category: 'Coated Steel',
-    subCategory: 'Galvalume sheets',
-    group: 'Mild Steel',
-    grade: 'IS 15961:2012',
-    subGrade: 'YS 550',
-    specs: {
-      thickness: '0.3 - 1.2 mm',
-      length: '500 - 12000 mm',
       width: '900 - 1500 mm'
     },
     delivery: 'Delivery in 2 - 5 days',
@@ -422,6 +405,7 @@ export const COATED_STEEL_PRODUCTS = [
     id: 625,
     title: 'TATA Zincalume Galvalume Steel Sheets IS 15961:2012 G550',
     brand: 'TATA',
+    subBrand: 'Zincalume',
     category: 'Coated Steel',
     subCategory: 'Galvalume sheets',
     group: 'Mild Steel',

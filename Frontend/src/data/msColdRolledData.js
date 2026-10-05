@@ -714,7 +714,7 @@ export const MS_COLD_ROLLED_PRODUCTS = [
     category: 'MS Cold rolled',
     subCategory: 'Cold rolled coils',
     group: 'Mild Steel',
-    grade: 'IS 513:2016',
+    grade: 'HSLA 340',
     subGrade: 'HSLA 340',
     specs: {
       thickness: '0.35 - 3 mm',

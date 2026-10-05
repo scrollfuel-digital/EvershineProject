@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ChevronRight,
   CheckCircle2,
@@ -101,16 +102,16 @@ export default function BaregalvalumeProfileSheetPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* BREADCRUMB NAVIGATION */}
         <nav className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-6 flex-wrap">
-          <a href="/" className="hover:text-teal-600 transition">
+          <Link to="/" className="hover:text-teal-600 transition">
             Home
-          </a>
+          </Link>
           <ChevronRight className="w-4 h-4 text-slate-400" />
-          <a
-            href="/allproduct/mildsteel/deck-sheet"
+          <Link
+            to="/products"
             className="hover:text-teal-600 transition"
           >
             All Products
-          </a>
+          </Link>
           <ChevronRight className="w-4 h-4 text-slate-400" />
           <span className="font-semibold text-slate-900">
             Bare Galvalume Roofing Sheets
