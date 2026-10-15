@@ -1,6 +1,6 @@
 import React from 'react';
-import ProductDetails from '../ProductDetails';
+import ProductCatalogue from '../ProductCatalogue';
 
 export default function AccessoriesPage() {
-  return <ProductDetails initialCategory="Accessories" />;
+  return <ProductCatalogue initialCategory="Accessories" />;
 }

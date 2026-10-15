@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useFilters } from "./useFilters";
 import {
   GRADES_LIST,
   SUB_BRANDS_LIST,
@@ -152,6 +153,23 @@ export function useProductFilters(
   initialCategories = [],
   initialSubCategories = []
 ) {
+  // Connect with centralized filter specifications service
+  const liveFilters = useFilters();
+
+  const effectiveBrandsList = useMemo(() => {
+    if (liveFilters?.brands && liveFilters.brands.length > 0) {
+      return liveFilters.brands.map((b) => b.name);
+    }
+    return BRANDS_LIST;
+  }, [liveFilters?.brands]);
+
+  const effectiveSubBrandsList = useMemo(() => {
+    if (liveFilters?.subBrands && liveFilters.subBrands.length > 0) {
+      return liveFilters.subBrands.map((sb) => sb.name);
+    }
+    return SUB_BRANDS_LIST;
+  }, [liveFilters?.subBrands]);
+
   // Filter Checkbox Selection States
   const [selectedCategories, setSelectedCategories] = useState(
     Array.isArray(initialCategories) ? initialCategories : []
@@ -409,7 +427,7 @@ export function useProductFilters(
       return CATEGORY_SPECIFIC_FILTERS['colour coated'].subBrands;
     }
 
-    if (!isCategoryActive) return SUB_BRANDS_LIST;
+    if (!isCategoryActive) return effectiveSubBrandsList;
 
     const catSubBrands = new Set();
     categoryProducts.forEach(p => {
@@ -421,7 +439,7 @@ export function useProductFilters(
     const result = [];
     const addedLower = new Set();
 
-    SUB_BRANDS_LIST.forEach(sb => {
+    effectiveSubBrandsList.forEach(sb => {
       const sbLower = sb.toLowerCase();
       for (const csb of catSubBrands) {
         if (csb.toLowerCase() === sbLower) {
@@ -440,7 +458,7 @@ export function useProductFilters(
     });
 
     return result;
-  }, [categoryProducts, isCategoryActive, activeSubCategoryFilterKey, isColourCoatedActive]);
+  }, [categoryProducts, isCategoryActive, activeSubCategoryFilterKey, isColourCoatedActive, effectiveSubBrandsList]);
 
   // Dynamically compute available Brands related to active category
   const availableBrands = useMemo(() => {
@@ -454,7 +472,7 @@ export function useProductFilters(
       return CATEGORY_SPECIFIC_FILTERS['colour coated'].brands;
     }
 
-    if (!isCategoryActive) return BRANDS_LIST;
+    if (!isCategoryActive) return effectiveBrandsList;
 
     const catBrands = new Set();
     categoryProducts.forEach(p => {
@@ -466,7 +484,7 @@ export function useProductFilters(
     const result = [];
     const addedLower = new Set();
 
-    BRANDS_LIST.forEach(b => {
+    effectiveBrandsList.forEach(b => {
       const bLower = b.toLowerCase();
       for (const cb of catBrands) {
         if (cb.toLowerCase() === bLower) {
@@ -485,7 +503,7 @@ export function useProductFilters(
     });
 
     return result;
-  }, [categoryProducts, isCategoryActive]);
+  }, [categoryProducts, isCategoryActive, activeSubCategoryFilterKey, isColourCoatedActive, effectiveBrandsList]);
 
   // Dynamically compute available Sub-grades related to active category
   const availableSubGrades = useMemo(() => {

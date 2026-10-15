@@ -1,5 +1,5 @@
-import ProductDetails from "./ProductDetails";
+import ProductCatalogue from "./ProductCatalogue";
 
 export default function ProductList() {
-    return <ProductDetails />;
+    return <ProductCatalogue />;
 }

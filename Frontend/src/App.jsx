@@ -1,9 +1,14 @@
 import "./App.css";
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
+
+// Admin Panel
+import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminContent from "./pages/Admin/AdminContent";
+import { FilterProvider } from "./context/FilterContext";
 
 // ScrollToTop Helper Component
 function ScrollToTop() {
@@ -27,6 +32,7 @@ import Contact from "./pages/Contactpage/Contact";
 import Categories from "./pages/catergoriespage/Categories";
 import AllCategories from "./pages/catergoriespage/AllCategories";
 import Products from "./pages/Products";
+import ProductDetails from "./pages/productpage/ProductDetails";
 import Blogs from "./pages/Blogspage/Blogs";
 
 // Dedicated Product Pages in productpage folder
@@ -50,23 +56,34 @@ import TurboVentilatorsPage from "./pages/productpage/MoreProducts/TurboVentilat
 import XLPEPage from "./pages/productpage/MoreProducts/XLPEPage";
 import ZPurlinCPurlinPage from "./pages/productpage/MoreProducts/ZPurlinCPurlinPage";
 
-function App() {
+function AppContent() {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith("/admin");
+
   return (
-    <BrowserRouter>
+    <>
       <ScrollToTop />
-      <Navbar />
+      {!isAdmin && <Navbar />}
 
       <Routes>
+        {/* Admin Portal Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="/admin/products" replace />} />
+          <Route path=":section/:subSection" element={<AdminContent />} />
+          <Route path=":section" element={<AdminContent />} />
+        </Route>
+
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/products/:slug" element={<ProductDetails />} />
+        <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/product" element={<Products />} />
         <Route path="/product-details" element={<Products />} />
         <Route path="/category/:categoryName" element={<Products />} />
-        <Route path="/product/:id" element={<Products />} />
 
         {/* Dedicated Hierarchical Category Routes */}
         <Route path="/allproduct/mildsteel/accessories" element={<AccessoriesPage />} />
@@ -142,11 +159,24 @@ function App() {
         <Route path="*" element={<Products />} />
       </Routes>
 
-      <Footer />
+      {!isAdmin && (
+        <>
+          <Footer />
+          {/* Floating Buttons */}
+          <CallButton />
+          <WhatsAppButton />
+        </>
+      )}
+    </>
+  );
+}
 
-      {/* Floating Buttons */}
-      <CallButton />
-      <WhatsAppButton />
+function App() {
+  return (
+    <BrowserRouter>
+      <FilterProvider>
+        <AppContent />
+      </FilterProvider>
     </BrowserRouter>
   );
 }

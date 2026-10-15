@@ -1,1177 +1,484 @@
-import { useState, useMemo, useEffect } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import {
-  ChevronRight,
-  ChevronLeft,
-  ChevronDown,
-  ChevronUp,
-  SlidersHorizontal,
-  Truck,
-  X,
-  ShoppingCart,
-  CheckCircle,
-  RotateCcw,
-  Search,
-  Tag
-} from 'lucide-react';
-import { categoryListData } from '../../data/categoryListData';
-import { CATEGORY_GROUPS, MS_HOT_ROLLED_SUB_CATEGORIES, COLOUR_COATED_SUB_CATEGORIES, COATED_STEEL_SUB_CATEGORIES, MS_COLD_ROLLED_SUB_CATEGORIES } from '../../data/filterData';
-import { SAMPLE_PRODUCTS } from '../../data/sampleProducts';
-import { useProductFilters } from '../../hooks/useProductFilters';
+import { useEffect, useState, useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { fetchProductBySlug } from "../../services/productService";
+import { useDataProcess } from "../../services/dataProccess";
 
-export default function ProductDetails({ initialCategory = null }) {
-  const { slug, categoryName, categorySlug } = useParams();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const queryCategory = searchParams.get('category');
-  const querySubCategory = searchParams.get('subCategory');
+export default function ProductDetails() {
+  const { slug } = useParams();
+  const { nameMap } = useDataProcess();
 
-  const currentSlug = slug || categoryName || categorySlug;
-
-  // Resolve category label from URL slug parameter
-  const matchedCategoryFromSlug = useMemo(() => {
-    if (!currentSlug) return null;
-    const cleanSlug = currentSlug.toLowerCase().replace(/^\//, '');
-    const found = categoryListData.find(cat => {
-      const catHref = cat.href.toLowerCase().replace(/^\//, '');
-      const catSlug = cat.label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      return catHref === cleanSlug || catSlug === cleanSlug || cat.label.toLowerCase() === cleanSlug;
-    });
-    return found ? found.label : null;
-  }, [currentSlug]);
-
-  // Track explicit user selection with fallback to URL slug / initialCategory / query params
-  const [userCategoryOverride, setUserCategoryOverride] = useState(null);
-  const selectedSubCategory = userCategoryOverride ?? (querySubCategory || matchedCategoryFromSlug || initialCategory || null);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selectedAttributes, setSelectedAttributes] = useState({});
+  const [quantity, setQuantity] = useState("");
+  const [activeTab, setActiveTab] = useState(0);
+  const [openMobileTabs, setOpenMobileTabs] = useState({ 0: true });
 
   useEffect(() => {
-    if (querySubCategory) {
-      setUserCategoryOverride(querySubCategory);
-    } else if (queryCategory) {
-      setUserCategoryOverride(null);
+    const controller = new AbortController();
+
+    async function loadProduct() {
+      if (!slug) return;
+      setLoading(true);
+      setError("");
+      setProduct(null);
+      setSelectedAttributes({});
+      setQuantity("");
+      setActiveTab(0);
+      setOpenMobileTabs({ 0: true });
+
+      try {
+        const data = await fetchProductBySlug(slug, controller.signal);
+        setProduct(data);
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          setError(err.message || "Unable to load product. Please try again.");
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
     }
-  }, [queryCategory, querySubCategory]);
 
-  const handleSubCategoryClick = (cat) => {
-    const isCurrentlyActive = selectedSubCategory === cat.label;
-    if (isCurrentlyActive) {
-      setUserCategoryOverride(null);
-      navigate('/products');
-    } else {
-      setUserCategoryOverride(cat.label);
-      navigate(cat.href);
+    loadProduct();
+
+    return () => controller.abort();
+  }, [slug]);
+
+  const attributes = useMemo(() => {
+    if (!product) return [];
+    if (Array.isArray(product.fullAttributeResponseDtos) && product.fullAttributeResponseDtos.length > 0) {
+      return product.fullAttributeResponseDtos;
     }
-  };
-
-  // Filter and Accordion State via useProductFilters custom hook
-  const effectiveInitialCategories = useMemo(() => {
-    if (queryCategory) return [queryCategory];
-    if (matchedCategoryFromSlug) return [matchedCategoryFromSlug];
-    if (initialCategory) return [initialCategory];
+    if (Array.isArray(product.attributes) && product.attributes.length > 0) {
+      return product.attributes;
+    }
     return [];
-  }, [queryCategory, matchedCategoryFromSlug, initialCategory]);
+  }, [product]);
 
-  const effectiveInitialSubCategories = useMemo(() => {
-    if (querySubCategory) return [querySubCategory];
+  const properties = useMemo(() => {
+    if (!product) return [];
+    if (Array.isArray(product.propertyRequestDtoList)) {
+      return product.propertyRequestDtoList;
+    }
     return [];
-  }, [querySubCategory]);
+  }, [product]);
 
-  const {
-    selectedCategories,
-    handleToggleCategory,
-    selectedSubCategories,
-    handleToggleSubCategory,
-    selectedGrades,
-    handleToggleGrade,
-    selectedSubBrands,
-    handleToggleSubBrand,
-    selectedBrands,
-    handleToggleBrand,
-    selectedSubGrades,
-    handleToggleSubGrade,
-    categoryOpen,
-    setCategoryOpen,
-    gradeOpen,
-    setGradeOpen,
-    subBrandOpen,
-    setSubBrandOpen,
-    brandOpen,
-    setBrandOpen,
-    subGradeOpen,
-    setSubGradeOpen,
-    gradeSearch,
-    setGradeSearch,
-    subBrandSearch,
-    setSubBrandSearch,
-    brandSearch,
-    setBrandSearch,
-    subGradeSearch,
-    setSubGradeSearch,
-    displayedGrades,
-    displayedSubBrands,
-    displayedBrands,
-    displayedSubGrades,
-    isCategoryActive,
-    availableGrades,
-    availableSubBrands,
-    availableBrands,
-    availableSubGrades,
-    filteredProducts,
-    handleClearFilters: clearFiltersHook,
-    hasActiveFilters
-  } = useProductFilters(
-    SAMPLE_PRODUCTS,
-    selectedSubCategory,
-    userCategoryOverride !== null || Boolean(querySubCategory),
-    effectiveInitialCategories,
-    effectiveInitialSubCategories
-  );
+  const resolvedBrand = useMemo(() => {
+    if (!product) return "—";
+    return (
+      (nameMap && product.brandId && nameMap.get(product.brandId)) ||
+      product.brand ||
+      product.brandName ||
+      product.title?.split(" ")[0] ||
+      "—"
+    );
+  }, [product, nameMap]);
 
-  const handleClearFilters = () => {
-    setUserCategoryOverride(null);
-    clearFiltersHook();
+  const resolvedCategory = useMemo(() => {
+    if (!product) return "";
+    return (
+      (nameMap && product.categoryId && nameMap.get(product.categoryId)) ||
+      product.category ||
+      product.categoryName ||
+      ""
+    );
+  }, [product, nameMap]);
+
+  const resetSelection = () => setSelectedAttributes({});
+
+  const selectAttribute = (label, value) => {
+    setSelectedAttributes((previous) => ({
+      ...previous,
+      [label]: value,
+    }));
   };
 
-  // Selected Product for purchase modal
-  const [activeModalProduct, setActiveModalProduct] = useState(null);
-  const [orderSubmitted, setOrderSubmitted] = useState(false);
-
-  // Pagination State: 7 rows of 3 cards = 21 cards per page
-  const ITEMS_PER_PAGE = 21;
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Reset to page 1 whenever filters or subcategory change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [
-    selectedCategories,
-    selectedSubCategories,
-    selectedGrades,
-    selectedSubBrands,
-    selectedBrands,
-    selectedSubGrades,
-    selectedSubCategory
-  ]);
-
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredProducts, currentPage]);
-
-  const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    window.scrollTo({ top: 300, behavior: 'smooth' });
+  const toggleMobileTab = (index) => {
+    setOpenMobileTabs((previous) => ({
+      ...previous,
+      [index]: !previous[index],
+    }));
   };
+
+  const safeTab = Math.min(activeTab, Math.max(0, properties.length - 1));
+  const activeProperty = properties[safeTab];
+  const tableEntries = activeProperty?.tableOfContent
+    ? Object.entries(activeProperty.tableOfContent)
+    : [];
+
+  if (loading) {
+    return (
+      <main className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20 pt-[80px] sm:pt-[95px] md:pt-[110px] lg:pt-[148px] pb-12 font-sans">
+        <div className="mx-auto w-full max-w-7xl animate-pulse space-y-6">
+          <div className="h-4 w-64 rounded bg-gray-200" />
+          <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[240px_minmax(0,1fr)_340px] xl:grid-cols-[280px_minmax(0,1fr)_360px]">
+            <div className="h-64 rounded-2xl bg-gray-100" />
+            <div className="space-y-4">
+              <div className="h-7 w-3/4 rounded bg-gray-200" />
+              <div className="h-4 w-32 rounded bg-gray-100" />
+              <div className="h-32 rounded-xl bg-gray-100" />
+              <div className="h-10 w-48 rounded bg-gray-100" />
+            </div>
+            <div className="h-64 rounded-2xl bg-gray-100" />
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <main className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20 pt-[80px] sm:pt-[95px] md:pt-[110px] lg:pt-[148px] pb-16 text-center font-sans">
+        <div className="mx-auto w-full max-w-7xl">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {error || "Product not found"}
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            Please check the product URL and try again.
+          </p>
+          <Link
+            to="/products"
+            className="mt-5 inline-block text-sm font-medium text-blue-700 hover:underline"
+          >
+            ← Back to All Products
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pt-[80px] md:pt-[125px] lg:pt-[138px] pb-12 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
+    <main className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20 pt-[80px] sm:pt-[95px] md:pt-[110px] lg:pt-[148px] pb-12 font-sans">
+      <div className="mx-auto w-full max-w-7xl">
+        {/* Breadcrumb Navigation */}
+        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-xs text-gray-500 sm:text-sm">
+          <Link to="/" className="hover:text-blue-700 transition-colors">
+            Home
+          </Link>
+          <span className="text-gray-400">›</span>
+          <Link to="/products" className="hover:text-blue-700 transition-colors">
+            All products
+          </Link>
+          {resolvedCategory && (
+            <>
+              <span className="text-gray-400">›</span>
+              <span className="text-gray-600">{resolvedCategory}</span>
+            </>
+          )}
+          <span className="text-gray-400">›</span>
+          <span className="font-medium text-gray-800 line-clamp-1 max-w-xs sm:max-w-md">
+            {product.title}
+          </span>
+        </nav>
 
+        {/* Main Product Section: 3-column on Desktop, stacked on Mobile */}
+        <section className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[240px_minmax(0,1fr)_340px] xl:grid-cols-[280px_minmax(0,1fr)_360px]">
+          {/* Product image (left) */}
+          <div className="flex items-center justify-center p-4 bg-white rounded-2xl border border-gray-200/80 shadow-2xs">
+            <img
+              src={product.imageUrl}
+              alt={product.title}
+              className="max-h-64 w-full max-w-[250px] object-contain"
+              loading="eager"
+            />
+          </div>
 
-        {/* Main Grid: Sidebar + Product Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+          {/* Product details & attribute selectors (center, left-aligned text) */}
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-semibold leading-snug text-gray-900">
+              {product.title}
+            </h1>
 
-          {/* Left Sidebar Filter Column matching JSW One MSME Reference Screenshot */}
-          <aside className="w-full lg:self-start space-y-3 z-10">
+            <p className="mt-2 text-sm text-gray-600">
+              Brand: <span className="font-semibold text-gray-900">{resolvedBrand}</span>
+            </p>
 
-            {/* Breadcrumb matching JSW One MSME screenshot */}
-            <div className="mb-2">
-              <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-3">
-                <a href="/" className="hover:text-blue-600 transition">Home</a>
-                <span className="text-slate-400 text-xs">›</span>
-                <span className="text-[#0F172A] font-medium">All products</span>
-              </nav>
+            {/* Attributes Container */}
+            {attributes.length > 0 && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                  <h2 className="text-sm sm:text-base font-semibold text-gray-900">
+                    Select attributes
+                  </h2>
 
-              {/* Filter Header: "Filter" on Left with 2-slider icon, "Clear filters" on Right */}
-              <div className="flex items-center justify-between pb-3">
-                <div className="flex items-center gap-2.5">
-                  <SlidersHorizontal className="w-5 h-5 text-slate-800" />
-                  <span className="text-xl font-bold text-[#0F172A]">Filter</span>
-                </div>
-                <button
-                  onClick={handleClearFilters}
-                  className="text-sm font-semibold text-[#1A56DB] hover:text-blue-800 hover:underline transition cursor-pointer"
-                >
-                  Clear filters
-                </button>
-              </div>
-            </div>
-
-            {/* 1. Category Accordion Card */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
-              <button
-                onClick={() => setCategoryOpen(!categoryOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
-              >
-                <span className="text-[15px] font-medium text-[#0F172A]">Category</span>
-                {categoryOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
-                )}
-              </button>
-
-              {categoryOpen && (
-                <div className="px-4 py-3.5 bg-white border-t border-[#E2E8F0] space-y-3">
-                  {CATEGORY_GROUPS.map((group, gIdx) => (
-                    <div key={group.groupName} className={gIdx > 0 ? "pt-1" : ""}>
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#4B5563] mb-2">
-                        {group.groupName}
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {group.items.map((item) => {
-                          const isChecked = selectedCategories.includes(item);
-                          if (item === 'Colour coated') {
-                            return (
-                              <div key={item} className="w-full flex flex-col gap-2">
-                                <span
-                                  onClick={() => handleToggleCategory(item)}
-                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
-                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                    }`}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => { }}
-                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                  />
-                                  <span>{item}</span>
-                                </span>
-
-                                {/* Ordered list of Sub-categories with clickable checkboxes directly below Colour coated */}
-                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
-                                  {COLOUR_COATED_SUB_CATEGORIES.map((subCat) => {
-                                    const isSubChecked = selectedSubCategories.includes(subCat);
-                                    return (
-                                      <span
-                                        key={subCat}
-                                        onClick={() => handleToggleSubCategory(subCat)}
-                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
-                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                          }`}
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          checked={isSubChecked}
-                                          onChange={() => { }}
-                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                        />
-                                        <span>{subCat}</span>
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            );
-                          }
-                          if (item === 'MS Hot rolled') {
-                            return (
-                              <div key={item} className="w-full flex flex-col gap-2">
-                                <span
-                                  onClick={() => handleToggleCategory(item)}
-                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
-                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                    }`}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => { }}
-                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                  />
-                                  <span>{item}</span>
-                                </span>
-
-                                {/* Ordered list of Sub-categories with clickable checkboxes directly below MS hot rolled */}
-                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
-                                  {MS_HOT_ROLLED_SUB_CATEGORIES.map((subCat) => {
-                                    const isSubChecked = selectedSubCategories.includes(subCat);
-                                    return (
-                                      <span
-                                        key={subCat}
-                                        onClick={() => handleToggleSubCategory(subCat)}
-                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
-                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                          }`}
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          checked={isSubChecked}
-                                          onChange={() => { }}
-                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                        />
-                                        <span>{subCat}</span>
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            );
-                          }
-                          if (item === 'Coated Steel') {
-                            return (
-                              <div key={item} className="w-full flex flex-col gap-2">
-                                <span
-                                  onClick={() => handleToggleCategory(item)}
-                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
-                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                    }`}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => { }}
-                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                  />
-                                  <span>{item}</span>
-                                </span>
-
-                                {/* Ordered list of Sub-categories with clickable checkboxes directly below Coated Steel */}
-                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
-                                  {COATED_STEEL_SUB_CATEGORIES.map((subCat) => {
-                                    const isSubChecked = selectedSubCategories.includes(subCat);
-                                    return (
-                                      <span
-                                        key={subCat}
-                                        onClick={() => handleToggleSubCategory(subCat)}
-                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
-                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                          }`}
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          checked={isSubChecked}
-                                          onChange={() => { }}
-                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                        />
-                                        <span>{subCat}</span>
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            );
-                          }
-                          if (item === 'MS Cold rolled') {
-                            return (
-                              <div key={item} className="w-full flex flex-col gap-2">
-                                <span
-                                  onClick={() => handleToggleCategory(item)}
-                                  className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isChecked
-                                      ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                    }`}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => { }}
-                                    className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                  />
-                                  <span>{item}</span>
-                                </span>
-
-                                {/* Ordered list of Sub-categories with clickable checkboxes directly below MS Cold rolled */}
-                                <div className="flex flex-col gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
-                                  {MS_COLD_ROLLED_SUB_CATEGORIES.map((subCat) => {
-                                    const isSubChecked = selectedSubCategories.includes(subCat);
-                                    return (
-                                      <span
-                                        key={subCat}
-                                        onClick={() => handleToggleSubCategory(subCat)}
-                                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${isSubChecked
-                                            ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                          }`}
-                                      >
-                                        <input
-                                          type="checkbox"
-                                          checked={isSubChecked}
-                                          onChange={() => { }}
-                                          className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                        />
-                                        <span>{subCat}</span>
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            );
-                          }
-                          return (
-                            <span
-                              key={item}
-                              onClick={() => handleToggleCategory(item)}
-                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
-                                  ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                  : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => { }}
-                                className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                              />
-                              <span>{item}</span>
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 2. Grade Accordion Card */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
-              <button
-                onClick={() => setGradeOpen(!gradeOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
-              >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
-                  Grade {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableGrades.length})</span>}
-                </span>
-                {gradeOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
-                )}
-              </button>
-
-              {gradeOpen && (
-                <div className="bg-white border-t border-[#E2E8F0]">
-                  <div className="p-3 border-b border-slate-100 bg-slate-50/50">
-                    <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
-                      <input
-                        type="text"
-                        placeholder="Search grade..."
-                        value={gradeSearch}
-                        onChange={(e) => setGradeSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
-                      />
-                      {gradeSearch && (
-                        <button
-                          onClick={() => setGradeSearch('')}
-                          className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 flex flex-wrap gap-2">
-                    {displayedGrades.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">
-                        {gradeSearch ? `No grades matching "${gradeSearch}"` : "No grades available for selected category"}
-                      </p>
-                    ) : (
-                      displayedGrades.map((grade) => {
-                        const isChecked = selectedGrades.includes(grade);
-                        return (
-                          <span
-                            key={grade}
-                            onClick={() => handleToggleGrade(grade)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
-                                ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                              }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => { }}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                            />
-                            <span>{grade}</span>
-                          </span>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 3. Sub brand Accordion Card */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
-              <button
-                onClick={() => setSubBrandOpen(!subBrandOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
-              >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
-                  Sub brand {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableSubBrands.length})</span>}
-                </span>
-                {subBrandOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
-                )}
-              </button>
-
-              {subBrandOpen && (
-                <div className="bg-white border-t border-[#E2E8F0]">
-                  <div className="p-3 border-b border-slate-100 bg-slate-50/50">
-                    <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
-                      <input
-                        type="text"
-                        placeholder="Search sub brand..."
-                        value={subBrandSearch}
-                        onChange={(e) => setSubBrandSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
-                      />
-                      {subBrandSearch && (
-                        <button
-                          onClick={() => setSubBrandSearch('')}
-                          className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 flex flex-wrap gap-2">
-                    {displayedSubBrands.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">
-                        {subBrandSearch ? `No sub-brands matching "${subBrandSearch}"` : "No sub-brands available for selected category"}
-                      </p>
-                    ) : (
-                      displayedSubBrands.map((subBrand) => {
-                        const isChecked = selectedSubBrands.includes(subBrand);
-                        return (
-                          <span
-                            key={subBrand}
-                            onClick={() => handleToggleSubBrand(subBrand)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
-                                ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                              }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => { }}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                            />
-                            <span>{subBrand}</span>
-                          </span>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 4. Brand Accordion Card */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
-              <button
-                onClick={() => setBrandOpen(!brandOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
-              >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
-                  Brand {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableBrands.length})</span>}
-                </span>
-                {brandOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
-                )}
-              </button>
-
-              {brandOpen && (
-                <div className="bg-white border-t border-[#E2E8F0]">
-                  <div className="p-3 border-b border-slate-100 bg-slate-50/50">
-                    <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
-                      <input
-                        type="text"
-                        placeholder="Search brand..."
-                        value={brandSearch}
-                        onChange={(e) => setBrandSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
-                      />
-                      {brandSearch && (
-                        <button
-                          onClick={() => setBrandSearch('')}
-                          className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 flex flex-wrap gap-2">
-                    {displayedBrands.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">
-                        {brandSearch ? `No brands matching "${brandSearch}"` : "No brands available for selected category"}
-                      </p>
-                    ) : (
-                      displayedBrands.map((brand) => {
-                        const isChecked = selectedBrands.includes(brand);
-                        return (
-                          <span
-                            key={brand}
-                            onClick={() => handleToggleBrand(brand)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
-                                ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                              }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => { }}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                            />
-                            <span>{brand}</span>
-                          </span>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 5. Sub grade Accordion Card */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
-              <button
-                onClick={() => setSubGradeOpen(!subGradeOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
-              >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
-                  Sub grade {isCategoryActive && <span className="text-xs font-normal text-slate-400">({availableSubGrades.length})</span>}
-                </span>
-                {subGradeOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
-                )}
-              </button>
-
-              {subGradeOpen && (
-                <div className="bg-white border-t border-[#E2E8F0]">
-                  <div className="p-3 border-b border-slate-100 bg-slate-50/50">
-                    <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
-                      <input
-                        type="text"
-                        placeholder="Search sub grade..."
-                        value={subGradeSearch}
-                        onChange={(e) => setSubGradeSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
-                      />
-                      {subGradeSearch && (
-                        <button
-                          onClick={() => setSubGradeSearch('')}
-                          className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 flex flex-wrap gap-2">
-                    {displayedSubGrades.length === 0 ? (
-                      <p className="text-xs text-slate-400 py-2 w-full text-center">
-                        {subGradeSearch ? `No sub-grades matching "${subGradeSearch}"` : "No sub-grades available for selected category"}
-                      </p>
-                    ) : (
-                      displayedSubGrades.map((subGrade) => {
-                        const isChecked = selectedSubGrades.includes(subGrade);
-                        return (
-                          <span
-                            key={subGrade}
-                            onClick={() => handleToggleSubGrade(subGrade)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${isChecked
-                                ? 'bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs'
-                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                              }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => { }}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                            />
-                            <span>{subGrade}</span>
-                          </span>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-          </aside>
-
-          {/* Right Column: Product Cards Grid */}
-          <div className="lg:col-span-3">
-
-            {/* Catalog Header Bar with Products Count & Reset */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-2xl font-bold text-slate-900">
-                  {selectedSubCategories.length > 0
-                    ? selectedSubCategories.join(', ')
-                    : selectedCategories.length > 0
-                    ? selectedCategories.join(', ')
-                    : selectedSubCategory || 'All Products'}
-                </h1>
-                <span className="text-sm font-medium text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">
-                  Found <strong className="text-slate-800">{filteredProducts.length}</strong> results
-                </span>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleClearFilters}
-                  className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1.5 transition cursor-pointer"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  Clear filters
-                </button>
-              </div>
-            </div>
-
-            {/* Active Filter Badges / Chips */}
-            {hasActiveFilters && (
-              <div className="flex flex-wrap items-center gap-2 mb-6 p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 mr-1">Active Filters:</span>
-
-                {selectedCategories.map(cat => (
-                  <span
-                    key={`chip-cat-${cat}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
-                  >
-                    <span>{cat}</span>
+                  {Object.keys(selectedAttributes).length > 0 && (
                     <button
-                      onClick={() => handleToggleCategory(cat)}
-                      className="hover:text-blue-900 transition cursor-pointer"
-                      aria-label={`Remove ${cat}`}
+                      type="button"
+                      onClick={resetSelection}
+                      className="shrink-0 text-xs font-medium text-blue-700 hover:text-blue-900 cursor-pointer transition-colors"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      ↻ Reset selection
                     </button>
-                  </span>
-                ))}
-
-                {selectedSubCategories.map(subCat => (
-                  <span
-                    key={`chip-subcat-${subCat}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
-                  >
-                    <span>{subCat}</span>
-                    <button
-                      onClick={() => handleToggleSubCategory(subCat)}
-                      className="hover:text-blue-900 transition cursor-pointer"
-                      aria-label={`Remove ${subCat}`}
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                ))}
-
-                {selectedGrades.map(grade => (
-                  <span
-                    key={`chip-grade-${grade}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0]"
-                  >
-                    <span>Grade: {grade}</span>
-                    <button
-                      onClick={() => handleToggleGrade(grade)}
-                      className="hover:text-green-900 transition cursor-pointer"
-                      aria-label={`Remove ${grade}`}
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                ))}
-
-                {selectedSubBrands.map(sb => (
-                  <span
-                    key={`chip-sb-${sb}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]"
-                  >
-                    <span>Sub-brand: {sb}</span>
-                    <button
-                      onClick={() => handleToggleSubBrand(sb)}
-                      className="hover:text-amber-900 transition cursor-pointer"
-                      aria-label={`Remove ${sb}`}
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                ))}
-
-                {selectedBrands.map(brand => (
-                  <span
-                    key={`chip-brand-${brand}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FAF5FF] text-[#6B21A8] border border-[#E9D5FF]"
-                  >
-                    <span>Brand: {brand}</span>
-                    <button
-                      onClick={() => handleToggleBrand(brand)}
-                      className="hover:text-purple-900 transition cursor-pointer"
-                      aria-label={`Remove ${brand}`}
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                ))}
-
-                {selectedSubGrades.map(sg => (
-                  <span
-                    key={`chip-subgrade-${sg}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]"
-                  >
-                    <span>Sub-grade: {sg}</span>
-                    <button
-                      onClick={() => handleToggleSubGrade(sg)}
-                      className="hover:text-red-900 transition cursor-pointer"
-                      aria-label={`Remove ${sg}`}
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                ))}
-
-                {userCategoryOverride && (
-                  <span
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200"
-                  >
-                    <span>Slider: {userCategoryOverride}</span>
-                    <button
-                      onClick={() => setUserCategoryOverride(null)}
-                      className="hover:text-purple-900 transition cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </span>
-                )}
-
-                <button
-                  onClick={handleClearFilters}
-                  className="text-xs font-bold text-red-600 hover:text-red-700 hover:underline ml-auto pl-2 cursor-pointer"
-                >
-                  Reset All
-                </button>
-              </div>
-            )}
-
-            {filteredProducts.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                  <SlidersHorizontal className="w-8 h-8" />
+                  )}
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">No products match your filters</h3>
-                <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
-                  Try clearing some filters or searching for different categories, grades, or sub-brands.
-                </p>
-                <button
-                  onClick={handleClearFilters}
-                  className="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-sm cursor-pointer"
-                >
-                  Clear all filters
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {paginatedProducts.map(product => {
-                  const isCleanLayout =
-                    product.category?.toLowerCase() === 'angles' ||
-                    product.category?.toLowerCase() === 'channels' ||
-                    product.category?.toLowerCase() === 'beams and columns' ||
-                    product.category?.toLowerCase() === 'colour coated' ||
-                    product.category?.toLowerCase() === 'ms cold rolled' ||
-                    product.category?.toLowerCase() === 'coated steel' ||
-                    product.category?.toLowerCase() === 'ms hot rolled' ||
-                    product.category?.toLowerCase() === 'wire rods' ||
-                    product.group === 'Structural Steel' ||
-                    product.group === 'Roofing & Cladding';
 
-                  return (
-                    <div
-                      key={product.id}
-                      className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col hover:shadow-lg transition-all duration-200 group"
-                    >
-                      {/* Image Box */}
-                      <div className="w-full h-36 bg-white flex items-center justify-center relative overflow-hidden p-2.5 border-b border-slate-100">
-                        <img
-                          src={product.img}
-                          alt={product.title}
-                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                        />
+                <div className="space-y-6 py-4">
+                  {attributes.map((attribute, index) => {
+                    const isFirst = index === 0;
+                    const isDisabled =
+                      isFirst
+                        ? false
+                        : !attributes
+                            .slice(0, index)
+                            .every((previous) => selectedAttributes[previous.label]);
 
-                        {/* Top Floating Badge (for non-catalog/general products) */}
-                        {!isCleanLayout && !product.category?.toLowerCase().includes('deck') && !product.title?.toLowerCase().includes('deck') && (
-                          <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-full text-xs font-semibold text-slate-700 shadow-sm border border-slate-100 flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-teal-500"></span>
-                            {product.category}
-                          </div>
-                        )}
-                      </div>
+                    const values = Array.isArray(attribute.values) ? attribute.values : [];
+                    const prevAttr = attributes[index - 1];
 
-                      {/* Card Content */}
-                      <div className="p-3.5 flex flex-col flex-1 justify-between">
-                        <div>
-                          {/* Title */}
-                          <h3 className="font-bold text-slate-800 text-sm mb-1 line-clamp-2 min-h-[38px] group-hover:text-blue-600 transition-colors">
-                            {product.title}
+                    return (
+                      <div key={attribute.label || index}>
+                        <div className="mb-2 flex flex-wrap items-center gap-2">
+                          <h3 className="text-xs sm:text-sm font-medium text-gray-900">
+                            {attribute.label}
+                            {attribute.unit ? ` (${attribute.unit})` : ""}
                           </h3>
 
-                          {/* Brand Info */}
-                          <p className="text-xs text-slate-500 mb-2 flex items-center gap-2">
-                            <span>Brand: <strong className="text-slate-700 font-medium">{product.brand}</strong></span>
-                            {!isCleanLayout && product.subBrand && (
-                              <>
-                                <span className="text-slate-300">•</span>
-                                <span>Sub-brand: <strong className="text-blue-700 font-medium">{product.subBrand}</strong></span>
-                              </>
-                            )}
-                          </p>
-
-                          {/* Specification Attributes */}
-                          {product.specs && Object.keys(product.specs).length > 0 && (
-                            <div className="space-y-1 text-xs text-slate-600 mb-2.5 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                              {product.specs?.thickness && (
-                                <div className="flex justify-between">
-                                  <span className="text-slate-400">Thickness</span>
-                                  <span className="font-semibold text-slate-800">{product.specs.thickness}</span>
-                                </div>
-                              )}
-                              {product.specs?.diameter && (
-                                <div className="flex justify-between">
-                                  <span className="text-slate-400">Diameter</span>
-                                  <span className="font-semibold text-slate-800">{product.specs.diameter}</span>
-                                </div>
-                              )}
-                              {product.specs?.sectionalWeight && (
-                                <div className="flex justify-between">
-                                  <span className="text-slate-400">Sectional weight</span>
-                                  <span className="font-semibold text-slate-800">{product.specs.sectionalWeight}</span>
-                                </div>
-                              )}
-                              {product.specs?.webDepth && (
-                                <div className="flex justify-between">
-                                  <span className="text-slate-400">Web depth</span>
-                                  <span className="font-semibold text-slate-800">{product.specs.webDepth}</span>
-                                </div>
-                              )}
-                              {product.specs?.flangeWidth && (
-                                <div className="flex justify-between">
-                                  <span className="text-slate-400">Flange width</span>
-                                  <span className="font-semibold text-slate-800">{product.specs.flangeWidth}</span>
-                                </div>
-                              )}
-                              {product.specs?.length && (
-                                <div className="flex justify-between">
-                                  <span className="text-slate-400">Length</span>
-                                  <span className="font-semibold text-slate-800">{product.specs.length}</span>
-                                </div>
-                              )}
-                              {product.specs?.width && (
-                                <div className="flex justify-between">
-                                  <span className="text-slate-400">Width</span>
-                                  <span className="font-semibold text-slate-800">{product.specs.width}</span>
-                                </div>
-                              )}
-                            </div>
+                          {isDisabled && prevAttr && (
+                            <span className="text-xs text-orange-600">
+                              Select {prevAttr.label.toLowerCase()} first
+                            </span>
                           )}
                         </div>
 
-                        {/* Bottom Action Area */}
-                        <div>
-                          <button
-                            onClick={() => setActiveModalProduct(product)}
-                            className="w-full py-2 bg-[#F1F5F9] hover:bg-blue-50 text-blue-600 font-bold text-xs rounded-lg transition border border-transparent hover:border-blue-200 text-left px-3 mb-2 cursor-pointer"
-                          >
-                            Purchase now
-                          </button>
+                        {values.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {values.map((value) => {
+                              const selected = selectedAttributes[attribute.label] === value;
 
-                          <div className="flex items-center gap-2 text-xs text-slate-500 pt-1.5 border-t border-slate-100">
-                            <Tag className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                            <span>{product.delivery}</span>
+                              return (
+                                <button
+                                  key={value}
+                                  type="button"
+                                  disabled={isDisabled}
+                                  onClick={() => selectAttribute(attribute.label, value)}
+                                  className={`min-w-[50px] sm:min-w-[54px] rounded-lg border px-3 py-1.5 sm:py-2 text-xs sm:text-sm transition cursor-pointer select-none ${
+                                    selected
+                                      ? "border-blue-700 bg-blue-50 font-semibold text-blue-800 shadow-2xs"
+                                      : "border-gray-300 bg-white text-gray-700 hover:border-blue-500 hover:bg-slate-50"
+                                  } disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-400`}
+                                >
+                                  {value}
+                                </button>
+                              );
+                            })}
                           </div>
-                        </div>
+                        )}
+
+                        {(attribute.min != null || attribute.max != null) && (
+                          <p className="mt-1.5 text-xs text-gray-400">
+                            Range: {attribute.min ?? "—"}–{attribute.max ?? "—"}{" "}
+                            {attribute.unit || ""}
+                          </p>
+                        )}
                       </div>
-                    </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Quantity Selector */}
+            <div className="mt-4 max-w-xs">
+              <label
+                htmlFor="product-quantity"
+                className="mb-1.5 block text-xs sm:text-sm font-medium text-gray-800"
+              >
+                Specify quantity (in MT)
+              </label>
+              <input
+                id="product-quantity"
+                type="number"
+                min="0.01"
+                step="any"
+                placeholder="e.g. 5"
+                value={quantity}
+                onChange={(event) => setQuantity(event.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
+              />
+            </div>
+          </div>
+
+          {/* Right Aside: Cart CTA & Promotional Banner (right) */}
+          <aside className="space-y-4 lg:sticky lg:top-[144px]">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-2xs">
+              <div className="rounded-xl bg-indigo-50/70 border border-indigo-100 px-3 py-3 text-xs sm:text-sm text-gray-800">
+                To add to cart and submit requirements{" "}
+                <Link to="/contact" className="font-semibold text-blue-700 hover:underline">
+                  Contact Sales
+                </Link>
+              </div>
+
+              <button
+                type="button"
+                className="mt-4 w-full rounded-xl border border-[#004060] bg-white px-4 py-2.5 text-sm font-semibold text-[#004060] hover:bg-blue-50 transition cursor-pointer shadow-2xs"
+              >
+                Add to cart
+              </button>
+            </div>
+
+            {/* Promotional Banner */}
+            <div className="relative flex min-h-36 items-center overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-500 p-5 text-white shadow-md">
+              <div className="relative z-10 max-w-[80%]">
+                <p className="text-[9px] font-bold uppercase tracking-wider text-blue-100">
+                  Promotional offer
+                </p>
+                <h2 className="mt-2 text-lg sm:text-xl font-bold leading-tight">
+                  Scale your business with better credit options
+                </h2>
+                <Link
+                  to="/contact"
+                  className="mt-3 inline-block rounded-full border border-white/60 bg-white/10 backdrop-blur-xs px-3 py-1 text-[10px] font-semibold hover:bg-white hover:text-blue-900 transition"
+                >
+                  Explore offers
+                </Link>
+              </div>
+              <div className="absolute -bottom-5 -right-2 text-7xl font-bold opacity-15 select-none pointer-events-none">
+                ₹
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        {/* Overview Section */}
+        {product.overviewHtml && (
+          <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-2xs">
+            <div
+              className="product-overview overflow-x-auto"
+              dangerouslySetInnerHTML={{
+                __html: product.overviewHtml ?? "",
+              }}
+            />
+          </section>
+        )}
+
+        {/* Product Property Tabs (Desktop) & Accordions (Mobile) */}
+        {properties.length > 0 && (
+          <section className="mt-8">
+            {/* Desktop View: Styled precisely like Image 1 */}
+            <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xs">
+              <div
+                role="tablist"
+                aria-label="Product properties"
+                className="flex w-full items-center border-b border-gray-200 bg-white"
+              >
+                {properties.map((property, index) => {
+                  const isActive = safeTab === index;
+                  return (
+                    <button
+                      key={property.heading || index}
+                      id={`property-tab-${index}`}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      aria-controls="property-panel"
+                      onClick={() => setActiveTab(index)}
+                      className={`flex-1 py-3.5 px-4 text-sm font-semibold transition cursor-pointer text-center ${
+                        isActive
+                          ? `text-blue-700 border-b-2 border-b-blue-700 -mb-px bg-white ${
+                              index > 0 ? "border-l border-gray-200" : ""
+                            } ${index < properties.length - 1 ? "border-r border-gray-200" : ""}`
+                          : "text-gray-700 hover:text-gray-900 hover:bg-gray-50/50"
+                      }`}
+                    >
+                      {property.heading}
+                    </button>
                   );
                 })}
               </div>
 
-              {/* Pagination Controls Matching Screenshot */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-10 pt-6 border-t border-slate-200/80">
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 border border-slate-300 rounded-md bg-white text-slate-700 text-sm font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-2xs"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    <span>Prev</span>
-                  </button>
-
-                  <div className="flex items-center gap-1.5">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => {
-                      const isActive = pageNumber === currentPage;
-                      return (
-                        <button
-                          key={pageNumber}
-                          onClick={() => handlePageChange(pageNumber)}
-                          className={`min-w-[34px] px-3 py-1.5 border rounded-md text-sm font-semibold transition cursor-pointer ${
-                            isActive
-                              ? 'bg-[#1849A9] border-[#1849A9] text-white shadow-xs'
-                              : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
-                          }`}
+              <div
+                id="property-panel"
+                role="tabpanel"
+                aria-labelledby={`property-tab-${safeTab}`}
+                className="w-full overflow-x-auto"
+              >
+                {tableEntries.length > 0 ? (
+                  <table className="w-full border-collapse text-sm">
+                    <tbody>
+                      {tableEntries.map(([label, value]) => (
+                        <tr
+                          key={label}
+                          className="border-b border-gray-100 last:border-b-0 hover:bg-slate-50/40 transition"
                         >
-                          {pageNumber}
-                        </button>
-                      );
-                    })}
+                          <th className="w-1/2 border-r border-gray-200 px-6 py-3.5 text-center font-normal text-gray-900">
+                            {label}
+                          </th>
+                          <td className="w-1/2 px-6 py-3.5 text-center font-normal text-gray-700">
+                            {value}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="py-8 text-center text-sm text-gray-500">
+                    No properties specified for this section.
                   </div>
+                )}
+              </div>
+            </div>
 
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 border border-slate-300 rounded-md bg-white text-slate-700 text-sm font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-2xs"
+            {/* Mobile View: Collapsible Accordion styled precisely like Image 2 */}
+            <div className="block md:hidden space-y-3">
+              {properties.map((property, index) => {
+                const isOpen = Boolean(openMobileTabs[index]);
+                const entries = property.tableOfContent
+                  ? Object.entries(property.tableOfContent)
+                  : [];
+
+                return (
+                  <div
+                    key={property.heading || index}
+                    className="rounded-xl border border-gray-100 bg-[#F8FAFC] p-4 transition-all"
                   >
-                    <span>Next</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-          </div>
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileTab(index)}
+                      className="flex w-full items-center justify-between text-left cursor-pointer focus:outline-none"
+                      aria-expanded={isOpen}
+                    >
+                      <span className="text-sm font-semibold text-gray-900">
+                        {property.heading}
+                      </span>
+                      {isOpen ? (
+                        <ChevronUp className="h-4 w-4 text-gray-500 shrink-0" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 text-gray-500 shrink-0" />
+                      )}
+                    </button>
 
-        </div>
-
-      </div>
-
-      {/* Interactive Purchase Modal */}
-      {activeModalProduct && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-            <button
-              onClick={() => { setActiveModalProduct(null); setOrderSubmitted(false); }}
-              className="absolute top-4 right-4 p-1 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {orderSubmitted ? (
-              <div className="text-center py-6">
-                <CheckCircle className="w-16 h-16 text-teal-600 mx-auto mb-3" />
-                <h3 className="text-xl font-bold text-slate-900 mb-1">Quote Request Sent!</h3>
-                <p className="text-sm text-slate-500 mb-6">
-                  Thank you for choosing Evershine. Our industrial team will send a formal proforma invoice to your business contact.
-                </p>
-                <button
-                  onClick={() => { setActiveModalProduct(null); setOrderSubmitted(false); }}
-                  className="w-full py-2.5 bg-teal-600 text-white font-bold rounded-xl hover:bg-teal-700 transition cursor-pointer"
-                >
-                  Close Window
-                </button>
-              </div>
-            ) : (
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">{activeModalProduct.title}</h3>
-                <p className="text-xs text-slate-500 mb-4">
-                  Brand: {activeModalProduct.brand} {activeModalProduct.subBrand && `(${activeModalProduct.subBrand})`} | Grade: {activeModalProduct.grade}
-                </p>
-
-                <div className="bg-slate-50 p-4 rounded-xl space-y-2 text-xs mb-6 border border-slate-100">
-                  {activeModalProduct.specs?.thickness && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Thickness:</span>
-                      <span className="font-semibold">{activeModalProduct.specs.thickness}</span>
-                    </div>
-                  )}
-                  {activeModalProduct.specs?.diameter && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Diameter:</span>
-                      <span className="font-semibold">{activeModalProduct.specs.diameter}</span>
-                    </div>
-                  )}
-                  {activeModalProduct.specs?.sectionalWeight && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Sectional weight:</span>
-                      <span className="font-semibold">{activeModalProduct.specs.sectionalWeight}</span>
-                    </div>
-                  )}
-                  {activeModalProduct.specs?.webDepth && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Web depth:</span>
-                      <span className="font-semibold">{activeModalProduct.specs.webDepth}</span>
-                    </div>
-                  )}
-                  {activeModalProduct.specs?.flangeWidth && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Flange width:</span>
-                      <span className="font-semibold">{activeModalProduct.specs.flangeWidth}</span>
-                    </div>
-                  )}
-                  {activeModalProduct.specs?.length && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Standard Length:</span>
-                      <span className="font-semibold">{activeModalProduct.specs.length}</span>
-                    </div>
-                  )}
-                  {activeModalProduct.specs?.width && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Width Range:</span>
-                      <span className="font-semibold">{activeModalProduct.specs.width}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between pt-2 border-t border-slate-200">
-                    <span className="text-slate-500">Estimated Base Price:</span>
-                    <span className="font-bold text-sm text-slate-900">₹54.50 / kg</span>
+                    {isOpen && (
+                      <div className="mt-3.5 space-y-2.5">
+                        {entries.length > 0 ? (
+                          entries.map(([label, value]) => (
+                            <div
+                              key={label}
+                              className="grid grid-cols-2 gap-3 text-xs sm:text-sm"
+                            >
+                              <span className="font-medium text-gray-900">
+                                {label}
+                              </span>
+                              <span className="text-gray-700">{value}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-xs text-gray-400">
+                            No properties specified for this section.
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
-
-                <div className="space-y-3 mb-6">
-                  <label className="block text-xs font-semibold text-slate-700">Estimated Requirement (Kg / Tons)</label>
-                  <input
-                    type="number"
-                    defaultValue={1000}
-                    className="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                    placeholder="Enter quantity in Kg"
-                  />
-                </div>
-
-                <button
-                  onClick={() => setOrderSubmitted(true)}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 cursor-pointer"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  <span>Request Instant Proforma Quote</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-    </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+      </div>
+    </main>
   );
 }
