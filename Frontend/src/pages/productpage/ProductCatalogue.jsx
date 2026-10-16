@@ -32,6 +32,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
     grades = [],
     subGrades = [],
     nameMap = new Map(),
+    categoryVariantsMap,
     loading: filtersLoading,
   } = useDataProcess();
 
@@ -75,13 +76,6 @@ export default function ProductCatalogue({ initialCategory = null }) {
   const selectedSubCategory =
     userCategoryOverride ?? (querySubCategory || matchedCategoryFromSlug || initialCategory || null);
 
-  // Sync state when URL query params change (e.g., clicking nav item, back/forward, or clearing)
-  useEffect(() => {
-    setSelectedCategories(queryCategory ? [queryCategory] : []);
-    setSelectedSubCategories(querySubCategory ? [querySubCategory] : []);
-    setUserCategoryOverride(querySubCategory || null);
-  }, [queryCategory, querySubCategory]);
-
   // Filter Checkbox Selection States
   const [selectedCategories, setSelectedCategories] = useState(() => {
     if (queryCategory) return [queryCategory];
@@ -97,6 +91,89 @@ export default function ProductCatalogue({ initialCategory = null }) {
   const [selectedSubBrands, setSelectedSubBrands] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedSubGrades, setSelectedSubGrades] = useState([]);
+
+  // Sync state when URL query params change (e.g., clicking nav item, back/forward, or clearing)
+  useEffect(() => {
+    setSelectedCategories(queryCategory ? [queryCategory] : []);
+    setSelectedSubCategories(querySubCategory ? [querySubCategory] : []);
+    setUserCategoryOverride(querySubCategory || null);
+  }, [queryCategory, querySubCategory]);
+
+  // Determine active category object based on URL query or selected categories
+  const activeCategory = useMemo(() => {
+    if (categories.length === 0) return null;
+    const currentName = selectedCategories[0] || queryCategory;
+    if (currentName) {
+      const found = categories.find(
+        (c) => c.name.toLowerCase() === currentName.toLowerCase() || c.id === currentName
+      );
+      if (found) return found;
+    }
+    // If only subCategory is present, find which category contains this type or variant
+    if (querySubCategory) {
+      const lowerSub = querySubCategory.toLowerCase();
+      for (const cat of categories) {
+        const catTypes = Array.isArray(cat.types) ? cat.types : [];
+        for (const t of catTypes) {
+          if (t.name?.toLowerCase() === lowerSub || t.id === querySubCategory) {
+            return cat;
+          }
+          const vars = categoryVariantsMap?.get(t.id) || t.variants || [];
+          if (vars.some((v) => v.name?.toLowerCase() === lowerSub || v.id === querySubCategory)) {
+            return cat;
+          }
+        }
+      }
+    }
+    return categories[0] || null;
+  }, [categories, selectedCategories, queryCategory, querySubCategory, categoryVariantsMap]);
+
+  // Determine which type groups to display in the Category sidebar filter accordion matching nav interaction
+  const displayedCategoryGroups = useMemo(() => {
+    if (!activeCategory) return [];
+
+    const rawTypes = Array.isArray(activeCategory.types) ? activeCategory.types : [];
+    const allTypesWithVariants = rawTypes.map((t) => {
+      const vars = categoryVariantsMap?.get(t.id) || t.variants || [];
+      return {
+        type: t,
+        variants: vars,
+      };
+    });
+
+    // If querySubCategory was provided via nav link
+    if (querySubCategory) {
+      const lowerSub = querySubCategory.toLowerCase();
+
+      // Check if user clicked a Type from nav
+      const matchingTypeGroup = allTypesWithVariants.find(
+        (g) => g.type.name?.toLowerCase() === lowerSub || g.type.id === querySubCategory
+      );
+      if (matchingTypeGroup) {
+        // Mode 2: Show only that clicked type inside category filter box
+        return [matchingTypeGroup];
+      }
+
+      // Check if user clicked a Variant from nav
+      for (const g of allTypesWithVariants) {
+        const matchingVar = g.variants.find(
+          (v) => v.name?.toLowerCase() === lowerSub || v.id === querySubCategory
+        );
+        if (matchingVar) {
+          // Mode 3: Variant is selected -> show only it under its parent type
+          return [
+            {
+              type: g.type,
+              variants: [matchingVar],
+            },
+          ];
+        }
+      }
+    }
+
+    // Mode 1: User clicked Category from nav -> show all types associated to it (non-clickable) and their variants as checkboxes
+    return allTypesWithVariants;
+  }, [activeCategory, querySubCategory, categoryVariantsMap]);
 
   // Accordion Expand/Collapse States (Category opened by default)
   const [categoryOpen, setCategoryOpen] = useState(true);
@@ -127,13 +204,16 @@ export default function ProductCatalogue({ initialCategory = null }) {
     });
   };
 
-  const handleToggleSubCategory = (subCatName) => {
+  const handleToggleSubCategory = (subCatName, parentTypeName) => {
     setSelectedSubCategories((prev) => {
       const isRemoving = prev.includes(subCatName);
-      const next = isRemoving ? prev.filter((s) => s !== subCatName) : [...prev, subCatName];
+      let next = isRemoving ? prev.filter((s) => s !== subCatName) : [...prev, subCatName];
+      if (!isRemoving && parentTypeName && next.includes(parentTypeName)) {
+        next = next.filter((s) => s !== parentTypeName);
+      }
       if (isRemoving) {
         setUserCategoryOverride(null);
-        if (searchParams.get("subCategory") === subCatName) {
+        if (searchParams.get("subCategory") === subCatName || next.length === 0) {
           setSearchParams((sp) => {
             const updated = new URLSearchParams(sp);
             updated.delete("subCategory");
@@ -193,30 +273,176 @@ export default function ProductCatalogue({ initialCategory = null }) {
     selectedSubGrades.length > 0 ||
     Boolean(userCategoryOverride);
 
-  // Active filter lists filtered by accordion search queries (using only active items from centralized data process)
-  const displayedGrades = useMemo(() => {
+  // Base products associated with the active Category and Sub-category selection
+  const categoryAssociatedProducts = useMemo(() => {
+    if (!Array.isArray(products) || products.length === 0) return [];
+
+    const hasCatFilter = selectedCategories.length > 0;
+    const hasSubCatFilter = selectedSubCategories.length > 0;
+    const hasOverride = Boolean(userCategoryOverride);
+
+    // If no category or sub-category filter is active, all products are in scope
+    if (!hasCatFilter && !hasSubCatFilter && !hasOverride) {
+      return products;
+    }
+
+    return products.filter((p) => {
+      // 1. Match Category (match ID or resolved Name)
+      if (hasCatFilter) {
+        const pCatName = nameMap?.get(p.categoryId);
+        const matchesCat =
+          (p.categoryId && selectedCategories.includes(p.categoryId)) ||
+          (pCatName && selectedCategories.includes(pCatName));
+        if (!matchesCat) return false;
+      }
+
+      // 2. Match Sub-Category / Type / Variant (match ID or resolved Name)
+      if (hasSubCatFilter) {
+        const pTypeName = nameMap?.get(p.categoryTypeId);
+        const pVariantName = nameMap?.get(p.categoryVariantId);
+        const matchesSubCat =
+          (p.categoryTypeId && selectedSubCategories.includes(p.categoryTypeId)) ||
+          (pTypeName && selectedSubCategories.includes(pTypeName)) ||
+          (p.categoryVariantId && selectedSubCategories.includes(p.categoryVariantId)) ||
+          (pVariantName && selectedSubCategories.includes(pVariantName));
+        if (!matchesSubCat) return false;
+      }
+
+      // 3. Fallback Category Filter from URL / category slider
+      if (hasOverride && !hasCatFilter && !hasSubCatFilter) {
+        const pCatName = (nameMap?.get(p.categoryId) || "").toLowerCase();
+        const pTypeName = (nameMap?.get(p.categoryTypeId) || "").toLowerCase();
+        const pTitle = (p.title || "").toLowerCase();
+        const target = userCategoryOverride.toLowerCase();
+        if (!pCatName.includes(target) && !pTypeName.includes(target) && !pTitle.includes(target)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [products, selectedCategories, selectedSubCategories, userCategoryOverride, nameMap]);
+
+  // Compute sets of active Brand, Sub-Brand, Grade, Sub-Grade associated with current category/sub-category
+  const { availableBrandKeys, availableSubBrandKeys, availableGradeKeys, availableSubGradeKeys } = useMemo(() => {
+    const hasCatFilter = selectedCategories.length > 0;
+    const hasSubCatFilter = selectedSubCategories.length > 0;
+    const hasOverride = Boolean(userCategoryOverride);
+
+    // If no category or sub-category filter is active, return null to show all options from dataProccess
+    if (!hasCatFilter && !hasSubCatFilter && !hasOverride) {
+      return {
+        availableBrandKeys: null,
+        availableSubBrandKeys: null,
+        availableGradeKeys: null,
+        availableSubGradeKeys: null,
+      };
+    }
+
+    const bKeys = new Set();
+    const sbKeys = new Set();
+    const gKeys = new Set();
+    const sgKeys = new Set();
+
+    categoryAssociatedProducts.forEach((p) => {
+      // Brands
+      if (p.brandId) {
+        bKeys.add(p.brandId);
+        const name = nameMap?.get(p.brandId);
+        if (name) bKeys.add(name.toLowerCase());
+      }
+      if (p.brand) bKeys.add(p.brand.toLowerCase());
+
+      // Sub-Brands
+      if (p.subBrandId) {
+        sbKeys.add(p.subBrandId);
+        const name = nameMap?.get(p.subBrandId);
+        if (name) sbKeys.add(name.toLowerCase());
+      }
+      if (p.subBrand) sbKeys.add(p.subBrand.toLowerCase());
+
+      // Grades
+      if (p.gradeId) {
+        gKeys.add(p.gradeId);
+        const name = nameMap?.get(p.gradeId);
+        if (name) gKeys.add(name.toLowerCase());
+      }
+      if (p.grade) gKeys.add(p.grade.toLowerCase());
+
+      // Sub-Grades
+      if (p.subGradeId) {
+        sgKeys.add(p.subGradeId);
+        const name = nameMap?.get(p.subGradeId);
+        if (name) sgKeys.add(name.toLowerCase());
+      }
+      if (p.subGrade) sgKeys.add(p.subGrade.toLowerCase());
+    });
+
+    return {
+      availableBrandKeys: bKeys,
+      availableSubBrandKeys: sbKeys,
+      availableGradeKeys: gKeys,
+      availableSubGradeKeys: sgKeys,
+    };
+  }, [categoryAssociatedProducts, selectedCategories, selectedSubCategories, userCategoryOverride, nameMap]);
+
+  // Dynamic filter lists constrained to associated products at runtime
+  const dynamicBrands = useMemo(() => {
+    const list = brands.map((b) => b.name || b);
+    if (!availableBrandKeys) return list;
+    return list.filter((name) => {
+      const lower = (name || "").toLowerCase();
+      return availableBrandKeys.has(lower) || selectedBrands.includes(name);
+    });
+  }, [brands, availableBrandKeys, selectedBrands]);
+
+  const dynamicSubBrands = useMemo(() => {
+    const list = subBrands.map((sb) => sb.name || sb);
+    if (!availableSubBrandKeys) return list;
+    return list.filter((name) => {
+      const lower = (name || "").toLowerCase();
+      return availableSubBrandKeys.has(lower) || selectedSubBrands.includes(name);
+    });
+  }, [subBrands, availableSubBrandKeys, selectedSubBrands]);
+
+  const dynamicGrades = useMemo(() => {
     const list = grades.map((g) => g.name || g);
-    if (!gradeSearch) return list;
-    return list.filter((g) => g.toLowerCase().includes(gradeSearch.toLowerCase().trim()));
-  }, [grades, gradeSearch]);
+    if (!availableGradeKeys) return list;
+    return list.filter((name) => {
+      const lower = (name || "").toLowerCase();
+      return availableGradeKeys.has(lower) || selectedGrades.includes(name);
+    });
+  }, [grades, availableGradeKeys, selectedGrades]);
+
+  const dynamicSubGrades = useMemo(() => {
+    const list = subGrades.map((sg) => sg.name || sg);
+    if (!availableSubGradeKeys) return list;
+    return list.filter((name) => {
+      const lower = (name || "").toLowerCase();
+      return availableSubGradeKeys.has(lower) || selectedSubGrades.includes(name);
+    });
+  }, [subGrades, availableSubGradeKeys, selectedSubGrades]);
+
+  // Active filter lists filtered by accordion search queries
+  const displayedGrades = useMemo(() => {
+    if (!gradeSearch) return dynamicGrades;
+    return dynamicGrades.filter((g) => g.toLowerCase().includes(gradeSearch.toLowerCase().trim()));
+  }, [dynamicGrades, gradeSearch]);
 
   const displayedSubBrands = useMemo(() => {
-    const list = subBrands.map((sb) => sb.name || sb);
-    if (!subBrandSearch) return list;
-    return list.filter((sb) => sb.toLowerCase().includes(subBrandSearch.toLowerCase().trim()));
-  }, [subBrands, subBrandSearch]);
+    if (!subBrandSearch) return dynamicSubBrands;
+    return dynamicSubBrands.filter((sb) => sb.toLowerCase().includes(subBrandSearch.toLowerCase().trim()));
+  }, [dynamicSubBrands, subBrandSearch]);
 
   const displayedBrands = useMemo(() => {
-    const list = brands.map((b) => b.name || b);
-    if (!brandSearch) return list;
-    return list.filter((b) => b.toLowerCase().includes(brandSearch.toLowerCase().trim()));
-  }, [brands, brandSearch]);
+    if (!brandSearch) return dynamicBrands;
+    return dynamicBrands.filter((b) => b.toLowerCase().includes(brandSearch.toLowerCase().trim()));
+  }, [dynamicBrands, brandSearch]);
 
   const displayedSubGrades = useMemo(() => {
-    const list = subGrades.map((sg) => sg.name || sg);
-    if (!subGradeSearch) return list;
-    return list.filter((sg) => sg.toLowerCase().includes(subGradeSearch.toLowerCase().trim()));
-  }, [subGrades, subGradeSearch]);
+    if (!subGradeSearch) return dynamicSubGrades;
+    return dynamicSubGrades.filter((sg) => sg.toLowerCase().includes(subGradeSearch.toLowerCase().trim()));
+  }, [dynamicSubGrades, subGradeSearch]);
 
   // Filter products by selected active filters
   const filteredProducts = useMemo(() => {
@@ -309,14 +535,28 @@ export default function ProductCatalogue({ initialCategory = null }) {
     nameMap,
   ]);
 
-  // Pagination State
-  const ITEMS_PER_PAGE = 21;
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE) || 1;
+  // Page Maker chunking (reusing pagination logic from Admin update section)
+  const pageSize = 15;
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // Reset to page 1 on filter changes
+  // Chunk filtered products into an array of pages (array of arrays, 15 items per index)
+  const pages = useMemo(() => {
+    const chunks = [];
+    for (let i = 0; i < filteredProducts.length; i += pageSize) {
+      chunks.push(filteredProducts.slice(i, i + pageSize));
+    }
+    return chunks;
+  }, [filteredProducts, pageSize]);
+
+  // Products for the currently selected page
+  const currentProducts = useMemo(() => {
+    if (pages.length === 0) return [];
+    return pages[currentPage] || pages[0] || [];
+  }, [pages, currentPage]);
+
+  // Reset page when any filter changes
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPage(0);
   }, [
     selectedCategories,
     selectedSubCategories,
@@ -326,17 +566,6 @@ export default function ProductCatalogue({ initialCategory = null }) {
     selectedSubGrades,
     userCategoryOverride,
   ]);
-
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredProducts, currentPage]);
-
-  const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    window.scrollTo({ top: 300, behavior: "smooth" });
-  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pt-[80px] md:pt-[125px] lg:pt-[138px] pb-12 w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20">
@@ -372,112 +601,104 @@ export default function ProductCatalogue({ initialCategory = null }) {
               </div>
             </div>
 
-            {/* 1. Category Accordion Card (Dynamic from centralized data process) */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
+            {/* 1. Category Accordion Card (Dynamic hierarchy: Types non-clickable, Variants with checkboxes) */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden transition-all shadow-2xs">
               <button
                 onClick={() => setCategoryOpen(!categoryOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
+                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-slate-50 transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A]">
-                  Category{" "}
-                  {categories.length > 0 && (
-                    <span className="text-xs font-normal text-slate-400">({categories.length})</span>
-                  )}
+                <span className="text-[16px] font-semibold text-slate-800">
+                  Category
                 </span>
                 {categoryOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronUp className="w-5 h-5 text-slate-700" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronDown className="w-5 h-5 text-slate-700" />
                 )}
               </button>
 
               {categoryOpen && (
-                <div className="px-4 py-3.5 bg-white border-t border-[#E2E8F0] space-y-3">
+                <div className="px-4 pb-4 pt-2 bg-white border-t border-slate-100 space-y-4 max-h-[480px] overflow-y-auto">
                   {filtersLoading && categories.length === 0 ? (
                     <div className="flex items-center gap-2 text-xs text-slate-400 py-2">
                       <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
                       <span>Loading categories...</span>
                     </div>
-                  ) : categories.length === 0 ? (
+                  ) : displayedCategoryGroups.length === 0 ? (
                     <p className="text-xs text-slate-400 py-1">No categories configured.</p>
                   ) : (
-                    <div className="flex flex-col gap-2.5">
-                      {categories.map((cat) => {
-                        const isCatChecked = selectedCategories.includes(cat.name);
-                        const catTypes = Array.isArray(cat.types) ? cat.types : [];
+                    displayedCategoryGroups.map((group) => {
+                      const typeName = group.type.name;
+                      const variants = group.variants || [];
 
-                        return (
-                          <div key={cat.id || cat.name} className="flex flex-col gap-1.5">
-                            {/* Category Chip */}
-                            <span
-                              onClick={() => handleToggleCategory(cat.name)}
-                              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none w-fit ${
-                                isCatChecked
-                                  ? "bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs"
-                                  : "bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                              }`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isCatChecked}
-                                onChange={() => {}}
-                                className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                              />
-                              <span>{cat.name}</span>
-                            </span>
+                      return (
+                        <div key={group.type.id || typeName} className="space-y-2">
+                          {/* Non-clickable Type Header with increased font size */}
+                          <div className="text-[14.5px] font-semibold text-slate-600 select-none tracking-tight">
+                            {typeName}
+                          </div>
 
-                            {/* Subcategories / Types under Category */}
-                            {catTypes.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5 pl-3 ml-2 border-l-2 border-slate-200 py-1">
-                                {catTypes.map((type) => {
-                                  const isTypeChecked = selectedSubCategories.includes(type.name);
-                                  return (
-                                    <span
-                                      key={type.id || type.name}
-                                      onClick={() => handleToggleSubCategory(type.name)}
-                                      className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer transition-all border select-none ${
-                                        isTypeChecked
-                                          ? "bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs"
-                                          : "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                                      }`}
-                                    >
-                                      <input
-                                        type="checkbox"
-                                        checked={isTypeChecked}
-                                        onChange={() => {}}
-                                        className="w-3 h-3 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
-                                      />
-                                      <span>{type.name}</span>
-                                    </span>
-                                  );
-                                })}
-                              </div>
+                          {/* Associated Variants Checkboxes with increased font size */}
+                          <div className="space-y-2.5 pl-0.5">
+                            {variants.length > 0 ? (
+                              variants.map((variant) => {
+                                const isChecked =
+                                  selectedSubCategories.includes(variant.name) ||
+                                  selectedSubCategories.includes(variant.id);
+                                return (
+                                  <label
+                                    key={variant.id || variant.name}
+                                    className="flex items-center gap-2.5 text-[14px] text-slate-700 hover:text-slate-900 cursor-pointer select-none"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={isChecked}
+                                      onChange={() => handleToggleSubCategory(variant.name, typeName)}
+                                      className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
+                                    />
+                                    <span>{variant.name}</span>
+                                  </label>
+                                );
+                              })
+                            ) : (
+                              <label className="flex items-center gap-2.5 text-[14px] text-slate-700 hover:text-slate-900 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={
+                                    selectedSubCategories.includes(typeName) ||
+                                    selectedSubCategories.includes(group.type.id)
+                                  }
+                                  onChange={() => handleToggleSubCategory(typeName)}
+                                  className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
+                                />
+                                <span>{typeName}</span>
+                              </label>
                             )}
                           </div>
-                        );
-                      })}
-                    </div>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               )}
             </div>
 
-            {/* 2. Grade Accordion Card (Active only from centralized data process) */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
+            {/* 2. Grade Accordion Card (Dynamic from category-associated products) */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden transition-all shadow-2xs">
               <button
                 onClick={() => setGradeOpen(!gradeOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
+                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-slate-50 transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                <span className="text-[16px] font-semibold text-[#0F172A] flex items-center gap-1.5">
                   Grade{" "}
-                  {grades.length > 0 && (
-                    <span className="text-xs font-normal text-slate-400">({grades.length})</span>
+                  {dynamicGrades.length > 0 && (
+                    <span className="text-xs font-normal text-slate-400">({dynamicGrades.length})</span>
                   )}
                 </span>
                 {gradeOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronUp className="w-5 h-5 text-slate-700" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronDown className="w-5 h-5 text-slate-700" />
                 )}
               </button>
 
@@ -486,26 +707,26 @@ export default function ProductCatalogue({ initialCategory = null }) {
                   {/* Search inside Grade */}
                   <div className="p-3 border-b border-slate-100 bg-slate-50/50">
                     <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
+                      <Search className="w-4 h-4 text-slate-400 absolute left-2.5 pointer-events-none" />
                       <input
                         type="text"
                         placeholder="Search grade..."
                         value={gradeSearch}
                         onChange={(e) => setGradeSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
+                        className="w-full text-sm pl-8 pr-7 py-2 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
                       />
                       {gradeSearch && (
                         <button
                           onClick={() => setGradeSearch("")}
                           className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-3.5 flex flex-wrap gap-2">
+                  <div className="p-3.5 flex flex-wrap gap-2.5">
                     {filtersLoading && grades.length === 0 ? (
                       <div className="flex items-center gap-2 text-xs text-slate-400 py-2 w-full justify-center">
                         <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
@@ -515,7 +736,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       <p className="text-xs text-slate-400 py-2 w-full text-center">
                         {gradeSearch
                           ? `No active grades matching "${gradeSearch}"`
-                          : "No active grades configured."}
+                          : "No active grades for selected products."}
                       </p>
                     ) : (
                       displayedGrades.map((grade) => {
@@ -524,7 +745,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                           <span
                             key={grade}
                             onClick={() => handleToggleGrade(grade)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${
+                            className={`inline-flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-[13.5px] font-medium cursor-pointer transition-all border select-none ${
                               isChecked
                                 ? "bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs"
                                 : "bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
@@ -534,7 +755,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => {}}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                              className="w-4 h-4 rounded-[3px] border-[#64748B] text-[#004060] pointer-events-none"
                             />
                             <span>{grade}</span>
                           </span>
@@ -546,22 +767,22 @@ export default function ProductCatalogue({ initialCategory = null }) {
               )}
             </div>
 
-            {/* 3. Sub brand Accordion Card (Active only from centralized data process) */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
+            {/* 3. Sub brand Accordion Card (Dynamic from category-associated products) */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden transition-all shadow-2xs">
               <button
                 onClick={() => setSubBrandOpen(!subBrandOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
+                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-slate-50 transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                <span className="text-[16px] font-semibold text-[#0F172A] flex items-center gap-1.5">
                   Sub brand{" "}
-                  {subBrands.length > 0 && (
-                    <span className="text-xs font-normal text-slate-400">({subBrands.length})</span>
+                  {dynamicSubBrands.length > 0 && (
+                    <span className="text-xs font-normal text-slate-400">({dynamicSubBrands.length})</span>
                   )}
                 </span>
                 {subBrandOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronUp className="w-5 h-5 text-slate-700" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronDown className="w-5 h-5 text-slate-700" />
                 )}
               </button>
 
@@ -570,26 +791,26 @@ export default function ProductCatalogue({ initialCategory = null }) {
                   {/* Search inside Sub brand */}
                   <div className="p-3 border-b border-slate-100 bg-slate-50/50">
                     <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
+                      <Search className="w-4 h-4 text-slate-400 absolute left-2.5 pointer-events-none" />
                       <input
                         type="text"
                         placeholder="Search sub brand..."
                         value={subBrandSearch}
                         onChange={(e) => setSubBrandSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
+                        className="w-full text-sm pl-8 pr-7 py-2 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
                       />
                       {subBrandSearch && (
                         <button
                           onClick={() => setSubBrandSearch("")}
                           className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-3.5 flex flex-wrap gap-2">
+                  <div className="p-3.5 flex flex-wrap gap-2.5">
                     {filtersLoading && subBrands.length === 0 ? (
                       <div className="flex items-center gap-2 text-xs text-slate-400 py-2 w-full justify-center">
                         <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
@@ -599,7 +820,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       <p className="text-xs text-slate-400 py-2 w-full text-center">
                         {subBrandSearch
                           ? `No active sub-brands matching "${subBrandSearch}"`
-                          : "No active sub-brands configured."}
+                          : "No active sub-brands for selected products."}
                       </p>
                     ) : (
                       displayedSubBrands.map((subBrand) => {
@@ -608,7 +829,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                           <span
                             key={subBrand}
                             onClick={() => handleToggleSubBrand(subBrand)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${
+                            className={`inline-flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-[13.5px] font-medium cursor-pointer transition-all border select-none ${
                               isChecked
                                 ? "bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs"
                                 : "bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
@@ -618,7 +839,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => {}}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                              className="w-4 h-4 rounded-[3px] border-[#64748B] text-[#004060] pointer-events-none"
                             />
                             <span>{subBrand}</span>
                           </span>
@@ -630,22 +851,22 @@ export default function ProductCatalogue({ initialCategory = null }) {
               )}
             </div>
 
-            {/* 4. Brand Accordion Card (Active only from centralized data process) */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
+            {/* 4. Brand Accordion Card (Dynamic from category-associated products) */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden transition-all shadow-2xs">
               <button
                 onClick={() => setBrandOpen(!brandOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
+                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-slate-50 transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                <span className="text-[16px] font-semibold text-[#0F172A] flex items-center gap-1.5">
                   Brand{" "}
-                  {brands.length > 0 && (
-                    <span className="text-xs font-normal text-slate-400">({brands.length})</span>
+                  {dynamicBrands.length > 0 && (
+                    <span className="text-xs font-normal text-slate-400">({dynamicBrands.length})</span>
                   )}
                 </span>
                 {brandOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronUp className="w-5 h-5 text-slate-700" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronDown className="w-5 h-5 text-slate-700" />
                 )}
               </button>
 
@@ -654,26 +875,26 @@ export default function ProductCatalogue({ initialCategory = null }) {
                   {/* Search inside Brand */}
                   <div className="p-3 border-b border-slate-100 bg-slate-50/50">
                     <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
+                      <Search className="w-4 h-4 text-slate-400 absolute left-2.5 pointer-events-none" />
                       <input
                         type="text"
                         placeholder="Search brand..."
                         value={brandSearch}
                         onChange={(e) => setBrandSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
+                        className="w-full text-sm pl-8 pr-7 py-2 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
                       />
                       {brandSearch && (
                         <button
                           onClick={() => setBrandSearch("")}
                           className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-3.5 flex flex-wrap gap-2">
+                  <div className="p-3.5 flex flex-wrap gap-2.5">
                     {filtersLoading && brands.length === 0 ? (
                       <div className="flex items-center gap-2 text-xs text-slate-400 py-2 w-full justify-center">
                         <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
@@ -683,7 +904,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       <p className="text-xs text-slate-400 py-2 w-full text-center">
                         {brandSearch
                           ? `No active brands matching "${brandSearch}"`
-                          : "No active brands configured."}
+                          : "No active brands for selected products."}
                       </p>
                     ) : (
                       displayedBrands.map((brand) => {
@@ -692,7 +913,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                           <span
                             key={brand}
                             onClick={() => handleToggleBrand(brand)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${
+                            className={`inline-flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-[13.5px] font-medium cursor-pointer transition-all border select-none ${
                               isChecked
                                 ? "bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs"
                                 : "bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
@@ -702,7 +923,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => {}}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                              className="w-4 h-4 rounded-[3px] border-[#64748B] text-[#004060] pointer-events-none"
                             />
                             <span>{brand}</span>
                           </span>
@@ -714,22 +935,22 @@ export default function ProductCatalogue({ initialCategory = null }) {
               )}
             </div>
 
-            {/* 5. Sub grade Accordion Card (Active only from centralized data process) */}
-            <div className="rounded-xl border border-[#E2E8F0] bg-[#F4F6FB] overflow-hidden transition-all shadow-2xs">
+            {/* 5. Sub grade Accordion Card (Dynamic from category-associated products) */}
+            <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden transition-all shadow-2xs">
               <button
                 onClick={() => setSubGradeOpen(!subGradeOpen)}
-                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-[#EEF2F8] transition cursor-pointer"
+                className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-slate-50 transition cursor-pointer"
               >
-                <span className="text-[15px] font-medium text-[#0F172A] flex items-center gap-1.5">
+                <span className="text-[16px] font-semibold text-[#0F172A] flex items-center gap-1.5">
                   Sub grade{" "}
-                  {subGrades.length > 0 && (
-                    <span className="text-xs font-normal text-slate-400">({subGrades.length})</span>
+                  {dynamicSubGrades.length > 0 && (
+                    <span className="text-xs font-normal text-slate-400">({dynamicSubGrades.length})</span>
                   )}
                 </span>
                 {subGradeOpen ? (
-                  <ChevronUp className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronUp className="w-5 h-5 text-slate-700" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-[#0F172A]" />
+                  <ChevronDown className="w-5 h-5 text-slate-700" />
                 )}
               </button>
 
@@ -738,26 +959,26 @@ export default function ProductCatalogue({ initialCategory = null }) {
                   {/* Search inside Sub grade */}
                   <div className="p-3 border-b border-slate-100 bg-slate-50/50">
                     <div className="relative flex items-center">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 pointer-events-none" />
+                      <Search className="w-4 h-4 text-slate-400 absolute left-2.5 pointer-events-none" />
                       <input
                         type="text"
                         placeholder="Search sub grade..."
                         value={subGradeSearch}
                         onChange={(e) => setSubGradeSearch(e.target.value)}
-                        className="w-full text-xs pl-8 pr-7 py-1.5 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
+                        className="w-full text-sm pl-8 pr-7 py-2 border border-slate-200 rounded-md focus:outline-none focus:border-blue-500 bg-white"
                       />
                       {subGradeSearch && (
                         <button
                           onClick={() => setSubGradeSearch("")}
                           className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="p-3.5 flex flex-wrap gap-2">
+                  <div className="p-3.5 flex flex-wrap gap-2.5">
                     {filtersLoading && subGrades.length === 0 ? (
                       <div className="flex items-center gap-2 text-xs text-slate-400 py-2 w-full justify-center">
                         <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
@@ -767,7 +988,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       <p className="text-xs text-slate-400 py-2 w-full text-center">
                         {subGradeSearch
                           ? `No active sub-grades matching "${subGradeSearch}"`
-                          : "No active sub-grades configured."}
+                          : "No active sub-grades for selected products."}
                       </p>
                     ) : (
                       displayedSubGrades.map((subGrade) => {
@@ -776,7 +997,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                           <span
                             key={subGrade}
                             onClick={() => handleToggleSubGrade(subGrade)}
-                            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all border select-none ${
+                            className={`inline-flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-[13.5px] font-medium cursor-pointer transition-all border select-none ${
                               isChecked
                                 ? "bg-blue-50 text-[#004060] border-blue-300 font-semibold shadow-xs"
                                 : "bg-white text-slate-800 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
@@ -786,7 +1007,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => {}}
-                              className="w-3.5 h-3.5 rounded-[2px] border-[#64748B] text-[#004060] pointer-events-none"
+                              className="w-4 h-4 rounded-[3px] border-[#64748B] text-[#004060] pointer-events-none"
                             />
                             <span>{subGrade}</span>
                           </span>
@@ -831,13 +1052,13 @@ export default function ProductCatalogue({ initialCategory = null }) {
 
             {/* Active Filter Badges / Chips */}
             {hasActiveFilters && (
-              <div className="flex flex-wrap items-center gap-2 mb-6 p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 mr-1">Active Filters:</span>
+              <div className="flex flex-wrap items-center gap-2.5 mb-5">
+                <span className="text-sm font-semibold text-slate-500 mr-1">Active Filters:</span>
 
                 {selectedCategories.map((cat) => (
                   <span
                     key={`chip-cat-${cat}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
                   >
                     <span>{cat}</span>
                     <button
@@ -845,7 +1066,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       className="hover:text-blue-900 transition cursor-pointer"
                       aria-label={`Remove ${cat}`}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </span>
                 ))}
@@ -853,7 +1074,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                 {selectedSubCategories.map((subCat) => (
                   <span
                     key={`chip-subcat-${subCat}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-[#EBF5FF] text-[#1E40AF] border border-[#BFDBFE]"
                   >
                     <span>{subCat}</span>
                     <button
@@ -861,7 +1082,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       className="hover:text-blue-900 transition cursor-pointer"
                       aria-label={`Remove ${subCat}`}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </span>
                 ))}
@@ -869,7 +1090,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                 {selectedGrades.map((grade) => (
                   <span
                     key={`chip-grade-${grade}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0]"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0]"
                   >
                     <span>Grade: {grade}</span>
                     <button
@@ -877,7 +1098,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       className="hover:text-green-900 transition cursor-pointer"
                       aria-label={`Remove ${grade}`}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </span>
                 ))}
@@ -885,7 +1106,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                 {selectedBrands.map((brand) => (
                   <span
                     key={`chip-brand-${brand}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FAF5FF] text-[#6B21A8] border border-[#E9D5FF]"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-[#FAF5FF] text-[#6B21A8] border border-[#E9D5FF]"
                   >
                     <span>Brand: {brand}</span>
                     <button
@@ -893,7 +1114,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       className="hover:text-purple-900 transition cursor-pointer"
                       aria-label={`Remove ${brand}`}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </span>
                 ))}
@@ -901,7 +1122,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                 {selectedSubBrands.map((subBrand) => (
                   <span
                     key={`chip-subbrand-${subBrand}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FDF4FF] text-[#86198F] border border-[#F5D0FE]"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-[#FDF4FF] text-[#86198F] border border-[#F5D0FE]"
                   >
                     <span>Sub-brand: {subBrand}</span>
                     <button
@@ -909,7 +1130,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       className="hover:text-fuchsia-900 transition cursor-pointer"
                       aria-label={`Remove ${subBrand}`}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </span>
                 ))}
@@ -917,7 +1138,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
                 {selectedSubGrades.map((sg) => (
                   <span
                     key={`chip-subgrade-${sg}`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]"
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]"
                   >
                     <span>Sub-grade: {sg}</span>
                     <button
@@ -925,19 +1146,21 @@ export default function ProductCatalogue({ initialCategory = null }) {
                       className="hover:text-red-900 transition cursor-pointer"
                       aria-label={`Remove ${sg}`}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </span>
                 ))}
 
-                {userCategoryOverride && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                {userCategoryOverride &&
+                  !selectedCategories.includes(userCategoryOverride) &&
+                  !selectedSubCategories.includes(userCategoryOverride) && (
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-purple-50 text-purple-700 border border-purple-200">
                     <span>Selected: {userCategoryOverride}</span>
                     <button
                       onClick={() => setUserCategoryOverride(null)}
                       className="hover:text-purple-900 transition cursor-pointer"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </span>
                 )}
@@ -984,7 +1207,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {paginatedProducts.map((product) => {
+                  {currentProducts.map((product) => {
                     const productSlug = product.slug || product.id;
                     return (
                       <ProductCard
@@ -1003,44 +1226,59 @@ export default function ProductCatalogue({ initialCategory = null }) {
                   })}
                 </div>
 
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-10 pt-6 border-t border-slate-200/80">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 border border-slate-300 rounded-md bg-white text-slate-700 text-sm font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-2xs"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      <span>Prev</span>
-                    </button>
+                {/* Real Pagination Controls (reused admin update pattern) */}
+                {pages.length > 1 && (
+                  <div className="pt-8 mt-8 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+                    <span className="text-slate-600">
+                      Page <strong className="text-slate-900">{currentPage + 1}</strong> of{" "}
+                      <strong className="text-slate-900">{pages.length}</strong> ({filteredProducts.length} items total)
+                    </span>
 
                     <div className="flex items-center gap-1.5">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => {
-                        const isActive = pageNumber === currentPage;
-                        return (
-                          <button
-                            key={pageNumber}
-                            onClick={() => handlePageChange(pageNumber)}
-                            className={`min-w-[34px] px-3 py-1.5 border rounded-md text-sm font-semibold transition cursor-pointer ${
-                              isActive
-                                ? "bg-[#004060] border-[#004060] text-white shadow-xs"
-                                : "bg-white border-slate-300 text-slate-700 hover:bg-slate-50"
-                            }`}
-                          >
-                            {pageNumber}
-                          </button>
-                        );
-                      })}
-                    </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentPage((p) => Math.max(0, p - 1));
+                          window.scrollTo({ top: 300, behavior: "smooth" });
+                        }}
+                        disabled={currentPage === 0}
+                        className="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-2xs transition-colors"
+                        title="Previous Page"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
 
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 border border-slate-300 rounded-md bg-white text-slate-700 text-sm font-medium hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-2xs"
-                    >
-                      <span>Next</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                      {pages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setCurrentPage(idx);
+                            window.scrollTo({ top: 300, behavior: "smooth" });
+                          }}
+                          className={`w-8 h-8 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
+                            currentPage === idx
+                              ? "bg-[#004060] text-white shadow-xs"
+                              : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {idx + 1}
+                        </button>
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentPage((p) => Math.min(pages.length - 1, p + 1));
+                          window.scrollTo({ top: 300, behavior: "smooth" });
+                        }}
+                        disabled={currentPage >= pages.length - 1}
+                        className="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-2xs transition-colors"
+                        title="Next Page"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 )}
               </>
