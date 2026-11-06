@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 import CrimpingBanner from "../../../assets/banner/crimping_profile_banner.png";
 import GIAngleBanner from "../../../assets/banner/GI Banner.png";
@@ -18,141 +18,88 @@ const banners = [
   BareGalvalumeBanner,
   StandingSeamBanner,
 ];
-const bannerBgColors = [
-  "bg-[#f1f5f9]",
-  "bg-[#0b1329]",
-  "bg-[#f1f5f9]",
-  "bg-[#f1f5f9]",
-  "bg-[#f1f5f9]",
-  "bg-[#f1f5f9]",
-  "bg-[#f1f5f9]",
-];
 
 const AUTOPLAY_DELAY = 4000;
 
-// Variants for the sliding effect
-const slideVariants = {
-  enter: (direction) => ({
-    x: direction > 0 ? "100%" : "-100%",
-    opacity: 1,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (direction) => ({
-    x: direction > 0 ? "-100%" : "100%",
-    opacity: 1,
-  }),
-};
+const Hero = () => {
+  const containerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [current, setCurrent] = useState(0);
 
-const Hore = () => {
-  const [[current, direction], setState] = useState([0, 0]);
-  const timerRef = useRef(null);
+  const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : false;
+  const gap = isMobile ? 12 : 28;
 
-  const goTo = useCallback((index, dir) => {
-    setState(([prevIndex]) => {
-      const newIndex = (index + banners.length) % banners.length;
-      // if direction not explicitly passed, infer it
-      const inferredDir =
-        dir !== undefined ? dir : newIndex > prevIndex ? 1 : -1;
-      return [newIndex, inferredDir];
-    });
-  }, []);
+  // Exactly two cards fill the container on desktop, one on mobile
+  const cardWidth = containerWidth > 0
+    ? (isMobile ? containerWidth : (containerWidth - gap) / 2)
+    : 0;
 
-  const next = useCallback(() => {
-    setState(([prevIndex]) => [(prevIndex + 1) % banners.length, 1]);
-  }, []);
+  const step = cardWidth + gap;
+  const maxIndex = banners.length - (isMobile ? 1 : 2);
+  const safeCurrent = Math.min(current, maxIndex);
 
-  const prev = useCallback(() => {
-    setState(([prevIndex]) => [
-      (prevIndex - 1 + banners.length) % banners.length,
-      -1,
-    ]);
-  }, []);
-
-  // Autoplay
   useEffect(() => {
-    timerRef.current = setInterval(next, AUTOPLAY_DELAY);
-    return () => clearInterval(timerRef.current);
-  }, [next]);
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    }, AUTOPLAY_DELAY);
+
+    return () => clearInterval(timer);
+  }, [maxIndex]);
 
   return (
-    <section
-      className={`relative w-full mt-[64px] sm:mt-[72px] lg:mt-[84px] h-[calc(100dvh-64px)] sm:h-[calc(100dvh-72px)] lg:h-[calc(100vh-84px)] overflow-hidden transition-colors duration-500 ${bannerBgColors[current]}`}
-    >
-      <AnimatePresence initial={false} custom={direction}>
+    <section className="w-full overflow-hidden mt-[114px] md:mt-[114px] lg:mt-[126px] pt-3 sm:pt-4 pb-2">
+      {/* Banner carousel viewport with equal left and right spacing */}
+      <div ref={containerRef} className="mx-4 md:mx-[4vw] overflow-hidden">
         <motion.div
-          key={current}
-          custom={direction}
-          variants={slideVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
+          className="flex w-max"
+          style={{ gap: `${gap}px` }}
+          animate={{ x: -safeCurrent * step }}
           transition={{
-            x: { type: "tween", duration: 0.6, ease: "easeInOut" },
+            duration: 0.7,
+            ease: [0.22, 1, 0.36, 1],
           }}
-          className="absolute inset-0 w-full h-full flex items-center justify-center p-0"
         >
-          <img
-            src={banners[current]}
-            alt={`Banner ${current + 1}`}
-            className="w-full h-full object-cover object-center max-w-full max-h-full"
-            draggable={false}
-          />
+          {banners.map((banner, index) => (
+            <div
+              key={index}
+              className="shrink-0 overflow-hidden rounded-xl md:rounded-2xl shadow-sm"
+              style={{ width: cardWidth > 0 ? `${cardWidth}px` : "auto" }}
+            >
+              <img
+                src={banner}
+                alt={`Banner ${index + 1}`}
+                className="block w-full aspect-[16/9] h-auto object-contain"
+                draggable={false}
+              />
+            </div>
+          ))}
         </motion.div>
-      </AnimatePresence>
+      </div>
 
-      {/* Prev / Next arrows */}
-      <button
-        onClick={prev}
-        aria-label="Previous slide"
-        className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 text-white hover:bg-black/60 transition cursor-pointer"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-4 h-4 sm:w-5 sm:h-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-      </button>
-
-      <button
-        onClick={next}
-        aria-label="Next slide"
-        className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 text-white hover:bg-black/60 transition cursor-pointer"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-4 h-4 sm:w-5 sm:h-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-
-      {/* Pagination dots */}
-      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-1.5 sm:gap-2">
-        {banners.map((_, index) => (
+      {/* Pagination */}
+      <div className="mt-2 flex justify-center gap-2">
+        {Array.from({ length: maxIndex + 1 }).map((_, index) => (
           <button
             key={index}
-            onClick={() => goTo(index)}
+            onClick={() => setCurrent(index)}
             aria-label={`Go to slide ${index + 1}`}
-            className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer ${index === current
-                ? "w-5 sm:w-6 bg-white"
-                : "w-1.5 sm:w-2 bg-white/50 hover:bg-white/80"
-              }`}
+            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+              safeCurrent === index
+                ? "w-6 bg-gray-500"
+                : "w-1.5 bg-gray-300 hover:bg-gray-500"
+            }`}
           />
         ))}
       </div>
@@ -160,4 +107,6 @@ const Hore = () => {
   );
 };
 
-export default Hore;
+export default Hero;
+
+

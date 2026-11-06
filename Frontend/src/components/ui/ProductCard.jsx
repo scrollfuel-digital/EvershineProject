@@ -1,162 +1,219 @@
-// src/components/ui/ProductCard.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Package, Truck } from "lucide-react";
+import {
+  Package,
+  Ruler,
+  Maximize2,
+  ArrowUpRight,
+} from "lucide-react";
 
 export default function ProductCard({
   product,
   brandName = "",
-  categoryName = "",
   nameMap = null,
   to = null,
   onClick = null,
+  onPurchase = null,
   actionButton = null,
+  isAdmin = false,
   className = "",
 }) {
   const [imgError, setImgError] = useState(false);
 
   if (!product) return null;
 
-  const resolvedBrand =
+  const resolvedIsAdmin = Boolean(isAdmin || actionButton);
+
+  const status = String(
+    product.productStatus || product.status || ""
+  ).toUpperCase();
+
+  const isUnavailable =
+    status === "UNAVAILABLE" || product.available === false;
+
+  const brand =
     brandName ||
     (nameMap && product.brandId && nameMap.get(product.brandId)) ||
-    product.brand ||
     product.brandName ||
-    "—";
+    product.brand ||
+    "";
+
+  const image = product.imageUrl || product.img;
 
   const rawAttributes = Array.isArray(product.attributes)
     ? product.attributes
     : Array.isArray(product.fullAttributeResponseDtos)
     ? product.fullAttributeResponseDtos
-    : product.specs && typeof product.specs === "object"
-    ? Object.entries(product.specs).map(([key, val]) => ({
-        label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, " $1"),
-        values: [String(val)],
-      }))
     : [];
 
-  const attributes = rawAttributes.filter((attr) => {
-    if (!attr || !attr.label) return false;
-    const hasMin = attr.min != null && attr.min !== "";
-    const hasMax = attr.max != null && attr.max !== "";
-    const hasValues = Array.isArray(attr.values) && attr.values.length > 0;
-    const hasValue = attr.value != null && attr.value !== "";
-    return hasMin || hasMax || hasValues || hasValue;
-  });
+  const attributes = rawAttributes
+    .filter(
+      (attr) =>
+        attr &&
+        attr.label &&
+        attr.min != null &&
+        attr.min !== "" &&
+        attr.max != null &&
+        attr.max !== ""
+    )
+    .slice(0, 3);
 
-  const getAttributeValue = (attr) => {
-    const hasMin = attr.min != null && attr.min !== "";
-    const hasMax = attr.max != null && attr.max !== "";
+  const icons = [Ruler, Maximize2, Package];
 
-    if (hasMin && hasMax) {
-      return `${attr.min} - ${attr.max} ${attr.unit || ""}`.trim();
-    }
+  const destination =
+    !isUnavailable || resolvedIsAdmin
+      ? to ||
+        (!actionButton && product.slug
+          ? `/products/${product.slug}`
+          : null)
+      : null;
 
-    if (hasMin || hasMax) {
-      return `${hasMin ? attr.min : attr.max} ${attr.unit || ""}`.trim();
-    }
+  const handlePurchase = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-    if (Array.isArray(attr.values) && attr.values.length) {
-      return `${attr.values.join(", ")} ${attr.unit || ""}`.trim();
-    }
+    if (isUnavailable && !resolvedIsAdmin) return;
 
-    if (attr.value) {
-      return `${attr.value} ${attr.unit || ""}`.trim();
-    }
-
-    return "—";
+    if (onPurchase) onPurchase(product);
+    else if (onClick) onClick(product);
   };
 
-  const displayImage = product.imageUrl || product.img;
-  const destination = to || (!actionButton && product.slug ? `/products/${product.slug}` : null);
-
-  const cardContent = (
+  const content = (
     <article
-      onClick={!destination ? onClick : undefined}
-      className={`group flex h-full min-w-0 flex-col overflow-hidden
-        rounded-[18px] border border-[#e2e2e2] bg-white
-        transition-colors duration-200 hover:border-[#c8c8c8]
-        ${destination || onClick ? "cursor-pointer" : ""}
-        ${className}`}
+      className={`group relative flex h-[320px] sm:h-[370px] w-full sm:max-w-[280px] lg:max-w-[290px] mx-auto flex-col overflow-hidden rounded-xl sm:rounded-2xl bg-white text-neutral-800 shadow-[0_10px_16px_-6px_rgba(0,0,0,0.15)] hover:shadow-[0_16px_24px_-6px_rgba(0,0,0,0.22)] transition-all duration-200 ${className}`}
+      onClick={(e) => {
+        if (isUnavailable && !resolvedIsAdmin) {
+          e.preventDefault();
+          return;
+        }
+
+        if (onClick && !destination) onClick(product);
+      }}
     >
-      {/* Product image */}
-      <div className="flex h-[190px] shrink-0 items-center justify-center overflow-hidden bg-white px-5 pt-3">
-        {!imgError && displayImage ? (
+      {/* IMAGE SECTION */}
+      <div className="relative min-h-0 flex-1 overflow-hidden bg-slate-50/50">
+        {image && !imgError ? (
           <img
-            src={displayImage}
-            alt={product.title || "Product"}
+            src={image}
+            alt={product.title || "Steel product"}
             loading="lazy"
             onError={() => setImgError(true)}
-            className="h-full w-full object-contain transition-transform
-              duration-300 group-hover:scale-[1.03]"
+            className="absolute inset-0 h-full w-full object-contain object-center p-2.5 sm:p-3.5 transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex flex-col items-center gap-2 text-gray-400">
-            <Package size={42} strokeWidth={1.2} />
-            <span className="text-xs">No image available</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-neutral-400">
+            <Package size={32} strokeWidth={1.3} />
+            <span className="text-[11px] sm:text-xs">No image</span>
           </div>
         )}
+
+        {/* SOFT IMAGE SHADING */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-neutral-900/5" />
+
+        {/* TOP BADGES - ONLY BRAND (AND UNAVAILABLE IF APPLICABLE) */}
+        <div className="absolute left-2.5 right-2.5 top-2.5 z-10 flex items-start justify-between gap-1.5">
+          {brand ? (
+            <span className="max-w-[85%] truncate rounded-md border border-neutral-200/90 bg-white/95 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-semibold text-neutral-800 shadow-2xs backdrop-blur-sm">
+              {brand}
+            </span>
+          ) : (
+            <span />
+          )}
+
+          {isUnavailable && (
+            <span className="rounded-md bg-red-600 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-white">
+              Unavailable
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Product details */}
-      <div className="flex flex-1 flex-col px-[15px] pb-3">
-        <h3 className="mb-1 line-clamp-2 min-h-[48px] text-[17px]
-          font-normal leading-[25px] tracking-[-0.3px] text-[#111111]">
+      {/* PRODUCT DETAILS */}
+      <div className="relative z-10 flex shrink-0 flex-col gap-1.5 sm:gap-2 bg-white p-2.5 sm:p-3.5">
+        {/* PRODUCT NAME - FIXED 2-LINE HEIGHT TO PREVENT UNEVEN ALIGNMENT */}
+        <h3
+          className="h-8 sm:h-10 line-clamp-2 text-xs sm:text-[14px] font-semibold leading-snug text-neutral-800"
+          title={product.title || "Untitled product"}
+        >
           {product.title || "Untitled product"}
         </h3>
 
-        <p className="mb-3 text-[14px] leading-5 text-[#777777]">
-          Brand: {resolvedBrand}
-        </p>
+        {/* ATTRIBUTES - AT MOST 3, ICONS HIDDEN ON MOBILE, NO SEPARATORS, FIXED SLOTS */}
+        <div className="flex h-[66px] sm:h-[78px] flex-col justify-start">
+          {[0, 1, 2].map((slotIndex) => {
+            const attr = attributes[slotIndex];
+            const Icon = icons[slotIndex];
 
-        {attributes.length > 0 && (
-          <div className="mt-auto space-y-2 pb-1">
-            {attributes.slice(0, 4).map((attr, index) => (
+            if (!attr) {
+              return (
+                <div
+                  key={`empty-${slotIndex}`}
+                  className="h-[22px] sm:h-[26px] shrink-0"
+                  aria-hidden="true"
+                />
+              );
+            }
+
+            return (
               <div
-                key={attr.id || `${attr.label}-${index}`}
-                className="flex flex-wrap items-baseline gap-x-2
-                  text-[14px] leading-5 text-[#171717]"
+                key={attr.id || `${attr.label}-${slotIndex}`}
+                className="flex h-[22px] sm:h-[26px] shrink-0 items-center justify-between gap-1 sm:gap-2 text-[11px] sm:text-xs md:text-sm"
               >
-                <span className="font-medium text-[#111111]">
-                  {attr.label}:
+                <div className="flex items-center gap-1.5 min-w-0 flex-1 truncate">
+                  <Icon
+                    size={13}
+                    strokeWidth={1.8}
+                    className="hidden sm:inline-block shrink-0 text-neutral-400"
+                  />
+                  <span className="truncate font-medium text-neutral-500 sm:text-neutral-600">
+                    {attr.label}
+                  </span>
+                </div>
+
+                <span className="shrink-0 text-right font-bold text-neutral-900 ml-1">
+                  {`${attr.min} - ${attr.max}${attr.unit ? ` ${attr.unit}` : ""}`}
                 </span>
-                <span className="text-slate-600">{getAttributeValue(attr)}</span>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Action button (Only rendered if actionButton is provided, e.g. in Admin) */}
-      {actionButton && (
-        <div
-          className="flex min-h-[50px] shrink-0 items-center border-t border-[#e2e2e2] bg-[#f5f6fa] px-[15px]"
-          onClick={(event) => {
-            event.stopPropagation();
-            event.preventDefault();
-          }}
-        >
-          {actionButton}
+            );
+          })}
         </div>
-      )}
 
-      {/* Delivery footer */}
-      <div className="flex min-h-[48px] shrink-0 items-center gap-3 border-t border-[#e2e2e2] bg-[#f5f6fa] px-[15px] text-[14px] text-[#222222]">
-        <Truck size={18} strokeWidth={1.5} className="shrink-0 text-[#004060]" />
-        <span>
-          {product.deliveryText || product.delivery || "Delivery in 2 - 5 days"}
-        </span>
+        {/* ACTION BUTTON */}
+        {actionButton ? (
+          <div
+            className="flex flex-wrap items-center gap-1.5 pt-0.5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {actionButton}
+          </div>
+        ) : (
+          <button
+            type="button"
+            disabled={isUnavailable}
+            onClick={handlePurchase}
+            className="flex h-7 sm:h-8.5 w-full items-center justify-between rounded-lg bg-primary hover:bg-secondary text-white px-2.5 sm:px-3 py-[2px] text-[11px] sm:text-xs md:text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer shadow-xs"
+          >
+            <span className="text-white font-medium">
+              {isUnavailable ? "Unavailable" : "View Product"}
+            </span>
+
+            {!isUnavailable && <ArrowUpRight size={14} className="shrink-0 text-white" />}
+          </button>
+        )}
       </div>
     </article>
   );
 
-  if (destination) {
+  if (destination && !isUnavailable) {
     return (
-      <Link to={destination} className="block h-full focus:outline-none select-none text-inherit no-underline">
-        {cardContent}
+      <Link
+        to={destination}
+        className="block h-full w-full text-inherit no-underline"
+      >
+        {content}
       </Link>
     );
   }
 
-  return cardContent;
+  return content;
 }

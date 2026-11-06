@@ -249,7 +249,6 @@ export default function ProductCatalogueGrid({
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {currentProducts.map((product) => {
               const brandName = nameMap?.get(product.brandId) || "—";
-              const categoryName = nameMap?.get(product.categoryId) || "";
               const hasAdminActions = showAdminActions || Boolean(onUpdateProduct || onDeleteProduct);
 
               const actionButton = hasAdminActions ? (
@@ -294,8 +293,9 @@ export default function ProductCatalogueGrid({
                   key={product.id}
                   product={product}
                   brandName={brandName}
-                  categoryName={categoryName}
                   actionButton={actionButton}
+                  isAdmin={true}
+                  onClick={onUpdateProduct ? () => onUpdateProduct(product.id, product) : undefined}
                 />
               );
             })}
