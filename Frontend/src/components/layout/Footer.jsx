@@ -9,7 +9,7 @@ import {
   FaClock,
 } from "react-icons/fa";
 import footerLogo from "../../assets/evershine_footer_logo.png";
-
+// 
 const socials = [
   {
     icon: <FaInstagram />,

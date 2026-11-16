@@ -20,11 +20,11 @@ import TurboVentilators from "../assets/Untitleddesign/13.png";
 import XLPE from "../assets/Untitleddesign/14.png";
 import ZPurlin from "../assets/Untitleddesign/15.png";
 
-import jswLogo from "../assets/brand/JSWLogo.png";
-import tataLogo from "../assets/brand/TATAlogo.png";
-import apolloLogo from "../assets/brand/ApolloLogo.png";
-import amnsLogo from "../assets/brand/AMIndialogo.png";
-import hindalcoLogo from "../assets/brand/HindalcoLogo.png";
+import jswLogo from "../assets/brands/jsw.png";
+import tataLogo from "../assets/brands/tata.png";
+import apolloLogo from "../assets/brands/apl.png";
+import amnsLogo from "../assets/brands/amns.png";
+import hindalcoLogo from "../assets/brands/hindalco.png";
 
 export const categoryListData = [
   { label: "Accessories", href: "/allproduct/mildsteel/accessories", images: [accessoriesImg1] },

@@ -5,6 +5,20 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-route
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 
+// Authentication & Protected Routes
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Login from "./pages/Auth/Login";
+import Signup from "./pages/Auth/Signup";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+
+// Cart Context & Components
+import { CartProvider } from "./context/CartContext";
+import CartDrawer from "./components/cart/CartDrawer";
+import CartToast from "./components/cart/CartToast";
+import CartPage from "./pages/Cart/CartPage";
+
 // Admin Panel
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminContent from "./pages/Admin/AdminContent";
@@ -38,20 +52,46 @@ import Blogs from "./pages/Blogspage/Blogs";
 function AppContent() {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
+  const isAuth =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/forgotpassword") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/resetpassword");
+  const hideLayout = isAdmin || isAuth;
 
   return (
     <>
       <ScrollToTop />
-      {!isAdmin && <Navbar />}
+      {!hideLayout && <Navbar />}
 
       <Routes>
-        {/* Admin Portal Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* Admin Portal Routes (Restricted strictly to ROLE_ADMIN) */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate to="/admin/products" replace />} />
           <Route path=":section/:subSection" element={<AdminContent />} />
           <Route path=":section" element={<AdminContent />} />
         </Route>
 
+        {/* Authentication Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/register" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
+
+        {/* Public Application Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/blogs" element={<Blogs />} />
@@ -71,12 +111,17 @@ function AppContent() {
         <Route path="/allproduct/:category/:slug" element={<Products />} />
 
         {/* Specialty Pages & Catch-All Fallback */}
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/all-categories" element={<AllCategories />} />
         <Route path="/allcategories" element={<AllCategories />} />
         <Route path="*" element={<Products />} />
       </Routes>
 
-      {!isAdmin && (
+      {/* Slide-over Enquiry Cart Drawer & Bottom Toast Notification */}
+      <CartDrawer />
+      <CartToast />
+
+      {!hideLayout && (
         <>
           <Footer />
           {/* Floating Buttons */}
@@ -91,9 +136,13 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <FilterProvider>
-        <AppContent />
-      </FilterProvider>
+      <AuthProvider>
+        <CartProvider>
+          <FilterProvider>
+            <AppContent />
+          </FilterProvider>
+        </CartProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

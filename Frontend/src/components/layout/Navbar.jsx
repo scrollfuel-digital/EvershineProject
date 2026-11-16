@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Headphones } from "lucide-react";
+import { ChevronDown, Headphones, User, LogOut, X, Loader2 } from "lucide-react";
 import evershineLogo from "../../assets/Evershinelogo.png";
 import {
     HiOutlineShoppingCart,
@@ -12,12 +12,15 @@ import {
 
 import { useDataProcess } from "../../services/dataProccess";
 import { fetchActiveProducts } from "../../services/productService";
+import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../hooks/useCart";
+import { getUserInfo } from "../../services/authService";
 
 export default function Navbar() {
+    const { user, isAuthenticated, isAdmin, logout } = useAuth();
+    const { cartCount, openCart } = useCart();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
-    const [isCartOpen, setIsCartOpen] = useState(false);
     const [search, setSearch] = useState("");
-    const [cartItems] = useState([]);
     const [products, setProducts] = useState([]);
 
     const { categories = [], categoryTypesMap, categoryVariantsMap, nameMap } = useDataProcess();
@@ -38,8 +41,39 @@ export default function Navbar() {
     const [openMenu, setOpenMenu] = useState(null);
     const [isHover, setIsHover] = useState(null);
     const [mobileAccordionState, setMobileAccordionState] = useState({});
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+    const [userInfo, setUserInfo] = useState(null);
+    const [infoLoading, setInfoLoading] = useState(false);
+    const [infoError, setInfoError] = useState(null);
     const closeTimeout = useRef(null);
     const location = useLocation();
+
+    const userInitial = user?.username ? user.username.charAt(0).toUpperCase() : "U";
+
+    const handleViewInfo = async () => {
+        setIsProfileOpen(false);
+        setIsInfoModalOpen(true);
+        if (!userInfo) {
+            setInfoLoading(true);
+            setInfoError(null);
+            try {
+                const data = await getUserInfo();
+                setUserInfo(data);
+            } catch {
+                setInfoError("Unable to fetch user information at this time.");
+            } finally {
+                setInfoLoading(false);
+            }
+        }
+    };
+
+    const handleLogout = () => {
+        setIsProfileOpen(false);
+        setIsInfoModalOpen(false);
+        setUserInfo(null);
+        logout();
+    };
 
     // Core main navigation links
     const mainNavLinks = [
@@ -61,7 +95,8 @@ export default function Navbar() {
         setOpenMenu(null);
         setIsHover(null);
         setIsMobileOpen(false);
-        setIsCartOpen(false);
+        setIsProfileOpen(false);
+        setIsInfoModalOpen(false);
     }, [location.pathname, location.search]);
 
     const handleHover = (menuId) => {
@@ -110,10 +145,6 @@ export default function Navbar() {
         }
         return matches;
     }, [search, products, nameMap]);
-
-    const totalCartCount = useMemo(() => {
-        return cartItems.reduce((total, item) => total + (item.qty || 1), 0);
-    }, [cartItems]);
 
     // Reusable search bar input with auto-complete dropdown
     const renderSearchBar = (isMobile = false) => (
@@ -249,96 +280,81 @@ export default function Navbar() {
                         <div className="relative">
                             <button
                                 type="button"
-                                onClick={() => setIsCartOpen((prev) => !prev)}
+                                onClick={openCart}
                                 className="relative flex items-center justify-center p-2 rounded-lg text-primary hover:bg-slate-100 transition-colors cursor-pointer group"
                                 aria-label="Open Cart"
+                                title="Enquiry Cart"
                             >
                                 <HiOutlineShoppingCart className="text-2xl transition-transform duration-200 group-hover:scale-110" />
-                                {totalCartCount > 0 && (
+                                {cartCount > 0 && (
                                     <span className="absolute -top-1 -right-1 bg-primary text-white text-[11px] font-bold rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center shadow-sm">
-                                        {totalCartCount}
+                                        {cartCount}
                                     </span>
                                 )}
                             </button>
-
-                            {/* Cart Flyout Modal */}
-                            {isCartOpen && (
-                                <>
-                                    <div
-                                        className="fixed inset-0 z-40"
-                                        onClick={() => setIsCartOpen(false)}
-                                    />
-                                    <div className="absolute right-0 top-full mt-2 w-[85vw] sm:w-[340px] max-w-[340px] bg-white border border-light-gray rounded-xl shadow-[0_16px_40px_rgba(0,64,96,0.15)] z-50 overflow-hidden animate-[popIn_0.2s_ease-out]">
-                                        <div className="flex items-center justify-between px-5 py-4 border-b border-light-gray">
-                                            <h4 className="text-sm font-semibold text-dark">
-                                                Your Cart {totalCartCount > 0 ? `(${totalCartCount})` : ""}
-                                            </h4>
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsCartOpen(false)}
-                                                className="text-gray transition-all duration-200 hover:text-dark hover:rotate-90 cursor-pointer"
-                                            >
-                                                <HiX className="text-lg" />
-                                            </button>
-                                        </div>
-
-                                        {cartItems.length > 0 ? (
-                                            <>
-                                                <div className="max-h-[50vh] sm:max-h-[340px] overflow-y-auto py-2">
-                                                    {cartItems.map((item, idx) => (
-                                                        <div
-                                                            key={idx}
-                                                            className="flex items-center justify-between px-5 py-2.5 text-xs sm:text-sm text-dark border-b border-slate-50 last:border-b-0"
-                                                        >
-                                                            <div>
-                                                                <p className="font-medium text-slate-800">{item.name}</p>
-                                                                <span className="text-gray text-xs">Qty: {item.qty}</span>
-                                                            </div>
-                                                            <span className="font-semibold text-primary">{item.price}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                <div className="p-4 border-t border-light-gray bg-slate-50/50">
-                                                    <Link
-                                                        to="/products"
-                                                        onClick={() => setIsCartOpen(false)}
-                                                        className="block text-center w-full py-2.5 px-4 bg-primary text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-secondary transition-colors"
-                                                    >
-                                                        View Cart & Checkout
-                                                    </Link>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="py-8 px-5 text-center flex flex-col items-center justify-center">
-                                                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
-                                                    <HiOutlineShoppingCart className="text-2xl text-slate-400" />
-                                                </div>
-                                                <p className="text-sm font-semibold text-slate-800">Your cart is empty</p>
-                                                <p className="text-xs text-slate-400 mt-1 mb-4 leading-relaxed">
-                                                    Looks like you haven't added any products yet.
-                                                </p>
-                                                <Link
-                                                    to="/products"
-                                                    onClick={() => setIsCartOpen(false)}
-                                                    className="inline-flex items-center justify-center py-2 px-4 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-secondary transition-colors"
-                                                >
-                                                    Explore Products
-                                                </Link>
-                                            </div>
-                                        )}
-                                    </div>
-                                </>
-                            )}
                         </div>
 
-                        {/* Sign In Button */}
-                        <Link
-                            to="/admin"
-                            className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-primary text-white hover:bg-secondary transition-all shadow-sm active:scale-95 whitespace-nowrap"
-                        >
-                            Sign In
-                        </Link>
+                        {/* Authentication Actions */}
+                        {isAuthenticated ? (
+                            <div className="relative flex items-center gap-2">
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-primary text-white hover:bg-secondary transition-all shadow-sm whitespace-nowrap"
+                                    >
+                                        Admin Panel
+                                    </Link>
+                                )}
+
+                                {/* Profile Circle Button */}
+                                <button
+                                    type="button"
+                                    onClick={() => setIsProfileOpen((prev) => !prev)}
+                                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary text-white font-bold text-sm sm:text-base flex items-center justify-center hover:bg-secondary transition-transform active:scale-95 shadow-sm focus:outline-none cursor-pointer uppercase shrink-0"
+                                    title="Account Profile"
+                                    aria-label="Account Profile"
+                                    aria-expanded={isProfileOpen}
+                                >
+                                    {userInitial}
+                                </button>
+
+                                {/* Profile Popup Dropdown */}
+                                {isProfileOpen && (
+                                    <>
+                                        <div
+                                            className="fixed inset-0 z-40"
+                                            onClick={() => setIsProfileOpen(false)}
+                                        />
+                                        <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 animate-[popIn_0.15s_ease-out]">
+                                            <button
+                                                type="button"
+                                                onClick={handleViewInfo}
+                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors text-left cursor-pointer"
+                                            >
+                                                <User className="w-4 h-4 text-slate-500" />
+                                                <span>View Info</span>
+                                            </button>
+                                            <div className="border-t border-slate-100 my-1" />
+                                            <button
+                                                type="button"
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer"
+                                            >
+                                                <LogOut className="w-4 h-4 text-rose-500" />
+                                                <span>Logout</span>
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        ) : (
+                            <Link
+                                to="/login"
+                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-primary text-white hover:bg-secondary transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                            >
+                                Sign In
+                            </Link>
+                        )}
                     </div>
 
                     {/* RIGHT SECTION (PHONE / TABLET VIEW): CART + ANIMATED HAMBURGER MENU */}
@@ -346,14 +362,15 @@ export default function Navbar() {
                         {/* Mobile Cart Trigger */}
                         <button
                             type="button"
-                            onClick={() => setIsCartOpen((prev) => !prev)}
-                            className="relative flex items-center justify-center p-2 rounded-lg text-primary hover:bg-slate-100 transition-colors"
+                            onClick={openCart}
+                            className="relative flex items-center justify-center p-2 rounded-lg text-primary hover:bg-slate-100 transition-colors cursor-pointer"
                             aria-label="Open Cart"
+                            title="Enquiry Cart"
                         >
                             <HiOutlineShoppingCart className="text-2xl" />
-                            {totalCartCount > 0 && (
-                                <span className="absolute top-0.5 right-0.5 bg-primary text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center">
-                                    {totalCartCount}
+                            {cartCount > 0 && (
+                                <span className="absolute top-0.5 right-0.5 bg-primary text-white text-[10px] font-bold rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center shadow-sm">
+                                    {cartCount}
                                 </span>
                             )}
                         </button>
@@ -661,29 +678,151 @@ export default function Navbar() {
 
                     <div className="h-px bg-slate-100" />
 
-                    {/* MOBILE BOTTOM ACTIONS: SIGN IN & CART */}
+                    {/* MOBILE BOTTOM ACTIONS: SIGN IN / OUT & CART */}
                     <div className="flex flex-col gap-2 pt-1 pb-3">
-                        <Link
-                            to="/admin"
-                            onClick={() => setIsMobileOpen(false)}
-                            className="w-full flex items-center justify-center py-2.5 px-4 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-secondary transition-colors"
-                        >
-                            Sign In
-                        </Link>
+                        {isAuthenticated ? (
+                            <>
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        onClick={() => setIsMobileOpen(false)}
+                                        className="w-full flex items-center justify-center py-2.5 px-4 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-secondary transition-colors"
+                                    >
+                                        Admin Panel
+                                    </Link>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsMobileOpen(false);
+                                        handleViewInfo();
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200 transition-colors cursor-pointer"
+                                >
+                                    <User className="w-4 h-4" />
+                                    <span>View Info</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsMobileOpen(false);
+                                        handleLogout();
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg border border-rose-200 text-rose-600 text-sm font-semibold hover:bg-rose-50 transition-colors cursor-pointer"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    <span>Logout</span>
+                                </button>
+                            </>
+                        ) : (
+                            <Link
+                                to="/login"
+                                onClick={() => setIsMobileOpen(false)}
+                                className="w-full flex items-center justify-center py-2.5 px-4 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-secondary transition-colors"
+                            >
+                                Sign In
+                            </Link>
+                        )}
                         <button
                             type="button"
                             onClick={() => {
-                                setIsCartOpen(true);
                                 setIsMobileOpen(false);
+                                openCart();
                             }}
-                            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-slate-200 text-primary text-sm font-semibold hover:bg-slate-50 transition-colors"
+                            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-slate-200 text-primary text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
                         >
                             <HiOutlineShoppingCart className="text-lg" />
-                            <span>View Cart {totalCartCount > 0 ? `(${totalCartCount})` : ""}</span>
+                            <span>View Cart {cartCount > 0 ? `(${cartCount})` : ""}</span>
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* USER INFORMATION MODAL */}
+            {isInfoModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs select-none">
+                    <div
+                        className="fixed inset-0"
+                        onClick={() => setIsInfoModalOpen(false)}
+                    />
+                    <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 z-10 animate-[popIn_0.2s_ease-out]">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-primary text-white font-bold flex items-center justify-center text-base uppercase shrink-0">
+                                    {userInitial}
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-900 leading-tight">User Information</h3>
+                                    <p className="text-xs text-slate-500">Account Details</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsInfoModalOpen(false)}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                                aria-label="Close"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="py-4">
+                            {infoLoading ? (
+                                <div className="py-8 flex flex-col items-center justify-center text-slate-500 gap-2">
+                                    <Loader2 className="w-7 h-7 animate-spin text-primary" />
+                                    <span className="text-sm">Loading user info...</span>
+                                </div>
+                            ) : infoError ? (
+                                <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm text-center">
+                                    <p>{infoError}</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setUserInfo(null);
+                                            handleViewInfo();
+                                        }}
+                                        className="mt-2 text-xs font-semibold text-rose-800 underline cursor-pointer"
+                                    >
+                                        Try again
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-3 text-sm">
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-xs text-slate-500 font-medium block">Full Name</span>
+                                        <span className="text-[15px] font-semibold text-slate-800">{userInfo?.name || "N/A"}</span>
+                                    </div>
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-xs text-slate-500 font-medium block">Email (Username)</span>
+                                        <span className="text-[15px] font-semibold text-slate-800 break-all">{userInfo?.username || user?.username || "N/A"}</span>
+                                    </div>
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-xs text-slate-500 font-medium block">Phone Number</span>
+                                        <span className="text-[15px] font-semibold text-slate-800">{userInfo?.phoneNo || "N/A"}</span>
+                                    </div>
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-xs text-slate-500 font-medium block">Address</span>
+                                        <span className="text-[15px] font-semibold text-slate-800 leading-snug">{userInfo?.address || "N/A"}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="pt-3 border-t border-slate-100 flex justify-end">
+                            <button
+                                type="button"
+                                onClick={() => setIsInfoModalOpen(false)}
+                                className="py-2 px-5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors cursor-pointer"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }

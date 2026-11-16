@@ -1,15 +1,26 @@
 // src/pages/Admin/AdminNavbar.jsx
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import evershineLogo from "../../assets/Evershinelogo.png";
 import { HiOutlineSearch, HiOutlineChevronDown } from "react-icons/hi";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function AdminNavbar({
   isSidebarOpen = false,
   onToggleSidebar = () => {},
 }) {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [search, setSearch] = useState("");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const handleSignOut = () => {
+    setIsProfileOpen(false);
+    logout();
+    navigate("/login", { replace: true });
+  };
+
+  const userInitial = user?.username ? user.username.charAt(0).toUpperCase() : "A";
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white border-b border-light-gray select-none">
@@ -59,12 +70,14 @@ export default function AdminNavbar({
               aria-expanded={isProfileOpen}
               aria-label="User profile menu"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                AD
+              <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase">
+                {userInitial}
               </div>
               <div className="hidden sm:flex flex-col text-left">
                 <span className="text-xs font-semibold text-slate-800 leading-tight">Admin User</span>
-                <span className="text-[10px] text-slate-500 leading-tight">Super Admin</span>
+                <span className="text-[10px] text-slate-500 leading-tight truncate max-w-[120px]">
+                  {user?.username || "Admin"}
+                </span>
               </div>
               <HiOutlineChevronDown
                 className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${
@@ -84,7 +97,7 @@ export default function AdminNavbar({
                 <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 animate-[popIn_0.15s_ease-out]">
                   <div className="px-4 py-2.5 border-b border-slate-100">
                     <p className="text-xs font-semibold text-slate-900">Administrator</p>
-                    <p className="text-[11px] text-slate-500 truncate">admin@evershine.com</p>
+                    <p className="text-[11px] text-slate-500 truncate">{user?.username || "admin@evershine.com"}</p>
                   </div>
 
                   <div className="py-1">
@@ -115,8 +128,8 @@ export default function AdminNavbar({
                   <div className="pt-1 border-t border-slate-100">
                     <button
                       type="button"
-                      onClick={() => setIsProfileOpen(false)}
-                      className="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 transition-colors"
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                     >
                       Sign Out
                     </button>

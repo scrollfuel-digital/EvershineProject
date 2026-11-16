@@ -1,12 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
+import { ChevronDown, ChevronUp, Loader2, AlertCircle, ShoppingBag } from "lucide-react";
 import { fetchProductBySlug } from "../../services/productService";
 import { useDataProcess } from "../../services/dataProccess";
+import { useAuth } from "../../hooks/useAuth";
+import { useCart } from "../../hooks/useCart";
 
 export default function ProductDetails() {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { nameMap } = useDataProcess();
+  const { isAuthenticated } = useAuth();
+  const { addItemToCart, cartCount, maxLimit } = useCart();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,6 +21,8 @@ export default function ProductDetails() {
   const [quantity, setQuantity] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [openMobileTabs, setOpenMobileTabs] = useState({ 0: true });
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [cartFeedback, setCartFeedback] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -102,6 +110,69 @@ export default function ProductDetails() {
       ...previous,
       [index]: !previous[index],
     }));
+  };
+
+  const handleAddToCart = async () => {
+    setCartFeedback(null);
+
+    // If not authenticated, redirect to login preserving current location
+    if (!isAuthenticated) {
+      navigate("/login", {
+        state: {
+          from: location,
+          message: "Please sign in to add products to your cart.",
+        },
+      });
+      return;
+    }
+
+    // Check maximum 5 products limit
+    if (cartCount >= maxLimit) {
+      setCartFeedback({
+        type: "limit",
+        message: `Maximum cart limit reached (${maxLimit} products). Please remove an existing item before adding a new one.`,
+      });
+      return;
+    }
+
+    // Check if attributes exist and ensure all are selected
+    if (attributes.length > 0) {
+      const missing = attributes.find((attr) => !selectedAttributes[attr.label]);
+      if (missing) {
+        setCartFeedback({
+          type: "error",
+          message: `Please select ${missing.label} before adding to cart.`,
+        });
+        return;
+      }
+    }
+
+    const qty = Math.max(1, Number(quantity) || 1);
+
+    const selectedCartAttributes = attributes.map((attr) => ({
+      label: attr.label,
+      unit: attr.unit || "",
+      value: String(selectedAttributes[attr.label]),
+    }));
+
+    setAddingToCart(true);
+    try {
+      await addItemToCart({
+        productSlug: product.slug,
+        quantity: qty,
+        selectedCartAttributes,
+      });
+
+      // Clear any previous error; success toast is handled globally
+      setCartFeedback(null);
+    } catch (err) {
+      setCartFeedback({
+        type: err.isLimitError ? "limit" : "error",
+        message: err.message || "Failed to add product to cart.",
+      });
+    } finally {
+      setAddingToCart(false);
+    }
   };
 
   const safeTab = Math.min(activeTab, Math.max(0, properties.length - 1));
@@ -312,11 +383,37 @@ export default function ProductDetails() {
                 </Link>
               </div>
 
+              {/* Error Notice (if validation or limit reached) */}
+              {cartFeedback && (
+                <div
+                  className={`mt-3 p-3 rounded-xl border text-xs flex items-start gap-2 ${
+                    cartFeedback.type === "limit"
+                      ? "bg-amber-50 border-amber-200 text-amber-900"
+                      : "bg-rose-50 border-rose-200 text-rose-800"
+                  }`}
+                >
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span className="font-medium flex-1 leading-snug">{cartFeedback.message}</span>
+                </div>
+              )}
+
               <button
                 type="button"
-                className="mt-4 w-full rounded-xl border border-[#004060] bg-white px-4 py-2.5 text-sm font-semibold text-[#004060] hover:bg-blue-50 transition cursor-pointer shadow-2xs"
+                onClick={handleAddToCart}
+                disabled={addingToCart}
+                className="mt-4 w-full rounded-xl border border-primary bg-primary hover:bg-secondary text-white disabled:opacity-60 disabled:cursor-not-allowed px-4 py-2.5 text-sm font-semibold transition cursor-pointer shadow-sm flex items-center justify-center gap-2"
               >
-                Add to cart
+                {addingToCart ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Adding to Cart...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="w-4 h-4" />
+                    <span>Add to cart</span>
+                  </>
+                )}
               </button>
             </div>
 
