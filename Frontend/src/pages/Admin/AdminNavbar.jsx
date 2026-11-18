@@ -1,7 +1,7 @@
 // src/pages/Admin/AdminNavbar.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import evershineLogo from "../../assets/Evershinelogo.png";
+import evershineLogo from "../../assets/evershine_logo.svg";
 import { HiOutlineSearch, HiOutlineChevronDown } from "react-icons/hi";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -29,12 +29,12 @@ export default function AdminNavbar({
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 shrink-0">
           <Link
             to="/admin"
-            className="shrink-0 flex items-center h-full overflow-hidden transition-transform duration-300 ease-out hover:scale-105"
+            className="shrink-0 flex items-center transition-transform duration-300 ease-out hover:scale-105"
           >
             <img
               src={evershineLogo}
               alt="Evershine Solution Logo"
-              className="h-[150%] max-h-[100px] sm:max-h-[150px] lg:max-h-[170px] xl:h-[270%] xl:max-h-[164px] w-auto object-contain"
+              className="h-[60px] sm:h-[70px] lg:h-[82px] w-auto object-contain"
             />
           </Link>
 

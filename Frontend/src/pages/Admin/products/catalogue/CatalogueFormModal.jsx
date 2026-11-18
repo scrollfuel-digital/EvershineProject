@@ -20,7 +20,7 @@ export default function CatalogueFormModal({
   if (!open) return null;
 
   const entityTitle =
-    entity === "category" ? "Category" : entity === "type" ? "Category Type" : "Variant";
+    entity === "category" ? "Category" : entity === "type" ? "Subcategory" : "Subcategory Variant";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">

@@ -105,6 +105,19 @@ export default function ProductAdminView() {
             <Edit3 className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>Update & Delete</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => handleTabChange("filters")}
+            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm sm:text-base font-semibold transition-all cursor-pointer ${
+              activeTab === "filters"
+                ? "bg-[#004060] text-white shadow-xs"
+                : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span>Filter Options</span>
+          </button>
         </div>
       </div>
 

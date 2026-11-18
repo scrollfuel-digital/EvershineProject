@@ -1,6 +1,7 @@
 // src/services/categoryService.js
 // Centralized service for Catalogue API operations: Categories, CategoryTypes, and Variants.
 import axios from "axios";
+import { invalidateFilterCache } from "./filterService";
 
 export const CATEGORIES_API_URL = "https://evershine-backend-1.onrender.com/api/categories";
 export const CATEGORY_TYPES_API_URL = "https://evershine-backend-1.onrender.com/api/category-types";
@@ -36,6 +37,7 @@ export async function createCategory({ name, slug }) {
       },
     }
   );
+  invalidateFilterCache();
   return response.data;
 }
 
@@ -59,6 +61,7 @@ export async function updateCategory(id, { name, slug }) {
       },
     }
   );
+  invalidateFilterCache();
   return response.data;
 }
 
@@ -82,6 +85,7 @@ export async function createCategoryType(parentCategoryId, { name, slug }) {
       },
     }
   );
+  invalidateFilterCache();
   return response.data;
 }
 
@@ -105,6 +109,7 @@ export async function updateCategoryType(categoryTypeId, { name, slug }) {
       },
     }
   );
+  invalidateFilterCache();
   return response.data;
 }
 
@@ -128,6 +133,7 @@ export async function updateCategoryVariant(variantId, { name, slug }) {
       },
     }
   );
+  invalidateFilterCache();
   return response.data;
 }
 
@@ -151,6 +157,7 @@ export async function createCategoryVariant(parentTypeId, { name, slug }) {
       },
     }
   );
+  invalidateFilterCache();
   return response.data;
 }
 

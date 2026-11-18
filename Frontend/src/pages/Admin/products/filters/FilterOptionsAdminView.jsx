@@ -1,6 +1,7 @@
 // src/pages/Admin/products/filters/FilterOptionsAdminView.jsx
 // Production Admin view for managing Filter Options: Brands, Sub-Brands, Grades, and Sub-Grades.
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Layers,
   Award,
@@ -14,6 +15,7 @@ import {
   Loader2,
   Building2,
   X,
+  FolderTree,
 } from "lucide-react";
 import { useAdminDashboard } from "../AdminDashboardContext";
 import {
@@ -30,6 +32,7 @@ const TAB_CONFIG = [
 ];
 
 export default function FilterOptionsAdminView() {
+  const navigate = useNavigate();
   const {
     allBrands = [],
     allSubBrands = [],
@@ -266,6 +269,17 @@ export default function FilterOptionsAdminView() {
                 </button>
               );
             })}
+
+            {/* Quick Link to Categories & Hierarchy (Catalogue) */}
+            <button
+              type="button"
+              onClick={() => navigate("/admin/products/catalogue")}
+              className="inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-sky-50 text-[#004060] hover:bg-sky-100 transition-all whitespace-nowrap cursor-pointer border border-sky-200/80"
+              title="Manage Categories, Subcategories, and Variants in Catalogue"
+            >
+              <FolderTree className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#004060]" />
+              <span>Categories & Hierarchy</span>
+            </button>
           </div>
 
           {/* Add Option Button */}

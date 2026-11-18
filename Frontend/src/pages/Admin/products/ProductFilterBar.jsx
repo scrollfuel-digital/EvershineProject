@@ -53,8 +53,8 @@ export default function ProductFilterBar({
 
   const hierarchyFilters = [
     { label: "All Categories", val: selectedCategory, set: onCategoryChange, list: categories },
-    { label: "All Types", val: selectedType, set: onTypeChange, list: availableTypes, disabled: !selectedCategory },
-    { label: "All Variants", val: selectedVariant, set: onVariantChange, list: availableVariants, disabled: !selectedType },
+    { label: "All Subcategories", val: selectedType, set: onTypeChange, list: availableTypes, disabled: !selectedCategory },
+    { label: "All Subcategory Variants", val: selectedVariant, set: onVariantChange, list: availableVariants, disabled: !selectedType },
   ];
 
   const attributeFilters = [
@@ -66,7 +66,7 @@ export default function ProductFilterBar({
 
   const activeBadges = [
     { label: "Cat", val: selectedCategory, clear: () => onCategoryChange("") },
-    { label: "Type", val: selectedType, clear: () => onTypeChange("") },
+    { label: "Subcategory", val: selectedType, clear: () => onTypeChange("") },
     { label: "Variant", val: selectedVariant, clear: () => onVariantChange("") },
     { label: "Brand", val: selectedBrand, clear: () => onBrandChange("") },
     { label: "Sub-Brand", val: selectedSubBrand, clear: () => onSubBrandChange("") },

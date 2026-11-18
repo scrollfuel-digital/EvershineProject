@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Headphones, User, LogOut, X, Loader2 } from "lucide-react";
-import evershineLogo from "../../assets/Evershinelogo.png";
+import evershineLogo from "../../assets/evershine_logo.svg";
 import {
     HiOutlineShoppingCart,
     HiOutlineSearch,
@@ -15,6 +15,173 @@ import { fetchActiveProducts } from "../../services/productService";
 import { useAuth } from "../../hooks/useAuth";
 import { useCart } from "../../hooks/useCart";
 import { getUserInfo } from "../../services/authService";
+
+function CategoryNavItem({
+    category,
+    isOpen,
+    isHover,
+    types,
+    hasTypes,
+    hasAnyVariants,
+    categoryVariantsMap,
+    handleHover,
+    handleLeave,
+    setIsHover,
+    setOpenMenu,
+    closeTimeout,
+}) {
+    const liRef = useRef(null);
+    const dropdownRef = useRef(null);
+
+    useLayoutEffect(() => {
+        if (!isOpen) return;
+
+        const el = dropdownRef.current;
+        const liEl = liRef.current;
+        if (!el || !liEl) return;
+
+        const updatePosition = () => {
+            const liRect = liEl.getBoundingClientRect();
+            // offsetWidth returns the natural unscaled layout width of the dropdown
+            const dropdownWidth = el.offsetWidth;
+            const viewportWidth = window.innerWidth;
+            const screenPadding = 16;
+
+            const liCenter = liRect.left + liRect.width / 2;
+            const isRightHalf = liCenter > viewportWidth / 2;
+
+            let targetLeft = isRightHalf
+                ? liRect.right - dropdownWidth
+                : liRect.left;
+
+            if (targetLeft + dropdownWidth > viewportWidth - screenPadding) {
+                targetLeft = viewportWidth - screenPadding - dropdownWidth;
+            }
+            if (targetLeft < screenPadding) {
+                targetLeft = screenPadding;
+            }
+
+            const offsetLeft = targetLeft - liRect.left;
+            el.style.left = `${Math.round(offsetLeft)}px`;
+            el.style.right = "auto";
+        };
+
+        updatePosition();
+        window.addEventListener("resize", updatePosition, { passive: true });
+        window.addEventListener("scroll", updatePosition, { passive: true });
+
+        return () => {
+            window.removeEventListener("resize", updatePosition);
+            window.removeEventListener("scroll", updatePosition);
+        };
+    }, [isOpen]);
+
+    return (
+        <li
+            ref={liRef}
+            className="relative h-full flex items-center shrink-0"
+            onMouseEnter={() => handleHover(category.id)}
+            onMouseLeave={handleLeave}
+        >
+            <Link
+                to={`/products?category=${encodeURIComponent(category.name)}`}
+                className="text-[12.5px] xl:text-[13.5px] font-medium py-1.5 px-2.5 xl:px-3 flex cursor-pointer group transition-colors duration-200 items-center justify-center gap-1 text-slate-700 hover:text-primary relative rounded-full whitespace-nowrap"
+                onMouseEnter={() => setIsHover(category.id)}
+                onMouseLeave={() => setIsHover(null)}
+                onClick={() => setOpenMenu(null)}
+            >
+                <span>{category.name}</span>
+                {hasTypes && (
+                    <ChevronDown
+                        className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                            isOpen ? "rotate-180 text-primary" : "text-slate-400 group-hover:text-primary"
+                        }`}
+                    />
+                )}
+                {(isHover === category.id || isOpen) && (
+                    <motion.div
+                        layoutId="cat-hover-bg"
+                        className="absolute inset-0 size-full bg-primary/10 rounded-full -z-10"
+                        transition={{ type: "spring", bounce: 0.15, duration: 0.3 }}
+                    />
+                )}
+            </Link>
+
+            <AnimatePresence>
+                {isOpen && hasTypes && (
+                    <div
+                        ref={dropdownRef}
+                        className="w-auto absolute top-full pt-1.5 z-50 left-0"
+                        onMouseEnter={() => {
+                            if (closeTimeout.current) clearTimeout(closeTimeout.current);
+                        }}
+                        onMouseLeave={handleLeave}
+                    >
+                        {/* Hover Bridge */}
+                        <div className="absolute -top-3 left-0 right-0 h-4" />
+
+                        <motion.div
+                            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                            transition={{ duration: 0.18, ease: "easeOut" }}
+                            className="bg-white border border-slate-200/90 shadow-xl rounded-2xl p-4 sm:p-5 w-max max-w-[calc(100vw-32px)] sm:max-w-[calc(100vw-48px)] lg:max-w-[calc(100vw-64px)]"
+                        >
+                            {hasAnyVariants ? (
+                                <div className="w-full flex gap-6 lg:gap-8 overflow-x-auto max-h-[calc(100vh-140px)] overflow-y-auto p-0.5 [scrollbar-width:thin] [scrollbar-color:#cbd5e1_transparent]">
+                                    {types.map((type) => {
+                                        const variants = Array.isArray(type.variants) && type.variants.length > 0
+                                            ? type.variants
+                                            : (categoryVariantsMap?.get(type.id) || []);
+                                        return (
+                                            <div key={type.id || type.name} className="min-w-[130px] sm:min-w-[145px] shrink-0">
+                                                <Link
+                                                    to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
+                                                    onClick={() => setOpenMenu(null)}
+                                                    className="text-sm xl:text-[14.5px] font-semibold text-primary hover:text-secondary transition-colors block pb-2 border-b border-slate-100 whitespace-nowrap"
+                                                >
+                                                    {type.name}
+                                                </Link>
+                                                {variants.length > 0 && (
+                                                    <ul className="pt-2 space-y-1.5 sm:space-y-2">
+                                                        {variants.map((v) => (
+                                                            <li key={v.id || v.name}>
+                                                                <Link
+                                                                    to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(v.name)}`}
+                                                                    onClick={() => setOpenMenu(null)}
+                                                                    className="text-[12.5px] xl:text-[13px] font-medium text-slate-600 hover:text-primary transition-colors block whitespace-nowrap"
+                                                                >
+                                                                    {v.name}
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="flex flex-wrap gap-2 sm:gap-3 p-1 max-w-[calc(100vw-48px)]">
+                                    {types.map((type) => (
+                                        <Link
+                                            key={type.id || type.name}
+                                            to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
+                                            onClick={() => setOpenMenu(null)}
+                                            className="text-sm xl:text-[14px] font-semibold text-primary hover:text-secondary transition-colors block whitespace-nowrap px-3 py-1.5 rounded-lg hover:bg-slate-50"
+                                        >
+                                            {type.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </li>
+    );
+}
 
 export default function Navbar() {
     const { user, isAuthenticated, isAdmin, logout } = useAuth();
@@ -232,16 +399,16 @@ export default function Navbar() {
 
                     {/* LEFT SECTION: LOGO + MAIN NAV LINKS */}
                     <div className="flex items-center gap-4 lg:gap-6 shrink-0 h-full">
-                        {/* Logo -> Redirect to Home with restored dimensions */}
+                        {/* Logo -> Redirect to Home */}
                         <Link
                             to="/"
-                            className="shrink-0 flex items-center h-full overflow-hidden transition-transform duration-300 ease-out hover:scale-105"
+                            className="shrink-0 flex items-center transition-transform duration-300 ease-out hover:scale-105"
                             title="Evershine Solution - Home"
                         >
                             <img
                                 src={evershineLogo}
                                 alt="Evershine Solution Logo"
-                                className="h-[150%] max-h-[100px] sm:max-h-[150px] lg:max-h-[170px] xl:h-[270%] xl:max-h-[164px] w-auto object-contain"
+                                className="h-[60px] sm:h-[70px] lg:h-[82px] w-auto object-contain"
                             />
                         </Link>
 
@@ -414,8 +581,8 @@ export default function Navbar() {
             {/* ================= 2. SECOND NAVBAR: CATEGORIES (DropdownNavigation) ================= */}
             <div className="w-full bg-white border-b border-slate-200/90 hidden md:block select-none shadow-[0_1px_2px_rgba(0,0,0,0.03)] z-40 relative">
                 <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 h-[44px] flex items-center text-sm relative">
-                    <ul className="relative flex items-center space-x-1 h-full">
-                        {categories.map((category, index) => {
+                    <ul className="relative flex items-center space-x-0.5 xl:space-x-1 h-full">
+                        {categories.map((category) => {
                             const types = Array.isArray(category.types) && category.types.length > 0
                                 ? category.types
                                 : (categoryTypesMap?.get(category.id) || []);
@@ -429,113 +596,22 @@ export default function Navbar() {
                                 return v.length > 0;
                             });
 
-                            const isRightAligned = index > categories.length / 2;
-
                             return (
-                                <li
+                                <CategoryNavItem
                                     key={category.id || category.name}
-                                    className="relative h-full flex items-center"
-                                    onMouseEnter={() => handleHover(category.id)}
-                                    onMouseLeave={handleLeave}
-                                >
-                                    <Link
-                                        to={`/products?category=${encodeURIComponent(category.name)}`}
-                                        className="text-[13px] xl:text-[13.5px] font-medium py-1.5 px-3 flex cursor-pointer group transition-colors duration-200 items-center justify-center gap-1 text-slate-700 hover:text-primary relative rounded-full"
-                                        onMouseEnter={() => setIsHover(category.id)}
-                                        onMouseLeave={() => setIsHover(null)}
-                                        onClick={() => setOpenMenu(null)}
-                                    >
-                                        <span>{category.name}</span>
-                                        {hasTypes && (
-                                            <ChevronDown
-                                                className={`h-3.5 w-3.5 transition-transform duration-300 ${
-                                                    isOpen ? "rotate-180 text-primary" : "text-slate-400 group-hover:text-primary"
-                                                }`}
-                                            />
-                                        )}
-                                        {(isHover === category.id || isOpen) && (
-                                            <motion.div
-                                                layoutId="cat-hover-bg"
-                                                className="absolute inset-0 size-full bg-primary/10 rounded-full -z-10"
-                                                transition={{ type: "spring", bounce: 0.15, duration: 0.3 }}
-                                            />
-                                        )}
-                                    </Link>
-
-                                    <AnimatePresence>
-                                        {isOpen && hasTypes && (
-                                            <div
-                                                className={`w-auto absolute top-full pt-1.5 z-50 ${
-                                                    isRightAligned ? "right-0" : "left-0"
-                                                }`}
-                                                onMouseEnter={() => {
-                                                    if (closeTimeout.current) clearTimeout(closeTimeout.current);
-                                                }}
-                                                onMouseLeave={handleLeave}
-                                            >
-                                                {/* Hover Bridge */}
-                                                <div className="absolute -top-3 left-0 right-0 h-4" />
-
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                                                    transition={{ duration: 0.18, ease: "easeOut" }}
-                                                    className="bg-white border border-slate-200/90 shadow-xl rounded-2xl p-5 w-max max-w-[85vw]"
-                                                >
-                                                    {hasAnyVariants ? (
-                                                        <div className="w-fit shrink-0 flex gap-8 overflow-hidden">
-                                                            {types.map((type) => {
-                                                                const variants = Array.isArray(type.variants) && type.variants.length > 0
-                                                                    ? type.variants
-                                                                    : (categoryVariantsMap?.get(type.id) || []);
-                                                                return (
-                                                                    <div key={type.id || type.name} className="min-w-[140px] shrink-0">
-                                                                        <Link
-                                                                            to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
-                                                                            onClick={() => setOpenMenu(null)}
-                                                                            className="text-sm xl:text-[14.5px] font-semibold text-primary hover:text-secondary transition-colors block pb-2 border-b border-slate-100 whitespace-nowrap"
-                                                                        >
-                                                                            {type.name}
-                                                                        </Link>
-                                                                        {variants.length > 0 && (
-                                                                            <ul className="pt-2 space-y-2">
-                                                                                {variants.map((v) => (
-                                                                                    <li key={v.id || v.name}>
-                                                                                        <Link
-                                                                                            to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(v.name)}`}
-                                                                                            onClick={() => setOpenMenu(null)}
-                                                                                            className="text-[13px] xl:text-[13.5px] font-medium text-slate-600 hover:text-primary transition-colors block whitespace-nowrap"
-                                                                                        >
-                                                                                            {v.name}
-                                                                                        </Link>
-                                                                                    </li>
-                                                                                ))}
-                                                                            </ul>
-                                                                        )}
-                                                                    </div>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex gap-4 p-0.5">
-                                                            {types.map((type) => (
-                                                                <Link
-                                                                    key={type.id || type.name}
-                                                                    to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
-                                                                    onClick={() => setOpenMenu(null)}
-                                                                    className="text-sm xl:text-[14.5px] font-semibold text-primary hover:text-secondary transition-colors block whitespace-nowrap px-3 py-1.5 rounded-lg hover:bg-slate-50"
-                                                                >
-                                                                    {type.name}
-                                                                </Link>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </motion.div>
-                                            </div>
-                                        )}
-                                    </AnimatePresence>
-                                </li>
+                                    category={category}
+                                    isOpen={isOpen}
+                                    isHover={isHover}
+                                    types={types}
+                                    hasTypes={hasTypes}
+                                    hasAnyVariants={hasAnyVariants}
+                                    categoryVariantsMap={categoryVariantsMap}
+                                    handleHover={handleHover}
+                                    handleLeave={handleLeave}
+                                    setIsHover={setIsHover}
+                                    setOpenMenu={setOpenMenu}
+                                    closeTimeout={closeTimeout}
+                                />
                             );
                         })}
                     </ul>

@@ -43,13 +43,13 @@ export const ADMIN_NAV_CONFIG = [
       {
         id: "catalogue",
         label: "Catalogue",
-        description: "Manage categories, types, and variants with cascading filters and edit options.",
+        description: "Manage categories, subcategories, and variants with cascading filters and edit options.",
         apiReady: true,
       },
       {
         id: "add-product",
         label: "Add Product",
-        description: "Create products with hierarchical category, type, and variant attributes.",
+        description: "Create products with hierarchical category, subcategory, and variant attributes.",
         apiReady: true,
       },
       {

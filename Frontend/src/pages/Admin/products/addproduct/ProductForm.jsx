@@ -1,22 +1,48 @@
 // src/pages/Admin/products/addproduct/ProductForm.jsx
 // Production form for adding and updating products adhering to ProductRequestDto schema.
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   FolderTree,
-  Plus,
-  Trash2,
   CheckCircle2,
   AlertCircle,
   Loader2,
   FileText,
   Sliders,
   TableProperties,
-  Image as ImageIcon,
   RotateCcw,
+  ChevronLeft,
+  ChevronRight,
+  Check,
 } from "lucide-react";
 import { useDataProcess } from "../dataProccess";
 import { createProduct, updateProduct } from "../../../../services/productService";
-import TiptapEditor from "./TiptapEditor";
+import CategoryHierarchySection from "./components/CategoryHierarchySection";
+import BasicInfoSection from "./components/BasicInfoSection";
+import OverviewSection from "./components/OverviewSection";
+import TechnicalAttributesSection from "./components/TechnicalAttributesSection";
+import PropertyTablesSection from "./components/PropertyTablesSection";
+import { propertyTablesToHtml, parsePastableTableText, rowsToPastableText } from "./components/propertyTableUtils";
+
+const DRAFT_STORAGE_KEY = "evershine_add_product_draft";
+
+const STEPS = [
+  { id: 1, title: "Category & Hierarchy Filters", icon: FolderTree },
+  { id: 2, title: "Basic Information", icon: FileText },
+  { id: 3, title: "Product Overview *", icon: FileText },
+  { id: 4, title: "Technical Attributes *", icon: Sliders },
+  { id: 5, title: "Property Tables", icon: TableProperties },
+];
+
+function getSavedDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
 function slugify(text) {
   return String(text || "")
@@ -34,6 +60,9 @@ export default function ProductForm({
   onSuccess = null,
   onCancel = null,
 }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isSubmittedRef = useRef(false);
+
   const {
     categories,
     categoryTypesMap,
@@ -46,24 +75,49 @@ export default function ProductForm({
     loading: filtersLoading,
   } = useDataProcess();
 
+  const savedDraft = useMemo(() => {
+    if (isEditMode || initialData) return null;
+    return getSavedDraft();
+  }, [isEditMode, initialData]);
+
+  // Stepper state (1 to 5) - integrates with URL search params so browser back/forward seamlessly switches steps
+  const [internalStep, setInternalStep] = useState(() => {
+    const stepParam = parseInt(searchParams.get("step"), 10);
+    if (!isEditMode && stepParam >= 1 && stepParam <= 5) {
+      return stepParam;
+    }
+    if (savedDraft?.currentStep && Number(savedDraft.currentStep) >= 1 && Number(savedDraft.currentStep) <= 5) {
+      return Number(savedDraft.currentStep);
+    }
+    return 1;
+  });
+
+  const stepParam = parseInt(searchParams.get("step"), 10);
+  const currentStep = useMemo(() => {
+    if (!isEditMode && stepParam >= 1 && stepParam <= 5) {
+      return stepParam;
+    }
+    return internalStep;
+  }, [isEditMode, stepParam, internalStep]);
+
   // Basic Information
-  const [title, setTitle] = useState(initialData?.title || "");
-  const [slug, setSlug] = useState(initialData?.slug || "");
-  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(Boolean(initialData?.slug));
-  const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || "");
-  const [productStatus, setProductStatus] = useState(initialData?.productStatus || "ACTIVE");
+  const [title, setTitle] = useState(() => initialData?.title || savedDraft?.title || "");
+  const [slug, setSlug] = useState(() => initialData?.slug || savedDraft?.slug || "");
+  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(() => Boolean(initialData?.slug || savedDraft?.isSlugManuallyEdited));
+  const [imageUrl, setImageUrl] = useState(() => initialData?.imageUrl || savedDraft?.imageUrl || "");
+  const [productStatus, setProductStatus] = useState(() => initialData?.productStatus || savedDraft?.productStatus || "ACTIVE");
 
   // Hierarchy & Filter Selection (7 filter dimensions)
-  const [categoryId, setCategoryId] = useState(initialData?.categoryId || "");
-  const [categoryTypeId, setCategoryTypeId] = useState(initialData?.categoryTypeId || "");
-  const [categoryVariantId, setCategoryVariantId] = useState(initialData?.categoryVariantId || "");
-  const [brandId, setBrandId] = useState(initialData?.brandId || "");
-  const [subBrandId, setSubBrandId] = useState(initialData?.subBrandId || "");
-  const [gradeId, setGradeId] = useState(initialData?.gradeId || "");
-  const [subGradeId, setSubGradeId] = useState(initialData?.subGradeId || "");
+  const [categoryId, setCategoryId] = useState(() => initialData?.categoryId || savedDraft?.categoryId || "");
+  const [categoryTypeId, setCategoryTypeId] = useState(() => initialData?.categoryTypeId || savedDraft?.categoryTypeId || "");
+  const [categoryVariantId, setCategoryVariantId] = useState(() => initialData?.categoryVariantId || savedDraft?.categoryVariantId || "");
+  const [brandId, setBrandId] = useState(() => initialData?.brandId || savedDraft?.brandId || "");
+  const [subBrandId, setSubBrandId] = useState(() => initialData?.subBrandId || savedDraft?.subBrandId || "");
+  const [gradeId, setGradeId] = useState(() => initialData?.gradeId || savedDraft?.gradeId || "");
+  const [subGradeId, setSubGradeId] = useState(() => initialData?.subGradeId || savedDraft?.subGradeId || "");
 
   // Overview HTML
-  const [overviewHtml, setOverviewHtml] = useState(initialData?.overviewHtml || "");
+  const [overviewHtml, setOverviewHtml] = useState(() => initialData?.overviewHtml || savedDraft?.overviewHtml || "");
 
   // Technical Attributes
   const [attributes, setAttributes] = useState(() => {
@@ -78,21 +132,56 @@ export default function ProductForm({
         customInput: Boolean(a.customInput),
       }));
     }
+    if (Array.isArray(savedDraft?.attributes) && savedDraft.attributes.length > 0) {
+      return savedDraft.attributes;
+    }
     return isEditMode
       ? []
       : [{ label: "", unit: "", valuesText: "", min: "", max: "", customInput: false }];
   });
 
-  // Property Tables
+  // Property Tables (HTML Table from Tiptap Editor & Structured Key-Values)
+  const [propertyTableHtml, setPropertyTableHtml] = useState(() => {
+    if (savedDraft?.propertyTableHtml) {
+      return savedDraft.propertyTableHtml;
+    }
+    const rawTables = initialData?.propertyTables || initialData?.propertyRequestDtoList;
+    if (Array.isArray(rawTables) && rawTables.length > 0) {
+      return propertyTablesToHtml(rawTables);
+    }
+    if (Array.isArray(savedDraft?.propertyTables) && savedDraft.propertyTables.length > 0) {
+      return propertyTablesToHtml(savedDraft.propertyTables);
+    }
+    return "";
+  });
+
   const [propertyTables, setPropertyTables] = useState(() => {
     const rawTables = initialData?.propertyTables || initialData?.propertyRequestDtoList;
     if (Array.isArray(rawTables) && rawTables.length > 0) {
-      return rawTables.map((t) => ({
-        heading: t.heading || "",
-        rows: Object.entries(t.tableOfContent || {}).map(([key, value]) => ({ key, value })),
-      }));
+      return rawTables.map((t) => {
+        const rows = Object.entries(t.tableOfContent || {}).map(([key, value]) => ({ key, value }));
+        return {
+          heading: t.heading || "Specifications",
+          rows,
+          rawText: rowsToPastableText(rows),
+        };
+      });
     }
-    return [];
+    if (Array.isArray(savedDraft?.propertyTables) && savedDraft.propertyTables.length > 0) {
+      return savedDraft.propertyTables.map((t) => {
+        const rows = Array.isArray(t.rows)
+          ? t.rows
+          : t.tableOfContent
+          ? Object.entries(t.tableOfContent).map(([key, value]) => ({ key, value }))
+          : [];
+        return {
+          heading: t.heading || "Specifications",
+          rows,
+          rawText: t.rawText !== undefined ? t.rawText : rowsToPastableText(rows),
+        };
+      });
+    }
+    return [{ heading: "Specifications", rows: [], rawText: "" }];
   });
 
   // Synchronize form fields whenever initialData changes (e.g. edit mode update)
@@ -135,14 +224,20 @@ export default function ProductForm({
         initialData.propertyTables ||
         initialData.propertyRequestDtoList;
       if (Array.isArray(rawTables) && rawTables.length > 0) {
+        setPropertyTableHtml(propertyTablesToHtml(rawTables));
         setPropertyTables(
-          rawTables.map((t) => ({
-            heading: t.heading || "",
-            rows: Object.entries(t.tableOfContent || {}).map(([key, value]) => ({ key, value })),
-          }))
+          rawTables.map((t) => {
+            const rows = Object.entries(t.tableOfContent || {}).map(([key, value]) => ({ key, value }));
+            return {
+              heading: t.heading || "Specifications",
+              rows,
+              rawText: rowsToPastableText(rows),
+            };
+          })
         );
       } else {
-        setPropertyTables([]);
+        setPropertyTableHtml("");
+        setPropertyTables([{ heading: "Specifications", rows: [], rawText: "" }]);
       }
     }
   }, [initialData]);
@@ -164,24 +259,176 @@ export default function ProductForm({
   }, [categoryTypeId, categoryVariantsMap]);
 
   const handleTitleChange = (e) => {
+    isSubmittedRef.current = false;
     const newTitle = e.target.value;
     setTitle(newTitle);
     if (!isSlugManuallyEdited) setSlug(slugify(newTitle));
   };
 
-  const handleCategoryChange = (e) => {
-    setCategoryId(e.target.value);
+  const handleCategoryChange = (val) => {
+    isSubmittedRef.current = false;
+    const value = val && typeof val === "object" && "target" in val ? val.target.value : val;
+    setCategoryId(value || "");
     setCategoryTypeId("");
     setCategoryVariantId("");
   };
 
-  const handleTypeChange = (e) => {
-    setCategoryTypeId(e.target.value);
+  const handleTypeChange = (val) => {
+    isSubmittedRef.current = false;
+    const value = val && typeof val === "object" && "target" in val ? val.target.value : val;
+    setCategoryTypeId(value || "");
     setCategoryVariantId("");
+  };
+
+  // Persist draft to localStorage whenever form fields or current step change (Add Product mode only)
+  useEffect(() => {
+    if (isEditMode || initialData || isSubmittedRef.current) return;
+    const draft = {
+      currentStep,
+      title,
+      slug,
+      isSlugManuallyEdited,
+      imageUrl,
+      productStatus,
+      categoryId,
+      categoryTypeId,
+      categoryVariantId,
+      brandId,
+      subBrandId,
+      gradeId,
+      subGradeId,
+      overviewHtml,
+      attributes,
+      propertyTables,
+      propertyTableHtml,
+    };
+    try {
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    } catch {
+      // Ignore localStorage quota errors
+    }
+  }, [
+    isEditMode,
+    initialData,
+    currentStep,
+    title,
+    slug,
+    isSlugManuallyEdited,
+    imageUrl,
+    productStatus,
+    categoryId,
+    categoryTypeId,
+    categoryVariantId,
+    brandId,
+    subBrandId,
+    gradeId,
+    subGradeId,
+    overviewHtml,
+    attributes,
+    propertyTables,
+    propertyTableHtml,
+  ]);
+
+  // Step Validation
+  const validateStep = (stepNumber) => {
+    setFormError(null);
+
+    if (stepNumber === 1) {
+      // Step 1: Category & Hierarchy Filters (optional selections)
+      return true;
+    }
+
+    if (stepNumber === 2) {
+      // Step 2: Basic Information
+      const finalTitle = title.trim();
+      const finalSlug = slug.trim() || slugify(finalTitle);
+
+      if (finalTitle.length < 2 || finalTitle.length > 150) {
+        setFormError("Title must be between 2 and 150 characters.");
+        return false;
+      }
+      if (finalSlug.length < 4 || finalSlug.length > 150) {
+        setFormError("Slug must be between 4 and 150 characters.");
+        return false;
+      }
+      if (!imageUrl.trim()) {
+        setFormError("Image URL is required.");
+        return false;
+      }
+      return true;
+    }
+
+    if (stepNumber === 3) {
+      const plainOverview = overviewHtml.replace(/<[^>]*>/g, "").trim();
+      if (!plainOverview && !overviewHtml.trim()) {
+        setFormError("Product overview description is required.");
+        return false;
+      }
+      return true;
+    }
+
+    if (stepNumber === 4) {
+      const validAttrs = attributes.filter(
+        (a) => a.label && a.label.trim().length >= 2
+      );
+      if (!isEditMode && validAttrs.length === 0) {
+        setFormError("At least one attribute with a valid label (min 2 characters) is required.");
+        return false;
+      }
+      return true;
+    }
+
+    return true;
+  };
+
+  const goToStep = (nextStep) => {
+    setFormError(null);
+    setInternalStep(nextStep);
+    if (!isEditMode) {
+      setSearchParams({ step: nextStep });
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNextStep = () => {
+    if (!validateStep(currentStep)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    const nextStep = Math.min(currentStep + 1, 5);
+    goToStep(nextStep);
+  };
+
+  const handlePrevStep = () => {
+    const prevStep = Math.max(currentStep - 1, 1);
+    goToStep(prevStep);
+  };
+
+  const handleStepClick = (targetStep) => {
+    if (targetStep === currentStep) return;
+    if (targetStep < currentStep) {
+      goToStep(targetStep);
+      return;
+    }
+    if (!validateStep(currentStep)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    goToStep(targetStep);
   };
 
   // Reset Form
   const handleResetForm = () => {
+    isSubmittedRef.current = true;
+    if (!isEditMode) {
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+      setSearchParams({ step: 1 });
+    }
+    setInternalStep(1);
     setTitle("");
     setSlug("");
     setIsSlugManuallyEdited(false);
@@ -197,13 +444,15 @@ export default function ProductForm({
     setOverviewHtml("");
     setAttributes([{ label: "", unit: "", valuesText: "", min: "", max: "", customInput: false }]);
     setPropertyTables([]);
+    setPropertyTableHtml("");
     setFormError(null);
     setFormSuccess(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Submit Handler
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setFormError(null);
     setFormSuccess(null);
 
@@ -212,47 +461,60 @@ export default function ProductForm({
 
     if (finalTitle.length < 2 || finalTitle.length > 150) {
       setFormError("Title must be between 2 and 150 characters.");
+      goToStep(2);
       return;
     }
     if (finalSlug.length < 4 || finalSlug.length > 150) {
       setFormError("Slug must be between 4 and 150 characters.");
+      goToStep(2);
       return;
     }
     if (!imageUrl.trim()) {
       setFormError("Image URL is required.");
+      goToStep(2);
       return;
     }
-    if (!overviewHtml.trim()) {
+    if (!overviewHtml.trim() || overviewHtml === "<p></p>") {
       setFormError("Product overview description is required.");
+      goToStep(3);
       return;
     }
 
     const processedAttributes = attributes
       .map((attr) => {
-        const values = attr.valuesText.split(",").map((v) => v.trim()).filter(Boolean);
+        const rawText = (attr.valuesText || "").trim();
+        const values = rawText.includes(",")
+          ? rawText.split(",").map((v) => v.trim()).filter(Boolean)
+          : rawText.split(/\s+/).map((v) => v.trim()).filter(Boolean);
         return {
-          label: attr.label.trim(),
-          unit: attr.unit.trim(),
-          values: values.length > 0 ? values : [attr.label.trim()],
+          label: (attr.label || "").trim(),
+          unit: (attr.unit || "").trim(),
+          values: values.length > 0 ? values : [(attr.label || "").trim()],
           customInput: Boolean(attr.customInput),
-          min: attr.min.trim() || null,
-          max: attr.max.trim() || null,
+          min: (attr.min || "").trim() || null,
+          max: (attr.max || "").trim() || null,
         };
       })
       .filter((attr) => attr.label.length >= 2);
 
     if (!isEditMode && processedAttributes.length === 0) {
       setFormError("At least one attribute with a valid label (2-20 characters) is required.");
+      goToStep(4);
       return;
     }
 
     const processedTables = propertyTables
       .map((tbl) => {
         const tableOfContent = {};
-        tbl.rows.forEach((row) => {
-          if (row.key.trim() && row.value.trim()) tableOfContent[row.key.trim()] = row.value.trim();
+        if (tbl.tableOfContent && typeof tbl.tableOfContent === "object") {
+          Object.assign(tableOfContent, tbl.tableOfContent);
+        }
+        (tbl.rows || []).forEach((row) => {
+          if ((row.key || "").trim() && (row.value || "").trim()) {
+            tableOfContent[row.key.trim()] = row.value.trim();
+          }
         });
-        return { heading: tbl.heading.trim(), tableOfContent };
+        return { heading: (tbl.heading || "Specifications").trim(), tableOfContent };
       })
       .filter((tbl) => tbl.heading && Object.keys(tbl.tableOfContent).length > 0);
 
@@ -292,12 +554,44 @@ export default function ProductForm({
         ? await updateProduct(initialData.id || initialData._id, payload)
         : await createProduct(payload);
 
+      isSubmittedRef.current = true;
+      if (!isEditMode) {
+        try {
+          localStorage.removeItem(DRAFT_STORAGE_KEY);
+        } catch {
+          // ignore
+        }
+        setSearchParams({ step: 1 });
+      }
+
       setFormSuccess(
         isEditMode
           ? `Product "${result?.title || finalTitle}" updated successfully.`
-          : `Product "${result?.title || finalTitle}" created successfully.`
+          : `Product "${result?.title || finalTitle}" created successfully and stored in database.`
       );
-      if (!isEditMode) handleResetForm();
+      setFormError(null);
+
+      // Reset form fields after successful creation without wiping formSuccess
+      if (!isEditMode) {
+        setInternalStep(1);
+        setTitle("");
+        setSlug("");
+        setIsSlugManuallyEdited(false);
+        setImageUrl("");
+        setProductStatus("ACTIVE");
+        setCategoryId("");
+        setCategoryTypeId("");
+        setCategoryVariantId("");
+        setBrandId("");
+        setSubBrandId("");
+        setGradeId("");
+        setSubGradeId("");
+        setOverviewHtml("");
+        setAttributes([{ label: "", unit: "", valuesText: "", min: "", max: "", customInput: false }]);
+        setPropertyTables([]);
+        setPropertyTableHtml("");
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
       if (typeof onSuccess === "function") onSuccess(result);
     } catch (err) {
       setFormError(
@@ -308,6 +602,25 @@ export default function ProductForm({
     }
   };
 
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (currentStep < 5) {
+      handleNextStep();
+      return;
+    }
+    handleSubmit(e);
+  };
+
+  const handleKeyDown = (e) => {
+    // Prevent accidental submit on Enter key inside inputs in the final step
+    if (e.key === "Enter" && e.target.tagName === "INPUT" && e.target.type !== "submit") {
+      e.preventDefault();
+      if (currentStep < 5) {
+        handleNextStep();
+      }
+    }
+  };
+
   // Helper to format item display name denoting unavailable status
   const formatOptionLabel = (item) => {
     if (!item) return "";
@@ -315,16 +628,8 @@ export default function ProductForm({
     return isUnavailable ? `${item.name} (Unavailable)` : item.name;
   };
 
-  // Filter option sets showing all options from processed data
-  const filterDropdownConfig = [
-    { label: "Brand", val: brandId, set: setBrandId, list: allBrands || [] },
-    { label: "Sub-Brand", val: subBrandId, set: setSubBrandId, list: allSubBrands || [] },
-    { label: "Grade", val: gradeId, set: setGradeId, list: allGrades || [] },
-    { label: "Sub-Grade", val: subGradeId, set: setSubGradeId, list: allSubGrades || [] },
-  ];
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleFormSubmit} onKeyDown={handleKeyDown} className="space-y-6">
       {/* Notifications */}
       {formSuccess && (
         <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between">
@@ -345,413 +650,237 @@ export default function ProductForm({
         </div>
       )}
 
-      {/* 1. BASIC INFORMATION */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.05)] space-y-5">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-          <FileText className="w-4 h-4 text-[#004060]" />
-          <h2 className="text-base font-bold text-slate-900 font-display">Basic Information</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5 md:col-span-2">
-            <label className="block text-xs font-semibold text-slate-700">Product Title *</label>
-            <input
-              type="text"
-              required
-              minLength={2}
-              maxLength={150}
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="e.g. JSW Colour Coated Corrugated Sheet"
-              className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-700">Slug *</label>
-            <input
-              type="text"
-              required
-              minLength={4}
-              maxLength={150}
-              value={slug}
-              onChange={(e) => {
-                setIsSlugManuallyEdited(true);
-                setSlug(e.target.value);
-              }}
-              placeholder="e.g. jsw-colour-coated-corrugated-sheet"
-              className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-700">Status *</label>
-            <select
-              value={productStatus}
-              onChange={(e) => setProductStatus(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060] cursor-pointer"
-            >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="UNAVAILABLE">UNAVAILABLE</option>
-            </select>
-          </div>
-
-          <div className="space-y-1.5 md:col-span-2">
-            <label className="block text-xs font-semibold text-slate-700">Image URL *</label>
-            <div className="flex items-center gap-3">
-              <input
-                type="url"
-                required
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://example.com/images/product.jpg"
-                className="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060]"
-              />
-              <div className="w-10 h-10 rounded-lg border border-slate-200 overflow-hidden bg-slate-50 flex items-center justify-center shrink-0">
-                {imageUrl ? (
-                  <img src={imageUrl} alt="" className="w-full h-full object-cover" onError={(e) => (e.target.style.display = "none")} />
-                ) : (
-                  <ImageIcon className="w-4 h-4 text-slate-400" />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. CATEGORY & FILTER HIERARCHY (7 DIMENSIONS) */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.05)] space-y-5">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-          <FolderTree className="w-4 h-4 text-[#004060]" />
-          <h2 className="text-base font-bold text-slate-900 font-display">Category & Hierarchy Filters</h2>
-        </div>
-
-        {/* Category -> Type -> Variant (clean selections, no add buttons) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* 1. Category */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-700">Category</label>
-            <select
-              value={categoryId}
-              onChange={handleCategoryChange}
-              disabled={filtersLoading}
-              className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060] cursor-pointer"
-            >
-              <option value="">None</option>
-              {(categories || []).map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {formatOptionLabel(cat)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* 2. Type */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-700">Type</label>
-            <select
-              value={categoryTypeId}
-              onChange={handleTypeChange}
-              disabled={!categoryId || availableTypes.length === 0}
-              className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060] disabled:bg-slate-50 disabled:text-slate-400 cursor-pointer"
-            >
-              <option value="">None</option>
-              {availableTypes.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {formatOptionLabel(t)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* 3. Variant */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-700">Variant</label>
-            <select
-              value={categoryVariantId}
-              onChange={(e) => setCategoryVariantId(e.target.value)}
-              disabled={!categoryTypeId || availableVariants.length === 0}
-              className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060] disabled:bg-slate-50 disabled:text-slate-400 cursor-pointer"
-            >
-              <option value="">None</option>
-              {availableVariants.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {formatOptionLabel(v)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* 4. Brand, 5. Sub-Brand, 6. Grade, 7. Sub-Grade (Show ALL options, denoting unavailable ones) */}
-        <div className="pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          {filterDropdownConfig.map(({ label, val, set, list }) => {
-            const options = [...(list || [])];
-            // If current val is not present in options (e.g. stale or legacy id), ensure it is safely represented
-            if (val && !options.some((item) => item.id === val)) {
-              const fallbackName = nameMap?.get(val) || "Selected Item";
-              options.unshift({ id: val, name: fallbackName, active: false });
-            }
+      {/* STEP PROGRESS INDICATOR */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+        <div className="flex items-center justify-between gap-1 sm:gap-2 overflow-x-auto pb-1 sm:pb-0">
+          {STEPS.map((step, idx) => {
+            const isCompleted = currentStep > step.id;
+            const isCurrent = currentStep === step.id;
 
             return (
-              <div key={label} className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">{label}</label>
-                <select
-                  value={val}
-                  onChange={(e) => set(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060] cursor-pointer"
+              <React.Fragment key={step.id}>
+                <button
+                  type="button"
+                  onClick={() => handleStepClick(step.id)}
+                  className={`flex items-center gap-2 sm:gap-2.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl transition-all cursor-pointer shrink-0 text-left ${
+                    isCurrent
+                      ? "bg-[#004060]/10 text-[#004060] font-bold"
+                      : isCompleted
+                      ? "text-slate-800 hover:bg-slate-50 font-semibold"
+                      : "text-slate-400 hover:text-slate-600 font-medium"
+                  }`}
+                  title={`Go to ${step.title}`}
                 >
-                  <option value="">None</option>
-                  {options.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {formatOptionLabel(item)}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  <div
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold shrink-0 transition-colors ${
+                      isCurrent
+                        ? "bg-[#004060] text-white shadow-xs"
+                        : isCompleted
+                        ? "bg-emerald-600 text-white"
+                        : "bg-slate-100 text-slate-500 border border-slate-200"
+                    }`}
+                  >
+                    {isCompleted ? <Check className="w-4 h-4 stroke-[2.5]" /> : step.id}
+                  </div>
+                  <span className="hidden md:inline-block text-xs sm:text-sm whitespace-nowrap">
+                    {step.title}
+                  </span>
+                </button>
+
+                {idx < STEPS.length - 1 && (
+                  <div
+                    className={`hidden lg:block flex-1 h-[2px] mx-1 transition-colors ${
+                      currentStep > step.id ? "bg-emerald-500" : "bg-slate-200"
+                    }`}
+                  />
+                )}
+              </React.Fragment>
             );
           })}
         </div>
+
+        {/* Mobile / Tablet active step title display */}
+        <div className="md:hidden mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-600">
+          <span className="font-semibold text-[#004060]">
+            Step {currentStep} of 5:
+          </span>
+          <span className="font-medium text-slate-800 truncate ml-2">
+            {STEPS[currentStep - 1]?.title}
+          </span>
+        </div>
       </div>
 
-      {/* 3. PRODUCT OVERVIEW HTML (Tiptap) */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.05)] space-y-4">
-        <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
-          <FileText className="w-4 h-4 text-[#004060]" />
-          <h2 className="text-base font-bold text-slate-900 font-display">Product Overview *</h2>
-        </div>
-        <TiptapEditor
-          value={overviewHtml}
-          onChange={setOverviewHtml}
-          placeholder="Write product overview and technical description..."
+      {/* 1. CATEGORY & FILTER HIERARCHY */}
+      {currentStep === 1 && (
+        <CategoryHierarchySection
+          categoryId={categoryId}
+          categoryTypeId={categoryTypeId}
+          categoryVariantId={categoryVariantId}
+          brandId={brandId}
+          subBrandId={subBrandId}
+          gradeId={gradeId}
+          subGradeId={subGradeId}
+          onCategoryChange={handleCategoryChange}
+          onTypeChange={handleTypeChange}
+          onVariantChange={(val) => {
+            isSubmittedRef.current = false;
+            const value = val && typeof val === "object" && "target" in val ? val.target.value : val;
+            setCategoryVariantId(value || "");
+          }}
+          onBrandChange={(val) => {
+            isSubmittedRef.current = false;
+            const value = val && typeof val === "object" && "target" in val ? val.target.value : val;
+            setBrandId(value || "");
+          }}
+          onSubBrandChange={(val) => {
+            isSubmittedRef.current = false;
+            const value = val && typeof val === "object" && "target" in val ? val.target.value : val;
+            setSubBrandId(value || "");
+          }}
+          onGradeChange={(val) => {
+            isSubmittedRef.current = false;
+            const value = val && typeof val === "object" && "target" in val ? val.target.value : val;
+            setGradeId(value || "");
+          }}
+          onSubGradeChange={(val) => {
+            isSubmittedRef.current = false;
+            const value = val && typeof val === "object" && "target" in val ? val.target.value : val;
+            setSubGradeId(value || "");
+          }}
+          categories={categories}
+          availableTypes={availableTypes}
+          availableVariants={availableVariants}
+          allBrands={allBrands}
+          allSubBrands={allSubBrands}
+          allGrades={allGrades}
+          allSubGrades={allSubGrades}
+          nameMap={nameMap}
+          filtersLoading={filtersLoading}
+          formatOptionLabel={formatOptionLabel}
         />
-      </div>
+      )}
+
+      {/* 2. BASIC INFORMATION */}
+      {currentStep === 2 && (
+        <BasicInfoSection
+          title={title}
+          slug={slug}
+          imageUrl={imageUrl}
+          productStatus={productStatus}
+          onTitleChange={handleTitleChange}
+          onSlugChange={(e) => {
+            isSubmittedRef.current = false;
+            setIsSlugManuallyEdited(true);
+            setSlug(e.target.value);
+          }}
+          onImageUrlChange={(e) => {
+            isSubmittedRef.current = false;
+            setImageUrl(e.target.value);
+          }}
+          onStatusChange={(e) => {
+            isSubmittedRef.current = false;
+            setProductStatus(e.target.value);
+          }}
+        />
+      )}
+
+      {/* 3. PRODUCT OVERVIEW HTML */}
+      {currentStep === 3 && (
+        <OverviewSection
+          overviewHtml={overviewHtml}
+          onChange={(html) => {
+            isSubmittedRef.current = false;
+            setOverviewHtml(html);
+          }}
+        />
+      )}
 
       {/* 4. TECHNICAL ATTRIBUTES */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.05)] space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-          <div className="flex items-center gap-2.5">
-            <Sliders className="w-4 h-4 text-[#004060]" />
-            <h2 className="text-base font-bold text-slate-900 font-display">Technical Attributes *</h2>
-          </div>
-          <button
-            type="button"
-            onClick={() => setAttributes((prev) => [...prev, { label: "", unit: "", valuesText: "", min: "", max: "", customInput: false }])}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#004060] bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add Attribute</span>
-          </button>
-        </div>
-
-        {attributes.length === 0 ? (
-          <div className="text-center py-5 border border-dashed border-slate-200 rounded-xl text-slate-400 text-xs">
-            No technical attributes configured. Click &quot;Add Attribute&quot; to add specifications.
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {attributes.map((attr, index) => (
-              <div key={index} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 items-end">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">Label *</label>
-                    <input
-                      type="text"
-                      required
-                      value={attr.label}
-                      onChange={(e) => setAttributes((p) => p.map((a, i) => (i === index ? { ...a, label: e.target.value } : a)))}
-                      placeholder="e.g. Thickness"
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">Unit</label>
-                    <input
-                      type="text"
-                      value={attr.unit}
-                      onChange={(e) => setAttributes((p) => p.map((a, i) => (i === index ? { ...a, unit: e.target.value } : a)))}
-                      placeholder="e.g. mm"
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">Values (comma-sep)</label>
-                    <input
-                      type="text"
-                      value={attr.valuesText}
-                      onChange={(e) => setAttributes((p) => p.map((a, i) => (i === index ? { ...a, valuesText: e.target.value } : a)))}
-                      placeholder="0.45, 0.50"
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">Min / Max</label>
-                    <div className="flex gap-1">
-                      <input
-                        type="text"
-                        value={attr.min}
-                        onChange={(e) => setAttributes((p) => p.map((a, i) => (i === index ? { ...a, min: e.target.value } : a)))}
-                        placeholder="Min"
-                        className="w-1/2 px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
-                      />
-                      <input
-                        type="text"
-                        value={attr.max}
-                        onChange={(e) => setAttributes((p) => p.map((a, i) => (i === index ? { ...a, max: e.target.value } : a)))}
-                        placeholder="Max"
-                        className="w-1/2 px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between pt-1">
-                    <label className="flex items-center gap-1.5 text-[11px] text-slate-600 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={attr.customInput}
-                        onChange={(e) => setAttributes((p) => p.map((a, i) => (i === index ? { ...a, customInput: e.target.checked } : a)))}
-                        className="rounded border-slate-300 text-[#004060]"
-                      />
-                      <span>Custom</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setAttributes((p) => p.filter((_, i) => i !== index))}
-                      className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {currentStep === 4 && (
+        <TechnicalAttributesSection
+          attributes={attributes}
+          onAddAttribute={() => {
+            isSubmittedRef.current = false;
+            setAttributes((prev) => [
+              ...prev,
+              { label: "", unit: "", valuesText: "", min: "", max: "", customInput: false },
+            ]);
+          }}
+          onUpdateAttribute={(index, field, value) => {
+            isSubmittedRef.current = false;
+            setAttributes((prev) =>
+              prev.map((attr, idx) => (idx === index ? { ...attr, [field]: value } : attr))
+            );
+          }}
+          onRemoveAttribute={(index) => {
+            isSubmittedRef.current = false;
+            setAttributes((prev) => prev.filter((_, idx) => idx !== index));
+          }}
+        />
+      )}
 
       {/* 5. PROPERTY TABLES */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.05)] space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-          <div className="flex items-center gap-2.5">
-            <TableProperties className="w-4 h-4 text-[#004060]" />
-            <h2 className="text-base font-bold text-slate-900 font-display">Property Tables</h2>
-          </div>
+      {currentStep === 5 && (
+        <PropertyTablesSection
+          propertyTables={propertyTables}
+          onAddTable={() => {
+            isSubmittedRef.current = false;
+            setPropertyTables((prev) => [
+              ...prev,
+              { heading: `Table ${prev.length + 1}`, rows: [], rawText: "" },
+            ]);
+          }}
+          onRemoveTable={(tableIndex) => {
+            isSubmittedRef.current = false;
+            setPropertyTables((prev) => prev.filter((_, idx) => idx !== tableIndex));
+          }}
+          onHeadingChange={(tableIndex, value) => {
+            isSubmittedRef.current = false;
+            setPropertyTables((prev) =>
+              prev.map((tbl, idx) => (idx === tableIndex ? { ...tbl, heading: value } : tbl))
+            );
+          }}
+          onTextChange={(tableIndex, newText) => {
+            isSubmittedRef.current = false;
+            const parsedRows = parsePastableTableText(newText);
+            setPropertyTables((prev) =>
+              prev.map((tbl, idx) =>
+                idx === tableIndex
+                  ? {
+                      ...tbl,
+                      rawText: newText,
+                      rows: parsedRows,
+                    }
+                  : tbl
+              )
+            );
+          }}
+        />
+      )}
+
+      {/* STEP NAVIGATION ACTIONS */}
+      <div className="flex items-center justify-between pt-2">
+        {currentStep > 1 ? (
           <button
             type="button"
-            onClick={() => setPropertyTables((prev) => [...prev, { heading: "", rows: [{ key: "", value: "" }] }])}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#004060] bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer"
+            onClick={handlePrevStep}
+            disabled={isSubmitting}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-sm font-semibold transition cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add Table</span>
+            <ChevronLeft className="w-4 h-4" />
+            <span>Back</span>
           </button>
-        </div>
-
-        {propertyTables.length === 0 ? (
-          <div className="text-center py-5 border border-dashed border-slate-200 rounded-xl text-slate-400 text-xs">
-            No property tables configured. Click "Add Table" to add key-value specifications.
-          </div>
         ) : (
-          <div className="space-y-4">
-            {propertyTables.map((tbl, tableIndex) => (
-              <div key={tableIndex} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2.5">
-                <div className="flex items-center justify-between gap-3">
-                  <input
-                    type="text"
-                    required
-                    value={tbl.heading}
-                    onChange={(e) => setPropertyTables((p) => p.map((t, i) => (i === tableIndex ? { ...t, heading: e.target.value } : t)))}
-                    placeholder="Table Heading (e.g. Specifications)"
-                    className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setPropertyTables((p) => p.filter((_, i) => i !== tableIndex))}
-                    className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  {tbl.rows.map((row, rowIndex) => (
-                    <div key={rowIndex} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={row.key}
-                        onChange={(e) =>
-                          setPropertyTables((p) =>
-                            p.map((t, i) =>
-                              i === tableIndex
-                                ? { ...t, rows: t.rows.map((r, rIdx) => (rIdx === rowIndex ? { ...r, key: e.target.value } : r)) }
-                                : t
-                            )
-                          )
-                        }
-                        placeholder="Property (e.g. Standard)"
-                        className="flex-1 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
-                      />
-                      <input
-                        type="text"
-                        value={row.value}
-                        onChange={(e) =>
-                          setPropertyTables((p) =>
-                            p.map((t, i) =>
-                              i === tableIndex
-                                ? { ...t, rows: t.rows.map((r, rIdx) => (rIdx === rowIndex ? { ...r, value: e.target.value } : r)) }
-                                : t
-                            )
-                          )
-                        }
-                        placeholder="Value (e.g. IS 277)"
-                        className="flex-1 px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
-                      />
-                      {tbl.rows.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setPropertyTables((p) =>
-                              p.map((t, i) =>
-                                i === tableIndex ? { ...t, rows: t.rows.filter((_, rIdx) => rIdx !== rowIndex) } : t
-                              )
-                            )
-                          }
-                          className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPropertyTables((p) =>
-                      p.map((t, i) => (i === tableIndex ? { ...t, rows: [...t.rows, { key: "", value: "" }] } : t))
-                    )
-                  }
-                  className="text-[11px] font-semibold text-[#004060] hover:underline cursor-pointer inline-flex items-center gap-1"
-                >
-                  <Plus className="w-3 h-3" />
-                  <span>Add Row</span>
-                </button>
-              </div>
-            ))}
-          </div>
+          <button
+            type="button"
+            onClick={handleResetForm}
+            disabled={isSubmitting}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-sm font-semibold transition cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset</span>
+          </button>
         )}
-      </div>
-
-      {/* FOOTER ACTIONS */}
-      <div className="flex items-center justify-between pt-2">
-        <button
-          type="button"
-          onClick={handleResetForm}
-          disabled={isSubmitting}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 text-xs sm:text-sm font-semibold cursor-pointer"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset</span>
-        </button>
 
         <div className="flex items-center gap-3">
           {typeof onCancel === "function" && (
@@ -759,25 +888,37 @@ export default function ProductForm({
               type="button"
               onClick={onCancel}
               disabled={isSubmitting}
-              className="px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
+              className="px-4 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
             >
               Cancel
             </button>
           )}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#004060] hover:bg-[#003350] text-white text-xs sm:text-sm font-semibold shadow-xs disabled:opacity-60 cursor-pointer"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Saving...</span>
-              </>
-            ) : (
-              <span>{isEditMode ? "Save Changes" : "Create Product"}</span>
-            )}
-          </button>
+
+          {currentStep < 5 ? (
+            <button
+              type="button"
+              onClick={handleNextStep}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#004060] hover:bg-[#003350] text-white text-sm font-semibold shadow-xs transition cursor-pointer"
+            >
+              <span>Save & Next</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#004060] hover:bg-[#003350] text-white text-sm font-semibold shadow-xs disabled:opacity-60 transition cursor-pointer"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <span>{isEditMode ? "Save Changes" : "Create Product"}</span>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </form>

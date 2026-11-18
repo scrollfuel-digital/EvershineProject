@@ -8,7 +8,7 @@ import {
   FaMapMarkerAlt,
   FaClock,
 } from "react-icons/fa";
-import footerLogo from "../../assets/evershine_footer_logo.png";
+import footerLogo from "../../assets/evershine_logo.svg";
 // 
 const socials = [
   {
@@ -42,7 +42,7 @@ export default function Footer() {
             <img
               src={footerLogo}
               alt="Evershine Solution"
-              className="h-14 sm:h-16 w-auto object-contain mb-3"
+              className="h-24 sm:h-28 w-auto object-contain mb-3"
             />
             <p className="text-[15px] sm:text-base text-gray-600 leading-relaxed max-w-sm">
               Building Strong Foundations for Industrial Growth. A trusted provider of industrial building solutions across India since 2012.

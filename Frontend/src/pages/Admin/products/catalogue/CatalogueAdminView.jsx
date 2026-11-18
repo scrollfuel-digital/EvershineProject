@@ -117,7 +117,7 @@ export default function CatalogueAdminView() {
       return { label: "Add Variant", entity: "variant" };
     }
     if (currentLevel === 1) {
-      return { label: "Add Type", entity: "type" };
+      return { label: "Add Subcategory", entity: "type" };
     }
     return { label: "Add Category", entity: "category" };
   }, [currentLevel]);
@@ -171,13 +171,13 @@ export default function CatalogueAdminView() {
         entity: "category",
         item,
         parentHierarchy: null,
-        childCountText: `${types.length} ${types.length === 1 ? "Type" : "Types"} configured`,
+        childCountText: `${types.length} ${types.length === 1 ? "Subcategory" : "Subcategories"} configured`,
       });
     } else if (currentLevel === 1) {
       const variants = categoryVariantsMap?.get(item.id) || [];
       setViewModal({
         open: true,
-        title: "Category Type Details",
+        title: "Subcategory Details",
         entity: "type",
         item,
         parentHierarchy: selectedCategory?.name || null,
@@ -217,7 +217,7 @@ export default function CatalogueAdminView() {
         formModal.mode === "edit"
           ? await updateCategoryType(formModal.item.id, { name: cleanName, slug: cleanSlug })
           : await createCategoryType(selectedCategoryId, { name: cleanName, slug: cleanSlug });
-        setToastMessage(`Type "${cleanName}" ${formModal.mode === "edit" ? "updated" : "created"} successfully.`);
+        setToastMessage(`Subcategory "${cleanName}" ${formModal.mode === "edit" ? "updated" : "created"} successfully.`);
       } else {
         formModal.mode === "edit"
           ? await updateCategoryVariant(formModal.item.id, { name: cleanName, slug: cleanSlug })
@@ -335,7 +335,7 @@ export default function CatalogueAdminView() {
           Showing:{" "}
           <strong className="text-slate-800">
             {currentLevel === 0 && "Root Categories"}
-            {currentLevel === 1 && `Types in ${selectedCategory?.name}`}
+            {currentLevel === 1 && `Subcategories in ${selectedCategory?.name}`}
             {currentLevel === 2 && `Variants in ${selectedType?.name}`}
           </strong>
         </div>
@@ -353,7 +353,7 @@ export default function CatalogueAdminView() {
               currentLevel === 0
                 ? "Search categories..."
                 : currentLevel === 1
-                ? `Search types in ${selectedCategory?.name}...`
+                ? `Search subcategories in ${selectedCategory?.name}...`
                 : `Search variants in ${selectedType?.name}...`
             }
             className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-300 rounded-xl text-sm sm:text-base text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#004060]/20 focus:border-[#004060] transition-all shadow-2xs"
@@ -385,7 +385,7 @@ export default function CatalogueAdminView() {
           <div className="flex items-center gap-2">
             <span className="text-base sm:text-lg font-bold text-slate-900 font-display">
               {currentLevel === 0 && "Categories"}
-              {currentLevel === 1 && `Category Types in "${selectedCategory?.name}"`}
+              {currentLevel === 1 && `Subcategories in "${selectedCategory?.name}"`}
               {currentLevel === 2 && `Variants in "${selectedType?.name}"`}
             </span>
             <span className="text-sm font-semibold px-2.5 py-0.5 rounded-md bg-slate-200/80 text-slate-700">
@@ -405,7 +405,7 @@ export default function CatalogueAdminView() {
                 : currentLevel === 0
                 ? "No categories created yet."
                 : currentLevel === 1
-                ? `No types configured under "${selectedCategory?.name}" yet.`
+                ? `No subcategories configured under "${selectedCategory?.name}" yet.`
                 : `No variants configured under "${selectedType?.name}" yet.`}
             </p>
             <button
@@ -424,7 +424,7 @@ export default function CatalogueAdminView() {
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider">
                   <th className="py-3.5 px-3 sm:px-6 w-10 sm:w-14 text-center">#</th>
                   <th className="py-3.5 px-3 sm:px-6">
-                    {currentLevel === 0 ? "Category Name" : currentLevel === 1 ? "Type Name" : "Variant Name"}
+                    {currentLevel === 0 ? "Category Name" : currentLevel === 1 ? "Subcategory Name" : "Variant Name"}
                   </th>
                   <th className="py-3.5 px-3 sm:px-6 text-right">Actions</th>
                 </tr>
