@@ -31,9 +31,9 @@ export default function CatalogHeader({
         <div className="flex items-center gap-4">
           <button
             onClick={onClearFilters}
-            className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1.5 transition cursor-pointer"
+            className="text-sm font-bold text-[#004060] hover:text-[#002d45] hover:underline flex items-center gap-1.5 transition cursor-pointer"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-4 h-4 text-[#004060]" />
             Clear filters
           </button>
         </div>

@@ -72,8 +72,6 @@ export default function ProductCatalogue({ initialCategory = null }) {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
           {/* Left Column: Multi-facet Filter Sidebar */}
           <FilterSidebar
-            hasActiveFilters={hasActiveFilters}
-            onClearFilters={handleClearFilters}
             categoryOpen={categoryOpen}
             onToggleCategoryOpen={() => setCategoryOpen(!categoryOpen)}
             filtersLoading={filtersLoading}
@@ -142,7 +140,6 @@ export default function ProductCatalogue({ initialCategory = null }) {
                 onToggleSubBrand={handleToggleSubBrand}
                 onToggleSubGrade={handleToggleSubGrade}
                 onClearOverride={() => setUserCategoryOverride(null)}
-                onClearAll={handleClearFilters}
               />
             )}
 

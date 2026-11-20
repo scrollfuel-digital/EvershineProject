@@ -2,7 +2,7 @@
 // Independent, production-ready authentication wrapper maintaining Evershine website design language
 import React from "react";
 import { Link } from "react-router-dom";
-import footerLogo from "../../assets/evershine_logo.svg";
+import footerLogo from "../../assets/evershine png.png";
 
 export default function AuthLayout({
   title,
@@ -23,7 +23,7 @@ export default function AuthLayout({
             <img
               src={footerLogo}
               alt="Evershine Prefab Solutions"
-              className="h-20 sm:h-24 w-auto mx-auto object-contain"
+              className="h-20 sm:h-24 w-auto mx-auto object-contain mb-2"
             />
           </Link>
           {title && (

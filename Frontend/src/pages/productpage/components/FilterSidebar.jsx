@@ -4,8 +4,6 @@ import CategoryAccordion from "./CategoryAccordion";
 import FacetAccordion from "./FacetAccordion";
 
 export default function FilterSidebar({
-  hasActiveFilters,
-  onClearFilters,
   // Category Accordion
   categoryOpen,
   onToggleCategoryOpen,
@@ -62,101 +60,93 @@ export default function FilterSidebar({
 
   return (
     <aside className="w-full lg:self-start space-y-3 z-10">
-      {/* Breadcrumb & Filter Header */}
-      <div className="mb-2">
-        <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-3">
-          <a href="/" className="hover:text-blue-600 transition">
-            Home
-          </a>
-          <span className="text-slate-400 text-xs">›</span>
-          <span className="text-[#0F172A] font-medium">All products</span>
-        </nav>
+      {/* Breadcrumb Navigation on top */}
+      <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-1 font-medium">
+        <a href="/" className="hover:text-[#004060] transition">
+          Home
+        </a>
+        <span className="text-slate-400 text-xs">›</span>
+        <span className="text-[#0F172A] font-semibold">All products</span>
+      </nav>
 
-        {/* Filter Header: "Filter" on Left, "Clear filters" on Right */}
-        <div className="flex items-center justify-between pb-3">
-          <div className="flex items-center gap-2.5">
-            <SlidersHorizontal className="w-5 h-5 text-slate-800" />
-            <span className="text-xl font-bold text-[#0F172A]">Filter</span>
-          </div>
-          {hasActiveFilters && (
-            <button
-              onClick={onClearFilters}
-              className="text-sm font-semibold text-[#1A56DB] hover:text-blue-800 hover:underline transition cursor-pointer"
-            >
-              Clear filters
-            </button>
-          )}
+      {/* Main Unified Filter Sidebar Container: Web Blue (#004060) */}
+      <div className="bg-[#004060] text-white rounded-2xl p-5 border border-[#003860] shadow-md space-y-3">
+        {/* Filter Header: "FILTER" (Golden Accent) */}
+        <div className="flex items-center gap-2.5 pb-3.5 border-b border-white/15">
+          <SlidersHorizontal className="w-5.5 h-5.5 text-[#FBBF24]" />
+          <span className="text-lg sm:text-xl font-black uppercase tracking-wide text-[#FBBF24]">
+            Filter
+          </span>
         </div>
+
+        {/* 1. Category Accordion */}
+        <CategoryAccordion
+          isOpen={categoryOpen}
+          onToggleOpen={onToggleCategoryOpen}
+          loading={filtersLoading}
+          categoriesCount={categoriesCount}
+          categoryGroups={categoryGroups}
+          selectedSubCategories={selectedSubCategories}
+          onToggleSubCategory={onToggleSubCategory}
+        />
+
+        {/* 2. Grade Accordion */}
+        <FacetAccordion
+          title="Grade"
+          isOpen={gradeOpen}
+          onToggleOpen={onToggleGradeOpen}
+          itemsCount={dynamicGrades.length}
+          loading={filtersLoading}
+          searchValue={gradeSearch}
+          onSearchChange={onGradeSearchChange}
+          displayedItems={displayedGrades}
+          selectedItems={selectedGrades}
+          onToggleItem={onToggleGrade}
+        />
+
+        {/* 3. Sub brand Accordion */}
+        <FacetAccordion
+          title="Sub brand"
+          isOpen={subBrandOpen}
+          onToggleOpen={onToggleSubBrandOpen}
+          itemsCount={dynamicSubBrands.length}
+          loading={filtersLoading}
+          searchValue={subBrandSearch}
+          onSearchChange={onSubBrandSearchChange}
+          displayedItems={displayedSubBrands}
+          selectedItems={selectedSubBrands}
+          onToggleItem={onToggleSubBrand}
+        />
+
+        {/* 4. Brand Accordion */}
+        <FacetAccordion
+          title="Brand"
+          isOpen={brandOpen}
+          onToggleOpen={onToggleBrandOpen}
+          itemsCount={dynamicBrands.length}
+          loading={filtersLoading}
+          searchValue={brandSearch}
+          onSearchChange={onBrandSearchChange}
+          displayedItems={displayedBrands}
+          selectedItems={selectedBrands}
+          onToggleItem={onToggleBrand}
+          checkMatcher={brandMatcher}
+        />
+
+        {/* 5. Sub grade Accordion */}
+        <FacetAccordion
+          title="Sub grade"
+          isOpen={subGradeOpen}
+          onToggleOpen={onToggleSubGradeOpen}
+          itemsCount={dynamicSubGrades.length}
+          loading={filtersLoading}
+          searchValue={subGradeSearch}
+          onSearchChange={onSubGradeSearchChange}
+          displayedItems={displayedSubGrades}
+          selectedItems={selectedSubGrades}
+          onToggleItem={onToggleSubGrade}
+        />
       </div>
-
-      {/* 1. Category Accordion */}
-      <CategoryAccordion
-        isOpen={categoryOpen}
-        onToggleOpen={onToggleCategoryOpen}
-        loading={filtersLoading}
-        categoriesCount={categoriesCount}
-        categoryGroups={categoryGroups}
-        selectedSubCategories={selectedSubCategories}
-        onToggleSubCategory={onToggleSubCategory}
-      />
-
-      {/* 2. Grade Accordion */}
-      <FacetAccordion
-        title="Grade"
-        isOpen={gradeOpen}
-        onToggleOpen={onToggleGradeOpen}
-        itemsCount={dynamicGrades.length}
-        loading={filtersLoading}
-        searchValue={gradeSearch}
-        onSearchChange={onGradeSearchChange}
-        displayedItems={displayedGrades}
-        selectedItems={selectedGrades}
-        onToggleItem={onToggleGrade}
-      />
-
-      {/* 3. Sub brand Accordion */}
-      <FacetAccordion
-        title="Sub brand"
-        isOpen={subBrandOpen}
-        onToggleOpen={onToggleSubBrandOpen}
-        itemsCount={dynamicSubBrands.length}
-        loading={filtersLoading}
-        searchValue={subBrandSearch}
-        onSearchChange={onSubBrandSearchChange}
-        displayedItems={displayedSubBrands}
-        selectedItems={selectedSubBrands}
-        onToggleItem={onToggleSubBrand}
-      />
-
-      {/* 4. Brand Accordion */}
-      <FacetAccordion
-        title="Brand"
-        isOpen={brandOpen}
-        onToggleOpen={onToggleBrandOpen}
-        itemsCount={dynamicBrands.length}
-        loading={filtersLoading}
-        searchValue={brandSearch}
-        onSearchChange={onBrandSearchChange}
-        displayedItems={displayedBrands}
-        selectedItems={selectedBrands}
-        onToggleItem={onToggleBrand}
-        checkMatcher={brandMatcher}
-      />
-
-      {/* 5. Sub grade Accordion */}
-      <FacetAccordion
-        title="Sub grade"
-        isOpen={subGradeOpen}
-        onToggleOpen={onToggleSubGradeOpen}
-        itemsCount={dynamicSubGrades.length}
-        loading={filtersLoading}
-        searchValue={subGradeSearch}
-        onSearchChange={onSubGradeSearchChange}
-        displayedItems={displayedSubGrades}
-        selectedItems={selectedSubGrades}
-        onToggleItem={onToggleSubGrade}
-      />
     </aside>
   );
 }
-

@@ -16,7 +16,6 @@ export default function ActiveFilterChips({
   onToggleSubBrand,
   onToggleSubGrade,
   onClearOverride,
-  onClearAll,
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2.5 mb-5">
@@ -132,13 +131,6 @@ export default function ActiveFilterChips({
             </button>
           </span>
         )}
-
-      <button
-        onClick={onClearAll}
-        className="text-xs font-bold text-red-600 hover:text-red-700 hover:underline ml-auto pl-2 cursor-pointer"
-      >
-        Reset All
-      </button>
     </div>
   );
 }

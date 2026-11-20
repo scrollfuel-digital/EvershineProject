@@ -11,44 +11,49 @@ export default function CategoryAccordion({
   onToggleSubCategory,
 }) {
   return (
-    <div className="rounded-xl border border-[#E2E8F0] bg-white overflow-hidden transition-all shadow-2xs">
+    <div className="border-b border-white/15 pb-3">
       <button
         onClick={onToggleOpen}
-        className="w-full flex items-center justify-between px-4 py-3.5 text-left hover:bg-slate-50 transition cursor-pointer"
+        className="w-full flex items-center justify-between py-2.5 text-left cursor-pointer transition group"
       >
-        <span className="text-[16px] font-semibold text-slate-800">
-          Category
+        <span className="text-sm sm:text-base font-extrabold uppercase tracking-wide text-[#FBBF24] flex items-center gap-2">
+          <span>Category</span>
+          {categoriesCount > 0 && (
+            <span className="text-xs font-bold text-white bg-white/15 px-2 py-0.5 rounded-full">
+              {categoriesCount}
+            </span>
+          )}
         </span>
         {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-slate-700" />
+          <ChevronUp className="w-4.5 h-4.5 text-[#FBBF24] group-hover:scale-110 transition-transform" />
         ) : (
-          <ChevronDown className="w-5 h-5 text-slate-700" />
+          <ChevronDown className="w-4.5 h-4.5 text-[#FBBF24] group-hover:scale-110 transition-transform" />
         )}
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 pt-2 bg-white border-t border-slate-100 space-y-4 max-h-[480px] overflow-y-auto">
+        <div className="pt-2 pb-1 space-y-3.5 max-h-64 overflow-y-auto pr-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#003860]/40 [&::-webkit-scrollbar-thumb]:bg-[#285870] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#3b7a9e] [scrollbar-width:thin] [scrollbar-color:#285870_#003860]">
           {loading && categoriesCount === 0 ? (
-            <div className="flex items-center gap-2 text-xs text-slate-400 py-2">
-              <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-white/70 py-2">
+              <Loader2 className="w-4 h-4 animate-spin text-white/70" />
               <span>Loading categories...</span>
             </div>
           ) : categoryGroups.length === 0 ? (
-            <p className="text-xs text-slate-400 py-1">No categories configured.</p>
+            <p className="text-xs font-semibold text-white/70 py-1">No categories configured.</p>
           ) : (
             categoryGroups.map((group) => {
               const typeName = group.type.name;
               const variants = group.variants || [];
 
               return (
-                <div key={group.type.id || typeName} className="space-y-2">
-                  {/* Non-clickable Type Header */}
-                  <div className="text-[14.5px] font-semibold text-slate-600 select-none tracking-tight">
+                <div key={group.type.id || typeName} className="space-y-1.5">
+                  {/* Non-clickable Type Header: Weighted & clear */}
+                  <div className="text-xs sm:text-[13px] font-extrabold text-[#FBBF24]/90 uppercase tracking-wide select-none">
                     {typeName}
                   </div>
 
                   {/* Associated Variants Checkboxes */}
-                  <div className="space-y-2.5 pl-0.5">
+                  <div className="space-y-1.5 pl-1">
                     {variants.length > 0 ? (
                       variants.map((variant) => {
                         const isChecked =
@@ -57,20 +62,22 @@ export default function CategoryAccordion({
                         return (
                           <label
                             key={variant.id || variant.name}
-                            className="flex items-center gap-2.5 text-[14px] text-slate-700 hover:text-slate-900 cursor-pointer select-none"
+                            className="flex items-center gap-3 text-[14.5px] sm:text-[15.5px] text-white/95 hover:text-white cursor-pointer select-none py-1 transition-colors"
                           >
                             <input
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => onToggleSubCategory(variant.name, typeName)}
-                              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
+                              className="w-4 h-4 rounded border-white/40 text-[#004060] focus:ring-0 accent-[#FBBF24] cursor-pointer shrink-0"
                             />
-                            <span>{variant.name}</span>
+                            <span className={`leading-snug ${isChecked ? "font-black text-[#FBBF24]" : "font-semibold"}`}>
+                              {variant.name}
+                            </span>
                           </label>
                         );
                       })
                     ) : (
-                      <label className="flex items-center gap-2.5 text-[14px] text-slate-700 hover:text-slate-900 cursor-pointer select-none">
+                      <label className="flex items-center gap-3 text-[14.5px] sm:text-[15.5px] text-white/95 hover:text-white cursor-pointer select-none py-1 transition-colors">
                         <input
                           type="checkbox"
                           checked={
@@ -78,9 +85,11 @@ export default function CategoryAccordion({
                             selectedSubCategories.includes(group.type.id)
                           }
                           onChange={() => onToggleSubCategory(typeName)}
-                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-0 cursor-pointer"
+                          className="w-4 h-4 rounded border-white/40 text-[#004060] focus:ring-0 accent-[#FBBF24] cursor-pointer shrink-0"
                         />
-                        <span>{typeName}</span>
+                        <span className={`leading-snug ${selectedSubCategories.includes(typeName) ? "font-black text-[#FBBF24]" : "font-semibold"}`}>
+                          {typeName}
+                        </span>
                       </label>
                     )}
                   </div>
@@ -93,4 +102,3 @@ export default function CategoryAccordion({
     </div>
   );
 }
-
