@@ -40,7 +40,7 @@ export default function BlogCard({ blog, className = "" }) {
 
       {/* Category Tag */}
       {category && (
-        <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[#004060]">
+        <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#004060] bg-[#004060]/10 px-2.5 py-0.5 rounded-md w-fit">
           {category}
         </span>
       )}

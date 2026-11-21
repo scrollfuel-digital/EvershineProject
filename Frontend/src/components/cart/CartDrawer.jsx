@@ -370,7 +370,7 @@ export default function CartDrawer() {
               </button>
 
               <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Direct inquiry to: +91 9860118911</span>
+                <span>Direct inquiry to: +91 7774078785</span>
                 <Link
                   to="/products"
                   onClick={closeCart}

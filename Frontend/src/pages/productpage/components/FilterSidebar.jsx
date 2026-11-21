@@ -1,9 +1,12 @@
 import React from "react";
 import { SlidersHorizontal } from "lucide-react";
+import AppSidebar from "../../../components/ui/AppSidebar";
 import CategoryAccordion from "./CategoryAccordion";
 import FacetAccordion from "./FacetAccordion";
 
 export default function FilterSidebar({
+  isOpen = false,
+  onClose,
   // Category Accordion
   categoryOpen,
   onToggleCategoryOpen,
@@ -59,26 +62,15 @@ export default function FilterSidebar({
     );
 
   return (
-    <aside className="w-full lg:self-start space-y-3 z-10">
-      {/* Breadcrumb Navigation on top */}
-      <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-1 font-medium">
-        <a href="/" className="hover:text-[#004060] transition">
-          Home
-        </a>
-        <span className="text-slate-400 text-xs">›</span>
-        <span className="text-[#0F172A] font-semibold">All products</span>
-      </nav>
-
-      {/* Main Unified Filter Sidebar Container: Web Blue (#004060) */}
-      <div className="bg-[#004060] text-white rounded-2xl p-5 border border-[#003860] shadow-md space-y-3">
-        {/* Filter Header: "FILTER" (Golden Accent) */}
-        <div className="flex items-center gap-2.5 pb-3.5 border-b border-white/15">
-          <SlidersHorizontal className="w-5.5 h-5.5 text-[#FBBF24]" />
-          <span className="text-lg sm:text-xl font-black uppercase tracking-wide text-[#FBBF24]">
-            Filter
-          </span>
-        </div>
-
+    <AppSidebar
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Filter"
+      icon={SlidersHorizontal}
+      desktopColSpan="lg:col-span-1"
+      stickyTopOffset={130}
+    >
+      <div className="space-y-3">
         {/* 1. Category Accordion */}
         <CategoryAccordion
           isOpen={categoryOpen}
@@ -147,6 +139,6 @@ export default function FilterSidebar({
           onToggleItem={onToggleSubGrade}
         />
       </div>
-    </aside>
+    </AppSidebar>
   );
 }

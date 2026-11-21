@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
-import { Loader2, AlertCircle, ShoppingBag, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, AlertCircle, ShoppingBag, Check, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
 import { fetchProductBySlug, fetchActiveProducts } from "../../services/productService";
 import { useDataProcess } from "../../services/dataProccess";
 import { useAuth } from "../../hooks/useAuth";
@@ -360,7 +360,7 @@ export default function ProductDetails() {
       specs ? ` with specifications: ${specs}` : ""
     }${quantity ? `, Quantity: ${quantity}` : ""}.`;
 
-    const whatsappUrl = `https://wa.me/919860118911?text=${encodeURIComponent(quoteMsg)}`;
+    const whatsappUrl = `https://wa.me/917774078785?text=${encodeURIComponent(quoteMsg)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -417,21 +417,21 @@ export default function ProductDetails() {
   return (
     <main className="min-h-screen bg-[#f5f7fb] text-slate-900 font-sans pt-[85px] sm:pt-[100px] md:pt-[115px] lg:pt-[135px] pb-16 px-4 sm:px-6 lg:px-8 xl:px-12">
       <div className="max-w-[1440px] mx-auto">
-        {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 mb-6 text-sm text-slate-500">
-          <Link to="/" className="text-[#004060] hover:underline font-medium">
+        {/* Breadcrumb Navigation - Clickable, large font size, separated by > icon */}
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2.5 mb-6 text-base sm:text-lg lg:text-[19px] font-semibold text-slate-700">
+          <Link to="/" className="hover:text-[#004060] transition-colors">
             Home
           </Link>
-          <span className="text-slate-400">/</span>
-          <Link to="/products" className="text-[#004060] hover:underline font-medium">
+          <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
+          <Link to="/products" className="hover:text-[#004060] transition-colors">
             Products
           </Link>
           {resolvedCategory && (
             <>
-              <span className="text-slate-400">/</span>
+              <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
               <Link
                 to={`/category/${product.categoryId || encodeURIComponent(resolvedCategory)}`}
-                className="text-[#004060] hover:underline font-medium"
+                className="hover:text-[#004060] transition-colors"
               >
                 {resolvedCategory}
               </Link>
@@ -439,12 +439,12 @@ export default function ProductDetails() {
           )}
           {resolvedSubcategory && (
             <>
-              <span className="text-slate-400">/</span>
-              <span className="text-slate-700 font-medium">{resolvedSubcategory}</span>
+              <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
+              <span className="text-slate-700 font-semibold">{resolvedSubcategory}</span>
             </>
           )}
-          <span className="text-slate-400">/</span>
-          <span className="text-slate-900 font-semibold truncate max-w-xs sm:max-w-md">
+          <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
+          <span className="text-[#004060] font-bold truncate max-w-xs sm:max-w-md">
             {product.title}
           </span>
         </nav>

@@ -2,7 +2,7 @@ import React from "react";
 import callIcon from "../../assets/call_icon.png";
 
 export default function CallButton() {
-  const phoneNumber = "917498147921";
+  const phoneNumber = "917774078785";
 
   return (
     <a

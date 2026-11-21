@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useCatalogProducts } from "./hooks/useCatalogProducts";
 import FilterSidebar from "./components/FilterSidebar";
 import CatalogHeader from "./components/CatalogHeader";
@@ -7,6 +9,8 @@ import ProductGrid from "./components/ProductGrid";
 import CatalogPagination from "./components/CatalogPagination";
 
 export default function ProductCatalogue({ initialCategory = null }) {
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
   const {
     products,
     productsLoading,
@@ -69,9 +73,55 @@ export default function ProductCatalogue({ initialCategory = null }) {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pt-[80px] md:pt-[125px] lg:pt-[138px] pb-12 w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20">
       <div className="w-full">
+        {/* Breadcrumb Navigation - Clickable, large font size, separated by > icon.
+            Strictly clean for phone view: nav does NOT include filters */}
+        <nav className="flex items-center gap-2.5 text-base sm:text-lg lg:text-[19px] text-slate-700 mb-6 font-semibold flex-wrap">
+          <Link to="/" className="hover:text-[#004060] transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
+          <Link to="/products" className="hover:text-[#004060] transition-colors">
+            All Products
+          </Link>
+          {initialCategory && (
+            <span className="hidden md:inline-flex items-center gap-2.5">
+              <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
+              <span className="text-[#004060] font-bold capitalize">
+                {initialCategory}
+              </span>
+            </span>
+          )}
+        </nav>
+
+        {/* Mobile View: Single Trigger Button for Filters Drawer (Only products visible initially) */}
+        <div className="lg:hidden mb-5">
+          <button
+            type="button"
+            onClick={() => setIsMobileFilterOpen(true)}
+            className="w-full flex items-center justify-between px-4 py-3.5 bg-[#004060] hover:bg-[#003860] active:scale-[0.99] text-white rounded-xl shadow-md border border-white/10 transition-all cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5">
+              <SlidersHorizontal className="w-5 h-5 text-[#FBBF24]" />
+              <span className="font-semibold text-[15px] sm:text-base">
+                Filters &amp; Categories
+              </span>
+              {hasActiveFilters && (
+                <span className="bg-[#FBBF24] text-[#004060] text-xs font-bold px-2 py-0.5 rounded-full">
+                  Active
+                </span>
+              )}
+            </div>
+            <span className="flex items-center gap-1 text-xs font-bold text-[#FBBF24] bg-white/10 px-2.5 py-1 rounded-lg">
+              View <ChevronRight className="w-4 h-4" />
+            </span>
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          {/* Left Column: Multi-facet Filter Sidebar */}
+          {/* Left Column: Multi-facet Filter Sidebar (Reusable AppSidebar) */}
           <FilterSidebar
+            isOpen={isMobileFilterOpen}
+            onClose={() => setIsMobileFilterOpen(false)}
             categoryOpen={categoryOpen}
             onToggleCategoryOpen={() => setCategoryOpen(!categoryOpen)}
             filtersLoading={filtersLoading}
@@ -114,7 +164,7 @@ export default function ProductCatalogue({ initialCategory = null }) {
           />
 
           {/* Right Column: Product Cards & Pagination */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 w-full">
             <CatalogHeader
               selectedSubCategories={selectedSubCategories}
               selectedCategories={selectedCategories}

@@ -6,7 +6,6 @@ import evershineLogo from "../../assets/evershine png.png";
 import {
     HiOutlineShoppingCart,
     HiOutlineSearch,
-    HiOutlineChevronDown,
     HiX,
 } from "react-icons/hi";
 
@@ -207,7 +206,6 @@ export default function Navbar() {
     // Sub-navbar dropdown and mobile states
     const [openMenu, setOpenMenu] = useState(null);
     const [isHover, setIsHover] = useState(null);
-    const [mobileAccordionState, setMobileAccordionState] = useState({});
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
@@ -249,13 +247,6 @@ export default function Navbar() {
         { href: "/blogs", label: "Blog" },
         { href: "/contact", label: "Contact & FAQs" },
     ];
-
-    const toggleMobileMenu = (id) => {
-        setMobileAccordionState((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
-    };
 
     // Auto-close dropdowns when URL path or query params change
     useEffect(() => {
@@ -402,7 +393,7 @@ export default function Navbar() {
                         {/* Logo -> Redirect to Home */}
                         <Link
                             to="/"
-                            className="shrink-0 flex items-center bg-[#fabd23] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl shadow-xs transition-transform duration-300 ease-out hover:scale-105"
+                            className="shrink-0 flex items-center px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl shadow-xs transition-transform duration-300 ease-out hover:scale-105"
                             title="Evershine Solution - Home"
                         >
                             <img
@@ -655,102 +646,14 @@ export default function Navbar() {
 
                     <div className="h-px bg-slate-100" />
 
-                    {/* MOBILE CATEGORIES ACCORDION */}
-                    <div className="flex flex-col gap-2">
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">
-                            Product Categories
-                        </span>
-                        {categories.map((category) => {
-                            const types = Array.isArray(category.types) && category.types.length > 0
-                                ? category.types
-                                : (categoryTypesMap?.get(category.id) || []);
-                            const isOpen = Boolean(mobileAccordionState[category.id]);
-                            return (
-                                <div key={category.id || category.name} className="border border-slate-200 rounded-lg overflow-hidden">
-                                    <button
-                                        type="button"
-                                        onClick={() => toggleMobileMenu(category.id)}
-                                        className="w-full flex items-center justify-between px-3.5 py-2.5 bg-slate-50 text-sm font-medium text-slate-800 cursor-pointer"
-                                    >
-                                        <span>{category.name}</span>
-                                        <HiOutlineChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
-                                    </button>
-                                    {isOpen && (
-                                        <div className="p-2.5 bg-white space-y-1.5 border-t border-slate-100">
-                                            {types.length > 0 ? (
-                                                <>
-                                                    <Link
-                                                        to={`/products?category=${encodeURIComponent(category.name)}`}
-                                                        onClick={() => setIsMobileOpen(false)}
-                                                        className="block px-2 py-1 text-xs font-semibold text-primary hover:underline border-b border-slate-100 mb-1"
-                                                    >
-                                                        All {category.name}
-                                                    </Link>
-                                                    {types.map((type) => {
-                                                    const variants = Array.isArray(type.variants) && type.variants.length > 0
-                                                        ? type.variants
-                                                        : (categoryVariantsMap?.get(type.id) || []);
-                                                    if (variants.length > 0) {
-                                                        return (
-                                                            <div key={type.id || type.name} className="space-y-0.5">
-                                                                <Link
-                                                                    to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
-                                                                    onClick={() => setIsMobileOpen(false)}
-                                                                    className="block px-2 py-1 text-sm font-semibold text-primary hover:underline"
-                                                                >
-                                                                    {type.name}
-                                                                </Link>
-                                                                <div className="pl-3 space-y-0.5 border-l border-slate-100 ml-2">
-                                                                    {variants.map((v) => (
-                                                                        <Link
-                                                                            key={v.id || v.name}
-                                                                            to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(v.name)}`}
-                                                                            onClick={() => setIsMobileOpen(false)}
-                                                                            className="block px-2 py-1 text-sm font-medium text-slate-700 hover:text-primary"
-                                                                        >
-                                                                            {v.name}
-                                                                        </Link>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    }
-                                                    return (
-                                                        <Link
-                                                            key={type.id || type.name}
-                                                            to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
-                                                            onClick={() => setIsMobileOpen(false)}
-                                                            className="block px-2 py-1 text-sm font-semibold text-primary hover:underline"
-                                                        >
-                                                            {type.name}
-                                                        </Link>
-                                                    );
-                                                })}
-                                                </>
-                                            ) : (
-                                                <Link
-                                                    to={`/products?category=${encodeURIComponent(category.name)}`}
-                                                    onClick={() => setIsMobileOpen(false)}
-                                                    className="block px-2 py-1 text-sm font-medium text-slate-700 hover:text-primary"
-                                                >
-                                                    View all {category.name}
-                                                </Link>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-
-                        {/* Mobile Help & Support Action */}
-                        <a
-                            href="tel:+919860118911"
-                            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-blue-50 text-[#1849A9] text-xs font-semibold mt-1"
-                        >
-                            <Headphones className="w-4 h-4" />
-                            <span>Help Helpline: +91 9860118911</span>
-                        </a>
-                    </div>
+                    {/* Mobile Help & Support Action */}
+                    <a
+                        href="tel:+917774078785"
+                        className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-blue-50 text-[#1849A9] text-xs font-semibold"
+                    >
+                        <Headphones className="w-4 h-4" />
+                        <span>Helpline: +91 7774078785</span>
+                    </a>
 
                     <div className="h-px bg-slate-100" />
 

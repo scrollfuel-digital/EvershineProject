@@ -48,6 +48,7 @@ import AllCategories from "./pages/catergoriespage/AllCategories";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/productpage/ProductDetails";
 import Blogs from "./pages/Blogspage/Blogs";
+import PolicyPage from "./pages/Policypage/PolicyPage";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -103,6 +104,12 @@ function AppContent() {
         <Route path="/product" element={<Products />} />
         <Route path="/product-details" element={<Products />} />
         <Route path="/category/:categoryName" element={<Products />} />
+
+        {/* Policy Routes */}
+        <Route path="/policy/:slug" element={<PolicyPage />} />
+        <Route path="/policy" element={<PolicyPage />} />
+        <Route path="/policies/:slug" element={<PolicyPage />} />
+        <Route path="/policies" element={<PolicyPage />} />
 
         {/* Dynamic Hierarchical Product Routes */}
         <Route path="/allproduct/mildsteel" element={<Products />} />

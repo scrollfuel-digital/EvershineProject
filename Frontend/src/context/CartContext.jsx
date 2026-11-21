@@ -439,7 +439,7 @@ export function CartProvider({ children }) {
 
   /**
    * Prepares and opens WhatsApp enquiry for selected products
-   * Recipient: 919860118911
+   * Recipient: 917774078785
    * Format matching Section 11 specifications
    */
   const sendWhatsAppEnquiry = useCallback(() => {
@@ -472,7 +472,7 @@ export function CartProvider({ children }) {
     });
 
     const fullMessage = `${header}\n${productBlocks.join("\n\n")}\n\nPlease share further details.`;
-    const whatsappUrl = `https://wa.me/919860118911?text=${encodeURIComponent(fullMessage)}`;
+    const whatsappUrl = `https://wa.me/917774078785?text=${encodeURIComponent(fullMessage)}`;
 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     return true;

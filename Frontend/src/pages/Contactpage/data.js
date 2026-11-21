@@ -27,7 +27,7 @@ export const faqs = [
       {
         question: "How can I get in touch with Evershine?",
         answer:
-          "You can contact us by calling +91 9860118911 or emailing evershineng@gmail.com. You can also reach us through WhatsApp or our website contact page."
+          "You can contact us by calling +91 7774078785, +91 9860118911, or +91 9881147000, or emailing evershineng@gmail.com. You can also reach us through WhatsApp or our website contact page."
       }
     ]
   },
@@ -262,7 +262,7 @@ export const faqs = [
       {
         question: "Can I discuss my requirements with a sales representative?",
         answer:
-          "Yes, you can speak directly with our sales team by calling +91 9860118911 or sending an email to evershineng@gmail.com."
+          "Yes, you can speak directly with our sales team by calling +91 7774078785, +91 9860118911, or +91 9881147000, or sending an email to evershineng@gmail.com."
       }
     ]
   },
@@ -523,7 +523,7 @@ export const faqs = [
       {
         question: "What is the contact number of Evershine Prefab Solutions?",
         answer:
-          "You can contact Evershine Prefab Solutions at +91 9860118911 for product enquiries, quotations and general assistance."
+          "You can contact Evershine Prefab Solutions at +91 7774078785, +91 9860118911, or +91 9881147000 for product enquiries, quotations and general assistance."
       },
       {
         question: "What is the official email address of Evershine?",
@@ -543,7 +543,7 @@ export const faqs = [
       {
         question: "Can I contact Evershine through WhatsApp?",
         answer:
-          "Yes, you can reach our team on WhatsApp at +91 9860118911 using the WhatsApp contact option on our website."
+          "Yes, you can reach our team on WhatsApp at +91 7774078785 using the WhatsApp contact option on our website."
       },
       {
         question: "Can I visit your office for product enquiries?",

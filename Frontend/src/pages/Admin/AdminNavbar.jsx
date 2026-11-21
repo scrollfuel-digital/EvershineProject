@@ -23,7 +23,7 @@ export default function AdminNavbar({
   const userInitial = user?.username ? user.username.charAt(0).toUpperCase() : "A";
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-full bg-white border-b border-light-gray select-none">
+    <header className="fixed top-0 left-0 z-50 w-full bg-[#004060] border-b border-light-gray select-none">
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20 h-[64px] sm:h-[72px] lg:h-[84px] flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
         {/* LEFT — LOGO + ADMIN BADGE */}
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 shrink-0">

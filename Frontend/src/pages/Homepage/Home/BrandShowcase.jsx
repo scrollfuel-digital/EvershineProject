@@ -104,7 +104,7 @@ export default function BrandShowcase() {
   };
 
   return (
-    <section className="py-4 sm:py-6 lg:py-8 bg-[#fabd23]">
+    <section className="py-4 sm:py-6 lg:py-8">
       <div className="mx-4 md:mx-[4vw]">
         {/* Brand Container with Arrows */}
         <div

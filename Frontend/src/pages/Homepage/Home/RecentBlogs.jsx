@@ -60,25 +60,28 @@ export default function RecentBlogs() {
   };
 
   return (
-    <section className="py-6 sm:py-10">
-      <div className="mx-4 md:mx-[4vw]">
-        {/* Header: Recent blogs on left, See all on right */}
-        <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-200">
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+    <section className="my-8 sm:my-12 mx-4 md:mx-[4vw]">
+      <div className="relative bg-gradient-to-b from-[#003860] via-[#004060] to-[#002840] rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] py-6 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-8 text-white shadow-xl overflow-hidden border border-white/10">
+        {/* Top Golden Accent Gradient Line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] w-full bg-gradient-to-r from-transparent via-[#FBBF24] to-transparent" />
+
+        {/* Header: Recent blogs on left (golden gradient), See all on right */}
+        <div className="flex items-center justify-between gap-4 pb-4 border-b border-white/15">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#FBBF24] via-amber-300 to-[#F59E0B]">
             Recent blogs
           </h2>
 
           <Link
             to="/blogs"
-            className="group inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#004060] hover:text-[#002840] transition-colors shrink-0"
+            className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#FBBF24] hover:text-amber-200 bg-white/10 hover:bg-white/15 px-3.5 py-1.5 rounded-full border border-white/15 transition-all shadow-xs shrink-0"
           >
             <span>See all</span>
-            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-[#FBBF24]" />
           </Link>
         </div>
 
-        {/* 1x3 Grid Container: horizontal scroller on phone (showing ~1.2 cards), 3-col grid on desktop */}
-        <div className="relative group/carousel pt-4 sm:pt-6">
+        {/* 1x3 Grid Container: horizontal scroller on phone, 3-col grid on desktop */}
+        <div className="relative group/carousel pt-5 sm:pt-6">
           {/* Left Arrow Button (mobile/tablet only) */}
           <button
             type="button"
@@ -113,11 +116,14 @@ export default function RecentBlogs() {
           <div
             ref={scrollRef}
             onScroll={checkScroll}
-            className="grid grid-flow-col auto-cols-[80%] sm:auto-cols-[48%] lg:auto-cols-fr lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 overflow-x-auto lg:overflow-visible scroll-smooth snap-x snap-mandatory py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="grid grid-flow-col auto-cols-[85%] sm:auto-cols-[48%] lg:auto-cols-fr lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 overflow-x-auto lg:overflow-visible scroll-smooth snap-x snap-mandatory py-2 px-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {DUMMY_BLOGS.map((blog) => (
               <div key={blog.id} className="w-full snap-start">
-                <BlogCard blog={blog} />
+                <BlogCard
+                  blog={blog}
+                  className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-md hover:shadow-xl transition-all duration-300 border border-slate-100/90 h-full"
+                />
               </div>
             ))}
           </div>
@@ -126,4 +132,3 @@ export default function RecentBlogs() {
     </section>
   );
 }
-
