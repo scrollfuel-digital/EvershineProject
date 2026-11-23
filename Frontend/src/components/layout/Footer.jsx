@@ -51,7 +51,7 @@ export default function Footer() {
               />
             </div>
             <p className="text-[14.5px] sm:text-[15px] text-slate-200/90 leading-relaxed max-w-sm mb-4">
-              Building Strong Foundations for Industrial Growth. A trusted provider of industrial building solutions across India since 2012.
+              Building Strong Foundations for Industrial Growth. A trusted provider of industrial building solutions across India since 2013.
             </p>
             {/* Social Media Icons */}
             <div className="flex items-center gap-4 pt-1">

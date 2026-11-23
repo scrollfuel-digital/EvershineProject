@@ -237,108 +237,107 @@ export const websitePolicies = [
   },
 
   {
-    title: "Cancellation Policy",
-    slug: "cancellation-policy",
-    content: `
-      <h2>4.1 Introduction</h2>
-      <p>Cancellation requests relating to enquiries or confirmed purchases are handled based on the status and specific terms of the relevant transaction.</p>
-
-      <h2>4.2 Enquiry Cancellation</h2>
-      <p>If you have submitted an enquiry and no purchase order has been confirmed, please contact our sales team to withdraw or update your enquiry.</p>
-
-      <h2>4.3 Confirmed Order Cancellation</h2>
-      <p>Cancellation requests for confirmed orders must be communicated to our team with the relevant order details.</p>
-      <p>The possibility of cancellation and any applicable charges or adjustments will be reviewed on a case-by-case basis, considering the order status and the arrangements agreed upon with the customer.</p>
-
-      <h2>4.4 Refunds Following Cancellation</h2>
-      <p>If a cancellation involves a payment, any applicable refund or adjustment will be discussed and handled according to the agreed transaction terms and applicable law.</p>
-      <p>No fixed refund timeline or automatic refund entitlement is stated in this policy.</p>
-
-      <h2>4.5 Contact</h2>
-      <p>Email: <a href="mailto:evershineng@gmail.com">evershineng@gmail.com</a></p>
-      <p>Primary Phone: <a href="tel:+917774078785">+91 7774078785</a></p>
-      <p>Additional Phones: +91 9860118911, +91 9881147000</p>
-    `
-  },
-
-  {
-    title: "Return, Refund, Replacement and Cancellation Policy",
+    title: "Returns, Refunds, Replacements and Cancellation Policy",
     slug: "return-refund-replacement-cancellation-policy",
     content: `
-      <p>At Evershine Prefab Solutions, we aim to provide reliable products and support throughout the enquiry, ordering and delivery process. This policy explains how requests relating to returns, refunds, replacements and order cancellations are handled.</p>
-      <p>Since our products include different types of steel, construction materials, insulation products, accessories and customised or fabricated items, the applicable conditions may vary depending on the product, order specifications and individual agreement.</p>
+    <p>By browsing, inquiring, or purchasing products and related services from <strong>Evershine Prefab Solutions</strong> through our website or direct B2B/client transactions, you agree to be bound by this Returns, Refunds, Replacements and Cancellation Policy ("Return Policy"). This Return Policy should be read alongside our Terms of Use, Privacy Policy, and any applicable quotations, purchase orders, or sales agreements executed between you and Evershine Prefab Solutions.</p>
 
-      <h2>1. Return Eligibility</h2>
-      <p>Return requests are evaluated based on the product type, order specifications and circumstances of the request.</p>
-      <ul>
-        <li>Return eligibility may vary depending on the product and order.</li>
-        <li>Customers should contact our team before arranging or dispatching any product for return.</li>
-        <li>Each request will be reviewed individually.</li>
-        <li>Customised, fabricated and made-to-order products will be assessed according to the specific order requirements and agreed conditions.</li>
-      </ul>
-      <p>Submitting a return request does not automatically mean that the return will be approved.</p>
+    <p>This document is an electronic record generated under the Information Technology Act, 2000 and the rules framed thereunder, and does not require physical or digital signatures. It becomes effective and binding upon placing an order, accepting a quotation, or availing products/services from us.</p>
 
-      <h2>2. Damaged, Defective or Incorrect Products</h2>
-      <p>If the material delivered is damaged, defective or different from the agreed order requirements, customers should contact Evershine Prefab Solutions immediately or as soon as possible after receiving the material.</p>
-      <p>To help us review the issue, customers should provide:</p>
-      <ul>
-        <li>Order or enquiry reference details.</li>
-        <li>Product name and relevant specifications.</li>
-        <li>A clear description of the issue.</li>
-        <li>Photographs or other supporting evidence, where available.</li>
-      </ul>
-      <p>Our team will review the complaint and communicate the appropriate resolution based on the circumstances.</p>
+    <h2>1. Order Cancellations &amp; Returns</h2>
 
-      <h2>3. Replacement Policy</h2>
-      <p>If a product-related complaint or return request is approved, a replacement may be offered depending on the nature of the issue, product availability and order conditions.</p>
-      <p>Replacement arrangements will be communicated individually after reviewing the request.</p>
+    <h3>1.1 Inspection at Delivery / Unloading</h3>
+    <p>Buyers must inspect shipments and packaging prior to accepting delivery and during unloading. If packaging appears tampered, torn, or damaged, or if there are visible discrepancies, the Buyer should note the issue on the delivery/unloading challan or receipt immediately and inform Evershine Prefab Solutions right away so verification can take place.</p>
 
-      <h2>4. Refund Policy</h2>
-      <p>Where a refund is considered appropriate and approved, it will be handled according to the applicable payment arrangement and the circumstances of the order.</p>
-      <ul>
-        <li>Refund eligibility is assessed on a case-by-case basis.</li>
-        <li>The refund method will depend on the original payment arrangement and the agreed resolution.</li>
-        <li>There is no fixed refund processing timeline applicable to every order.</li>
-        <li>The applicable refund method and expected processing timeline will be communicated to the customer individually.</li>
-      </ul>
-      <p>A refund is not automatic upon submitting a return or complaint request.</p>
+    <h3>1.2 Order Cancellation</h3>
+    <ul>
+      <li><strong>Standard / Ready Stock Orders:</strong> Cancellation requests must be submitted in writing before dispatch or fabrication commences. Where cancellation is approved by Evershine Prefab Solutions prior to dispatch, eligible refunds will be processed within <strong>7 (seven) working days</strong> from confirmation of cancellation.</li>
+      <li><strong>Custom / Made-to-Order Materials:</strong> Orders involving custom fabrication, cut-to-length roofing/cladding profiles, specialized purlins/flashings, or bespoke Pre-Engineered Building (PEB) components cannot be cancelled once raw material allocation, cutting, or manufacturing has started.</li>
+      <li><strong>Partial Cancellations:</strong> Where a partial cancellation is permitted by Evershine Prefab Solutions, applicable freight, loading, or handling charges for the order may not be refunded.</li>
+    </ul>
 
-      <h2>5. Return Transportation and Pickup</h2>
-      <p>Responsibility for return transportation, pickup or related logistics costs will depend on the reason for the return and the specific order conditions.</p>
-      <p>These arrangements will be discussed and communicated to the customer before the return is arranged.</p>
+    <h3>1.3 Eligible Returns</h3>
+    <p>Subject to the exclusions in Section 1.5, a Buyer may request a return or replacement only for the following valid reasons:</p>
+    <ol>
+      <li><strong>Material Mismatch:</strong> Supplied goods materially deviate from the agreed order specifications, dimensions, thickness, profile, grade, or colour;</li>
+      <li><strong>Manufacturing / Quality Defects:</strong> Major defects that render the material unusable for its intended purpose (such as severe rusting, pitting, or surface/structural defects not attributable to site storage or handling); or</li>
+      <li><strong>Transit Damage:</strong> Significant damage occurring during transportation arranged by us, provided it is reported as required under Section 1.7.</li>
+    </ol>
+    <p>Requests made solely because a Buyer no longer needs the material, changes project plans, or over-ordered are not eligible as For Cause Returns unless expressly approved in writing by Evershine Prefab Solutions.</p>
 
-      <h2>6. Order Cancellation Policy</h2>
-      <p>Requests to cancel a confirmed order are reviewed on a case-by-case basis.</p>
-      <p>Customers should contact our team as soon as possible if they wish to cancel an order. Approval and any applicable conditions will depend on the specific order and circumstances.</p>
-      <p>Please contact our team before assuming that a cancellation has been accepted.</p>
+    <h3>1.4 Return &amp; Defect Reporting Timeline (Unloading / Within 1 Day)</h3>
+    <ul>
+      <li>Any damage, shortage, or defect must be reported <strong>at the time of unloading</strong> and <strong>no later than 1 (one) day (24 hours)</strong> from the time of delivery/unloading at the site.</li>
+      <li>Claims must be accompanied by clear supporting evidence, including unloading/delivery challan remarks, timestamped photographs, and videos showing the condition of the goods and vehicle/packaging.</li>
+      <li>Claims reported after unloading is completed without notation or beyond <strong>1 (one) day</strong> of delivery will not be eligible for return, replacement, or refund.</li>
+    </ul>
 
-      <h2>7. Customised, Fabricated and Made-to-Order Products</h2>
-      <p>Some products may be customised, fabricated or prepared according to specific customer requirements.</p>
-      <p>Return, replacement or cancellation requests for such products will be evaluated based on the order specifications and agreed conditions. Eligibility may vary from one order to another.</p>
-      <p>Customers are encouraged to confirm product specifications and requirements with our team before placing an order.</p>
+    <h3>1.5 Non-Returnable &amp; Disqualified Items ("Disqualified Products")</h3>
+    <p>The following items and circumstances are <strong>not</strong> eligible for return, replacement, or refund:</p>
+    <ul>
+      <li><strong>Custom &amp; Fabricated Goods:</strong> Cut-to-size sheets, custom-profiled roofing/cladding, bespoke structural members, flashings, trims, or materials fabricated to specific project drawings/dimensions (except where a verified manufacturing defect exists);</li>
+      <li><strong>Late Claims:</strong> Requests raised after the 1-day / unloading reporting window;</li>
+      <li><strong>Altered or Used Condition:</strong> Goods that have been installed, cut, welded, drilled, painted, unbundled improperly, or damaged due to site handling, exposure, or improper storage after delivery;</li>
+      <li><strong>Standard Quantity &amp; Weight Variations:</strong> In industrial steel, coil, sheet, and structural supplies, actual dispatched quantity or weight may vary up to <strong>±10%</strong> from the ordered quantity. Final invoicing reflects actual serviced quantity/weight, with billing adjustments/refunds settled against actuals rather than treated as a returnable defect; and</li>
+      <li><strong>Product-Specific Terms:</strong> Any items governed by separate warranty or project contract terms that exclude returns.</li>
+    </ul>
 
-      <h2>8. How to Raise a Return or Refund Request</h2>
-      <p>For any return, replacement, refund or cancellation request:</p>
-      <ol>
-        <li>Contact Evershine Prefab Solutions using the details provided below.</li>
-        <li>Share your order or enquiry reference and relevant product details.</li>
-        <li>Explain the reason for your request.</li>
-        <li>Provide photographs or supporting information where applicable.</li>
-        <li>Our team will review the request and communicate the applicable next steps.</li>
-      </ol>
-      <p>Please do not arrange a product return or dispatch material back to us without first contacting our team.</p>
+    <h3>1.6 Return Procedure &amp; Verification</h3>
+    <p>To process an eligible return, the Buyer must:</p>
+    <ol>
+      <li>Notify Evershine Prefab Solutions within <strong>1 (one) day</strong> of delivery (ideally during unloading) with invoice/challan details and photo/video proof;</li>
+      <li>Keep the goods secure, segregated, and protected from weather, theft, or further damage;</li>
+      <li>Retain original tags, labels, mill/test certificates (where applicable), packaging, and invoice copies; and</li>
+      <li>Allow Evershine Prefab Solutions or its authorized representative/inspector to verify the claim before any return or replacement is approved.</li>
+    </ol>
+    <p>Evershine Prefab Solutions reserves sole discretion to accept or reject return/replacement requests after inspection and verification.</p>
 
-      <h2>9. Contact Us</h2>
-      <p><strong>Evershine Prefab Solutions</strong></p>
-      <p>Primary Contact: <a href="tel:+917774078785">+91 7774078785</a></p>
-      <p>Additional Contacts: +91 9860118911, +91 9881147000</p>
-      <p>Email: <a href="mailto:evershineng@gmail.com">evershineng@gmail.com</a></p>
-      <p>Office Address: 133, Bante Layout, Wardha Road, Nagpur, Maharashtra – 440025, India.</p>
-      <p>Business Hours: Monday – Saturday: 09:00 AM – 06:00 PM. Sunday: Closed.</p>
+    <h2>2. Refunds and Replacements</h2>
 
-      <h2>10. Policy Updates</h2>
-      <p>Evershine Prefab Solutions may update this policy when necessary. Any revised version will be published on this website. Customers are encouraged to review the policy when placing an enquiry or order.</p>
-    `
+    <h3>2.1 Resolution &amp; Inspection</h3>
+    <p>Once a valid return or replacement request is received with required proof, Evershine Prefab Solutions will coordinate inspection, site verification, or a mutually agreed resolution plan. If a resolution is not mutually concluded within <strong>3 (three) business days</strong> of verification, Evershine Prefab Solutions may determine an appropriate resolution (such as replacement, credit note, or refund) in line with this policy and the underlying supply contract.</p>
+
+    <h3>2.2 Reverse Logistics &amp; Site Handling</h3>
+    <p>Where a return or replacement is approved under For Cause Returns, Evershine Prefab Solutions will coordinate pickup/reverse logistics from the delivery site. Buyers must ensure safe vehicle access and proper unloading/loading support at the site, and must not install or further alter disputed materials pending inspection.</p>
+
+    <h3>2.3 Frivolous or Unsubstantiated Claims</h3>
+    <p>If a claim is found to be false, misleading, or caused by Buyer-side mishandling/storage rather than a genuine For Cause Return, Evershine Prefab Solutions may reject the claim and recover inspection, transport, or handling costs incurred in addressing the claim.</p>
+
+    <h2>3. Refund Process</h2>
+    <ul>
+      <li><strong>Authorization &amp; Method:</strong> Approved refunds will be processed within <strong>7 (seven) working days</strong> after final approval and completion of required verification/return checks. Refunds are issued via bank transfer (NEFT/RTGS/IMPS) or the original payment mode/registered bank account of the Buyer.</li>
+      <li><strong>Adjustments &amp; Set-Offs:</strong> Evershine Prefab Solutions may adjust or set off any outstanding dues, freight/handling charges, applicable tax adjustments (such as credit notes/GST adjustments), or promotional/discount benefits previously availed on the cancelled or returned order.</li>
+    </ul>
+
+    <h2>4. Shipping and Replacement Costs</h2>
+    <ul>
+      <li><strong>For Cause Returns:</strong> Where a return or replacement is validly approved under For Cause Returns, Evershine Prefab Solutions will bear the approved return/replacement freight cost as agreed.</li>
+      <li><strong>Replacement Dispatch:</strong> Replacement shipments are dispatched after verification and, where applicable, return/pickup of the disputed goods or completion of inspection formalities.</li>
+    </ul>
+
+    <h2>5. Misuse of Policy</h2>
+    <p>If Evershine Prefab Solutions determines that a Buyer has misused or abused this Return Policy—such as submitting fabricated defect claims, repeatedly cancelling orders after commitment, or misrepresenting site conditions—we reserve the right to pursue recovery of damages and direct costs incurred, suspend credit or order privileges, or decline future business dealings.</p>
+
+    <h2>6. Governing Law, Arbitration &amp; Jurisdiction</h2>
+
+    <h3>6.1 Amicable Resolution &amp; Arbitration</h3>
+    <p>If a dispute or difference arises out of or relating to this Return Policy (including its validity, interpretation, performance, or breach) and is not resolved amicably within <strong>30 (thirty) days</strong>, it shall be referred to and finally resolved by arbitration under the <strong>Arbitration and Conciliation Act, 1996</strong>, as amended from time to time.</p>
+
+    <h3>6.2 Arbitral Tribunal, Seat/Venue &amp; Language</h3>
+    <ul>
+      <li>The arbitration shall be conducted before a sole arbitrator mutually appointed by the parties, or a three-member tribunal if required by contract or mutual agreement.</li>
+      <li>The seat and venue of arbitration shall be <strong>Nagpur, Maharashtra, India</strong>, and the proceedings shall be conducted in <strong>English</strong>.</li>
+    </ul>
+
+    <h3>6.3 Arbitration Procedure &amp; Award</h3>
+    <ul>
+      <li>The arbitral tribunal may direct document production, witness statements/depositions, and hearings (or decide on written submissions where agreed), and may impose costs or dismiss claims/defences for non-compliance or non-payment of directed fees/costs after due notice.</li>
+      <li>The arbitral award shall be in writing, state reasons, and be final and binding on the parties. Each party shall bear its own legal fees unless otherwise awarded, while arbitration costs/expenses shall be governed by the tribunal’s directions or shared as applicable.</li>
+    </ul>
+
+    <h3>6.4 Governing Law &amp; Court Jurisdiction</h3>
+    <p>This Return Policy is governed by the laws of India. Subject to the arbitration clause above, the courts in <strong>Nagpur, Maharashtra</strong> shall have exclusive jurisdiction over any proceedings relating to this Return Policy.</p>
+  `
   },
 
   {

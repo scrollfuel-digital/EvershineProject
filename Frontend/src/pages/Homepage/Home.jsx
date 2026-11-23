@@ -1,4 +1,5 @@
 import React from "react";
+import ScrollReveal from "../../components/ui/ScrollReveal";
 
 // Home Page Section Components
 import Hero from "./Home/Hero";
@@ -14,16 +15,24 @@ const Home = () => {
       <Hero />
 
       {/* 2. Official Brand Partners & Direct Mill Sourcing Network */}
-      <BrandShowcase />
+      <ScrollReveal duration={1200} distance={40}>
+        <BrandShowcase />
+      </ScrollReveal>
 
       {/* 3. Category Associated Products Showcase */}
-      <CategoryProducts />
+      <ScrollReveal duration={1200} distance={40}>
+        <CategoryProducts />
+      </ScrollReveal>
 
       {/* 4. Recent Blogs Showcase */}
-      <RecentBlogs />
+      <ScrollReveal duration={1200} distance={40}>
+        <RecentBlogs />
+      </ScrollReveal>
 
       {/* 5. Customer Video Spotlight & Verified Testimonials */}
-      <FromOurCustomers />
+      <ScrollReveal duration={1200} distance={40}>
+        <FromOurCustomers />
+      </ScrollReveal>
     </div>
   );
 };

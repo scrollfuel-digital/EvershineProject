@@ -1,10 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Award, Handshake, Leaf, Lightbulb, Eye, Target } from "lucide-react";
+import {
+  Award,
+  Handshake,
+  Leaf,
+  Lightbulb,
+  Eye,
+  Target,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import ScrollReveal from "../../components/ui/ScrollReveal";
+import AnimatedCounter from "../../components/ui/AnimatedCounter";
 import heroBannerImg from "../../assets/aboutSectionImages/hero_banner.png";
 import evershineTeamImg from "../../assets/aboutSectionImages/evershine_team.png";
 
 const About = () => {
+  const [openPartnerItems, setOpenPartnerItems] = useState({
+    0: true,
+    1: false,
+    2: false,
+    3: false,
+  });
+
+  const togglePartnerItem = (idx) => {
+    setOpenPartnerItems((prev) => ({
+      ...prev,
+      [idx]: !prev[idx],
+    }));
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -15,8 +40,8 @@ const About = () => {
     "@type": "Organization",
     name: "Evershine Solution",
     description:
-      "Industrial construction, steel supply, and building solutions provider based in Nagpur, Maharashtra.",
-    foundingDate: "2012",
+      "Industrial construction, steel supply, and PEB roofing solutions provider based in Nagpur, Maharashtra.",
+    foundingDate: "2013",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Nagpur",
@@ -25,142 +50,35 @@ const About = () => {
     },
     knowsAbout: [
       "Steel Supply",
-      "Industrial Construction",
+      "Pre-Engineered Buildings (PEB)",
+      "Industrial Roofing",
+      "Structural Steel",
       "Building Solutions",
-      "Engineering Excellence",
     ],
   };
 
-  const capabilities = [
+  const whyPartnerWithUs = [
     {
-      icon: "precision_manufacturing",
-      title: "Strategic Sourcing",
-      description:
-        "We partner directly with premium mills to secure the highest quality steel, ensuring consistent availability and competitive pricing for our clients.",
+      title: "Certified Mill Partnerships",
+      desc: "Direct sourcing and processing of genuine coils, tubes, and structural steel from TATA, JSW, Hindalco, Apollo, and AM/NS—backed by mill test certificates (MTC) for strict project compliance.",
     },
     {
-      icon: "fact_check",
-      title: "Quality Assurance",
-      description:
-        "Every batch undergoes rigorous testing and certification. We maintain strict compliance with international standards for complete peace of mind.",
+      title: "In-House Nagpur Manufacturing",
+      desc: "Custom roll-forming, precision length cutting, and structural component fabrication executed directly at our Nagpur plant to match your exact site drawings and reduce off-cut wastage.",
     },
     {
-      icon: "conveyor_belt",
-      title: "Advanced Logistics",
-      description:
-        "Our robust supply chain network guarantees precise, on-time delivery across diverse geographies, minimizing downtime for your projects.",
+      title: "Complete Under-One-Roof Supply",
+      desc: "From primary PEB structures, hollow sections, and Z/C purlins to color-coated steel/aluminum roofing profiles, wall cladding, flashings, and fasteners—delivered as one coordinated package.",
     },
     {
-      icon: "memory",
-      title: "Technology Integration",
-      description:
-        "Leveraging digital platforms for real-time tracking, inventory management, and seamless communication throughout the procurement cycle.",
-    },
-  ];
-
-  const whyChooseUs = [
-    {
-      icon: "verified",
-      title: "Unmatched Quality",
-      desc: "Certified, high-grade steel products that meet global standards.",
-    },
-    {
-      icon: "payments",
-      title: "Transparent Pricing",
-      desc: "Competitive rates with no hidden costs or surprises.",
-    },
-    {
-      icon: "local_shipping",
-      title: "Reliable Supply",
-      desc: "Consistent and timely delivery to keep your projects on schedule.",
-    },
-    {
-      icon: "support_agent",
-      title: "Streamlined Procurement",
-      desc: "Dedicated support to simplify your purchasing process.",
-    },
-    {
-      icon: "engineering",
-      title: "Industry Expertise",
-      desc: "Deep knowledge of industrial applications and requirements.",
-    },
-  ];
-
-  const timeline = [
-    {
-      year: "2015",
-      desc: "Founded with a vision to streamline supply.",
-      colorClass: "bg-primary-container text-primary-container",
-      dotClass: "bg-primary-container",
-    },
-    {
-      year: "2018",
-      desc: "Expanded operations across 10 major cities.",
-      colorClass: "bg-primary-container text-primary-container",
-      dotClass: "bg-primary-container",
-    },
-    {
-      year: "2021",
-      desc: "Reached milestone of 25K tons supplied annually.",
-      colorClass: "bg-primary-container text-primary-container",
-      dotClass: "bg-primary-container",
-    },
-    {
-      year: "2026",
-      desc: "Aiming to be India's top strategic supply partner.",
-      colorClass: "bg-on-tertiary-container text-on-tertiary-container",
-      dotClass: "bg-on-tertiary-container",
-    },
-  ];
-
-  const team = [
-    {
-      name: "Rajesh Kumar",
-      role: "Managing Director",
-      image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Anita Sharma",
-      role: "Head of Procurement",
-      image:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Vikram Singh",
-      role: "Logistics Director",
-      image:
-        "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Priya Patel",
-      role: "Quality Assurance Lead",
-      image:
-        "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
-    },
-  ];
-
-  const industries = [
-    {
-      title: "Construction",
-      image:
-        "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Infrastructure",
-      image:
-        "https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      title: "Manufacturing",
-      image:
-        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+      title: "13+ Years of Technical & BOQ Support",
+      desc: "Our team reviews your structural layouts and Bills of Quantities (BOQs) to recommend the right gauge, coating, and brand specification for your budget and load requirements.",
     },
   ];
 
   return (
     <main
-      className="bg-background text-on-surface font-body-md antialiased overflow-x-hidden selection:bg-tertiary-container selection:text-on-tertiary pt-[64px] sm:pt-[72px] lg:pt-[84px]"
+      className="bg-white text-slate-900 font-body-md antialiased overflow-x-hidden selection:bg-amber-300 selection:text-slate-950 pt-[85px] sm:pt-[105px] md:pt-[120px] lg:pt-[140px]"
       itemScope
       itemType="https://schema.org/AboutPage"
     >
@@ -171,7 +89,7 @@ const About = () => {
       />
 
       {/* Hero Section */}
-      <section className="relative w-full min-h-[580px] sm:min-h-[680px] lg:min-h-[819px] flex items-center justify-center overflow-hidden bg-on-surface">
+      <section className="relative w-full min-h-[500px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#002840]">
         <div className="absolute inset-0 z-0">
           <div
             className="w-full h-full bg-cover bg-center opacity-40 transition-transform duration-1000 transform hover:scale-105"
@@ -179,76 +97,81 @@ const About = () => {
               backgroundImage: `url(${heroBannerImg})`,
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-on-surface via-on-surface/50 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#002840] via-[#002840]/60 to-transparent"></div>
         </div>
 
-        <div className="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center text-on-primary py-16">
-          <h1 className="font-headline-xl text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-stack-md max-w-4xl mx-auto leading-tight">
-            Built on Steel. <br />
-            <span className="text-inverse-primary">Driven by Trust.</span>
-          </h1>
-          <p className="font-body-lg text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-stack-lg text-surface-variant leading-relaxed">
-            We simplify steel procurement for businesses with reliable
-            products, transparent pricing, and dependable supply.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/products"
-              className="bg-primary-fixed text-on-primary-fixed font-label-md px-8 py-4 rounded hover:bg-primary-fixed-dim transition-colors w-full sm:w-auto text-center font-semibold shadow-md hover:shadow-lg"
-            >
-              Explore Our Products
-            </Link>
-            <Link
-              to="/contact"
-              className="border border-outline text-on-primary font-label-md px-8 py-4 rounded hover:bg-on-surface-variant/40 transition-colors w-full sm:w-auto text-center font-semibold"
-            >
-              Talk to Our Team
-            </Link>
-          </div>
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white py-16">
+          <ScrollReveal duration={4200} distance={100}>
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 max-w-4xl mx-auto leading-tight font-display">
+              Built on Steel. <br />
+              <span className="text-[#FBBF24]">Driven by Trust.</span>
+            </h1>
+          </ScrollReveal>
+          <ScrollReveal duration={4200} distance={100}>
+            <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 text-slate-200 leading-relaxed font-medium">
+              We simplify industrial steel and roofing procurement for businesses with reliable products, transparent pricing, and dependable supply.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal duration={4200} distance={100}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/products"
+                className="bg-[#FBBF24] text-[#003860] px-8 py-3.5 rounded-xl font-bold hover:bg-amber-400 transition-all w-full sm:w-auto text-center shadow-md hover:shadow-lg active:scale-95"
+              >
+                Explore Our Products
+              </Link>
+              <Link
+                to="/contact"
+                className="border border-white/30 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-white/10 transition-all w-full sm:w-auto text-center active:scale-95"
+              >
+                Talk to Our Team
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* Trust Metrics */}
-      <section className="py-stack-xl border-b border-outline-variant bg-surface-container-lowest relative z-20 -mt-10 mx-margin-mobile md:mx-margin-desktop rounded-xl shadow-md">
-        <div className="max-w-container-max mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center md:divide-x md:divide-outline-variant">
+      {/* Trust Metrics Number Line */}
+      <section className="py-8 sm:py-10 border-b border-slate-200/80 bg-white relative z-20 -mt-10 mx-4 sm:mx-8 lg:mx-14 rounded-2xl shadow-lg border border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 text-center md:divide-x md:divide-slate-200">
             <div className="flex flex-col items-center">
-              <span className="font-headline-lg text-3xl sm:text-4xl md:text-5xl font-bold text-primary-container">
-                10+
+              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#004060]">
+                <AnimatedCounter end={13} duration={5} suffix="+" />
               </span>
-              <span className="font-label-md text-sm sm:text-base text-on-surface-variant mt-2">
+              <span className="text-xs sm:text-sm font-semibold text-slate-600 mt-2 uppercase tracking-wide">
                 Years Experience
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="font-headline-lg text-3xl sm:text-4xl md:text-5xl font-bold text-primary-container">
-                500+
+              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#004060]">
+                <AnimatedCounter end={500} duration={5} suffix="+" />
               </span>
-              <span className="font-label-md text-sm sm:text-base text-on-surface-variant mt-2">
+              <span className="text-xs sm:text-sm font-semibold text-slate-600 mt-2 uppercase tracking-wide">
                 Clients
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="font-headline-lg text-3xl sm:text-4xl md:text-5xl font-bold text-primary-container">
-                50K+
+              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#004060]">
+                <AnimatedCounter end={50} duration={5} suffix="K+" />
               </span>
-              <span className="font-label-md text-sm sm:text-base text-on-surface-variant mt-2">
+              <span className="text-xs sm:text-sm font-semibold text-slate-600 mt-2 uppercase tracking-wide">
                 Tons Supplied
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="font-headline-lg text-3xl sm:text-4xl md:text-5xl font-bold text-primary-container">
-                25+
+              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#004060]">
+                <AnimatedCounter end={25} duration={5} suffix="+" />
               </span>
-              <span className="font-label-md text-sm sm:text-base text-on-surface-variant mt-2">
+              <span className="text-xs sm:text-sm font-semibold text-slate-600 mt-2 uppercase tracking-wide">
                 Cities
               </span>
             </div>
-            <div className="flex flex-col items-center col-span-2 md:col-span-1 border-t md:border-t-0 pt-6 md:pt-0 border-outline-variant">
-              <span className="font-headline-lg text-3xl sm:text-4xl md:text-5xl font-bold text-primary-container">
-                99%
+            <div className="flex flex-col items-center col-span-2 md:col-span-1 border-t md:border-t-0 pt-6 md:pt-0 border-slate-200">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#004060]">
+                <AnimatedCounter end={99} duration={5} suffix="%" />
               </span>
-              <span className="font-label-md text-sm sm:text-base text-on-surface-variant mt-2">
+              <span className="text-xs sm:text-sm font-semibold text-slate-600 mt-2 uppercase tracking-wide">
                 On-Time Delivery
               </span>
             </div>
@@ -256,46 +179,55 @@ const About = () => {
         </div>
       </section>
 
-      {/* Who We Are */}
-      <section className="py-stack-xl px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-        <div className="grid md:grid-cols-2 gap-stack-lg items-center">
-          <div className="relative h-[360px] sm:h-[450px] md:h-[500px] rounded-xl overflow-hidden group shadow-lg">
-            <div
-              className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
-              style={{
-                backgroundImage: `url(${evershineTeamImg})`,
-              }}
-            />
-            <div className="absolute inset-0 border border-outline-variant rounded-xl pointer-events-none" />
-          </div>
-
-          <div>
-            <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-bold mb-stack-md text-on-surface leading-tight">
-              More Than a Steel Supplier. <br />
-              <span className="text-on-surface-variant">
-                Your Long-Term Supply Partner.
-              </span>
-            </h2>
-            <div className="font-body-md text-sm sm:text-base text-on-surface-variant space-y-4 leading-relaxed">
-              <p>
-                At Evershine, we understand that steel is the backbone of your
-                operations. Since our inception, we have been dedicated to
-                providing not just raw materials, but comprehensive supply chain
-                solutions tailored for the heavy industrial sector.
-              </p>
-              <p>
-                Our commitment goes beyond fulfilling orders. We partner with
-                procurement officers and engineers to ensure high-grade
-                materials, transparent specifications, and reliable delivery
-                schedules that keep your projects on track and on budget.
-              </p>
-              <p>
-                We combine deep industry expertise with modern logistics,
-                ensuring a zero-error approach to quality control and
-                distribution.
-              </p>
+      {/* ABOUT US Section */}
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-14 items-stretch">
+          {/* Left Column: Image Container with Fade-In Left (4s duration, high depth) */}
+          <ScrollReveal
+            direction="left"
+            duration={4000}
+            distance={95}
+            threshold={0.15}
+            className="h-full"
+          >
+            <div className="relative w-full h-[320px] sm:h-[400px] md:h-full min-h-[380px] lg:min-h-[460px] rounded-2xl overflow-hidden group shadow-xl flex">
+              <img
+                src={evershineTeamImg}
+                alt="Evershine Solution manufacturing facility and team in Nagpur"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#003860]/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 border border-slate-200/50 rounded-2xl pointer-events-none" />
             </div>
-          </div>
+          </ScrollReveal>
+
+          {/* Right Column: Text content with Fade-In Right (4s duration, high depth) */}
+          <ScrollReveal
+            direction="right"
+            duration={4000}
+            distance={95}
+            threshold={0.15}
+            className="h-full"
+          >
+            <div className="flex flex-col justify-between h-full py-0.5 sm:py-1">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#004060]/10 text-[#004060] uppercase tracking-wider mb-3 sm:mb-4">
+                  About Us
+                </div>
+                <h2 className="text-2xl sm:text-3xl lg:text-[36px] xl:text-[38px] font-extrabold text-[#004060] leading-[1.25] mb-5 sm:mb-6 font-display">
+                  Pre-Engineered Buildings &amp; High-Performance Industrial Roofing Systems
+                </h2>
+              </div>
+              <div className="text-slate-700 space-y-4 sm:space-y-5 text-base sm:text-lg lg:text-[19px] leading-[1.75] text-justify [text-align-last:left]">
+                <p className="text-justify [text-align-last:left]">
+                  Operating out of Nagpur since 2013, we are a specialized manufacturing and supply partner for Pre-Engineered Buildings (PEB) and high-performance industrial roofing systems. Over the past 13 years, we have bridged the gap between tier-1 steel and aluminum mills and on-site project execution—delivering structural and cladding solutions that keep commercial, industrial, and infrastructure projects on schedule.
+                </p>
+                <p className="text-justify [text-align-last:left]">
+                  By combining our own production facility in Nagpur with direct supply partnerships from JSW, Hindalco, and AM/NS (ArcelorMittal Nippon Steel), we give contractors, builders, and procurement teams direct access to certified materials, custom sizing, and rapid dispatch—without multi-tier dealer delays.
+                </p>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -303,34 +235,34 @@ const About = () => {
       <section className="bg-slate-50/80 py-16 sm:py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-100">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-center text-[#004060] font-display mb-10">
+          <h2 className="text-3xl sm:text-4xl md:text-[40px] font-extrabold text-center text-[#004060] font-display mb-10 sm:mb-12">
             Vision and Values
           </h2>
 
           {/* Top Overlapping Values Banner */}
-          <div className="max-w-4xl mx-auto bg-[#004060] text-white rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 shadow-xl relative z-10 -mb-12 sm:-mb-14">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="max-w-5xl mx-auto bg-[#004060] text-white rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 lg:p-9 shadow-xl relative z-10 -mb-12 sm:-mb-14">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
               <div className="flex flex-col items-center">
-                <Award className="w-6 h-6 text-[#B8D8E8] mb-2" />
-                <span className="text-xs sm:text-sm font-bold tracking-wide">
-                  Quality & Durability
+                <Award className="w-7 h-7 sm:w-8 sm:h-8 text-[#B8D8E8] mb-2 sm:mb-2.5" />
+                <span className="text-sm sm:text-base lg:text-[17px] font-bold tracking-wide">
+                  Quality &amp; Durability
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <Handshake className="w-6 h-6 text-[#B8D8E8] mb-2" />
-                <span className="text-xs sm:text-sm font-bold tracking-wide">
-                  Trust & Transparency
+                <Handshake className="w-7 h-7 sm:w-8 sm:h-8 text-[#B8D8E8] mb-2 sm:mb-2.5" />
+                <span className="text-sm sm:text-base lg:text-[17px] font-bold tracking-wide">
+                  Trust &amp; Transparency
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <Leaf className="w-6 h-6 text-[#B8D8E8] mb-2" />
-                <span className="text-xs sm:text-sm font-bold tracking-wide">
+                <Leaf className="w-7 h-7 sm:w-8 sm:h-8 text-[#B8D8E8] mb-2 sm:mb-2.5" />
+                <span className="text-sm sm:text-base lg:text-[17px] font-bold tracking-wide">
                   Sustainability
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <Lightbulb className="w-6 h-6 text-[#B8D8E8] mb-2" />
-                <span className="text-xs sm:text-sm font-bold tracking-wide">
+                <Lightbulb className="w-7 h-7 sm:w-8 sm:h-8 text-[#B8D8E8] mb-2 sm:mb-2.5" />
+                <span className="text-sm sm:text-base lg:text-[17px] font-bold tracking-wide">
                   Innovation
                 </span>
               </div>
@@ -338,22 +270,22 @@ const About = () => {
           </div>
 
           {/* Main White Overlapping Card with Vision & Mission Split */}
-          <div className="max-w-5xl mx-auto bg-white rounded-[24px] sm:rounded-[32px] pt-18 sm:pt-20 pb-10 sm:pb-12 px-6 sm:px-12 shadow-lg border border-slate-200/80 relative z-0">
-            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start relative">
+          <div className="max-w-6xl mx-auto bg-white rounded-[24px] sm:rounded-[32px] pt-18 sm:pt-20 lg:pt-22 pb-10 sm:pb-14 px-6 sm:px-12 lg:px-16 shadow-lg border border-slate-200/80 relative z-0">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-start relative">
               {/* Center Vertical Separator Line for Desktop */}
-              <div className="hidden md:block absolute left-1/2 top-2 bottom-2 w-px bg-slate-200 -translate-x-1/2" />
+              <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-px bg-slate-200 -translate-x-1/2" />
 
               {/* Left Column: Vision */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#004060]/10 flex items-center justify-center shrink-0">
-                    <Eye className="w-6 h-6 text-[#004060]" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-xl bg-[#004060]/10 flex items-center justify-center shrink-0">
+                    <Eye className="w-6 h-6 sm:w-7 sm:h-7 text-[#004060]" />
                   </div>
-                  <h3 className="text-2xl font-extrabold text-slate-900 font-display">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-[#004060] font-display">
                     Vision
                   </h3>
                 </div>
-                <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-medium pt-1">
+                <p className="text-slate-700 text-base sm:text-lg lg:text-[19px] leading-[1.75] text-justify [text-align-last:left]">
                   To become a preferred industrial solutions partner by
                   consistently delivering quality, reliability, and customer
                   satisfaction.
@@ -361,16 +293,16 @@ const About = () => {
               </div>
 
               {/* Right Column: Mission */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#004060]/10 flex items-center justify-center shrink-0">
-                    <Target className="w-6 h-6 text-[#004060]" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-xl bg-[#004060]/10 flex items-center justify-center shrink-0">
+                    <Target className="w-6 h-6 sm:w-7 sm:h-7 text-[#004060]" />
                   </div>
-                  <h3 className="text-2xl font-extrabold text-slate-900 font-display">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-[#004060] font-display">
                     Mission
                   </h3>
                 </div>
-                <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-medium pt-1">
+                <p className="text-slate-700 text-base sm:text-lg lg:text-[19px] leading-[1.75] text-justify [text-align-last:left]">
                   To provide innovative and dependable industrial solutions that
                   help businesses achieve operational efficiency and sustainable
                   growth.
@@ -381,58 +313,58 @@ const About = () => {
         </div>
       </section>
 
-      {/* Why Businesses Choose Us */}
-      <section className="py-stack-xl bg-surface-container-low border-y border-outline-variant">
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-          <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-bold mb-stack-lg text-center text-primary-container">
-            Why Businesses Choose Us
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {whyChooseUs.map((item, index) => (
-              <div
-                key={index}
-                className="bg-surface-container-lowest p-6 rounded-lg shadow-sm border border-outline-variant text-center hover:shadow-md hover:border-primary-container transition-all duration-200"
-              >
-                <span className="material-symbols-outlined text-4xl text-on-tertiary-container mb-4">
-                  {item.icon}
-                </span>
-                <h3 className="font-headline-md text-lg font-bold mb-2 text-on-surface">
-                  {item.title}
-                </h3>
-                <p className="font-body-md text-on-surface-variant text-xs sm:text-sm leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Why Commercial Buyers Partner With Us */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-[#dbe9f4] via-[#eaf2f8] to-[#d6e5f1] border-t border-[#b8cad9]">
+        <div className="max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
+          <ScrollReveal duration={2200} distance={60}>
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-extrabold text-[#004060] font-display">
+                Why Commercial Buyers Partner With Us
+              </h2>
+              <p className="text-slate-600 text-base sm:text-lg lg:text-[19px] mt-3 sm:mt-4 leading-relaxed">
+                Direct mill access, in-house precision manufacturing, and end-to-end technical support for industrial projects.
+              </p>
+            </div>
+          </ScrollReveal>
 
-
-
-      {/* Final CTA */}
-      <section className="py-stack-xl bg-surface-container-highest border-b border-outline-variant">
-        <div className="max-w-3xl mx-auto text-center px-margin-mobile md:px-margin-desktop">
-          <h2 className="font-headline-xl text-2xl sm:text-4xl lg:text-5xl font-bold mb-6 text-primary-container leading-tight">
-            Let's Build Something Strong Together
-          </h2>
-          <p className="font-body-lg text-base sm:text-lg text-on-surface-variant mb-8 leading-relaxed">
-            Partner with us for your next major project and experience the
-            Evershine difference.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link
-              to="/contact"
-              className="bg-primary-container text-on-primary font-label-md px-8 py-4 rounded hover:opacity-90 transition-opacity w-full sm:w-auto text-center font-semibold shadow-md"
-            >
-              Get a Quote
-            </Link>
-            <Link
-              to="/contact"
-              className="border-2 border-primary-container text-primary-container font-label-md px-8 py-4 rounded hover:bg-primary-container hover:text-on-primary transition-colors w-full sm:w-auto text-center font-semibold"
-            >
-              Contact Us
-            </Link>
+          <div className="flex flex-col space-y-6 sm:space-y-8">
+            {whyPartnerWithUs.map((item, index) => {
+              const isOpen = !!openPartnerItems[index];
+              return (
+                <ScrollReveal
+                  key={index}
+                  duration={4000}
+                  delay={index * 350}
+                  distance={95}
+                  threshold={0.1}
+                >
+                  <div className="border-b border-[#9eb4c7] pb-3 transition-colors">
+                    <button
+                      type="button"
+                      onClick={() => togglePartnerItem(index)}
+                      className="w-full flex items-center justify-between text-left py-2.5 cursor-pointer group"
+                      aria-expanded={isOpen}
+                    >
+                      <span className="text-lg sm:text-xl lg:text-[22px] font-bold text-[#004060] group-hover:text-[#002840] transition-colors leading-snug">
+                        {item.title}
+                      </span>
+                      <span className="p-1 rounded-full text-[#004060] group-hover:bg-[#004060]/10 transition-colors ml-3 shrink-0">
+                        {isOpen ? (
+                          <ChevronUp className="w-5 h-5 sm:w-6 sm:h-6" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6" />
+                        )}
+                      </span>
+                    </button>
+                    {isOpen && (
+                      <p className="pt-1 pb-3 text-slate-700 text-base sm:text-[16.5px] lg:text-[17.5px] leading-[1.75] text-justify [text-align-last:left]">
+                        {item.desc}
+                      </p>
+                    )}
+                  </div>
+                </ScrollReveal>
+              );
+            })}
           </div>
         </div>
       </section>

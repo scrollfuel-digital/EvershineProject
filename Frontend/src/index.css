@@ -338,3 +338,39 @@ body {
 .policy-content a:hover {
   color: #002840;
 }
+
+/* Scroll Reveal Fade Animations (Up, Down, Left, Right) */
+.scroll-reveal {
+  opacity: 0;
+  transform: translate(var(--reveal-x, 0px), var(--reveal-y, var(--reveal-distance, 50px)));
+  transition: opacity var(--reveal-duration, 2000ms) cubic-bezier(0.16, 1, 0.3, 1),
+              transform var(--reveal-duration, 2000ms) cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.reveal-up {
+  --reveal-x: 0px;
+  --reveal-y: var(--reveal-distance, 50px);
+}
+
+.scroll-reveal.reveal-down {
+  --reveal-x: 0px;
+  --reveal-y: calc(-1 * var(--reveal-distance, 50px));
+}
+
+.scroll-reveal.reveal-left {
+  --reveal-x: calc(-1 * var(--reveal-distance, 50px));
+  --reveal-y: 0px;
+}
+
+.scroll-reveal.reveal-right {
+  --reveal-x: var(--reveal-distance, 50px);
+  --reveal-y: 0px;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+

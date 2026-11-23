@@ -319,9 +319,9 @@ export const faqs = [
           "For changes to your product requirements, quantity or specifications, please contact your sales representative directly so that the changes can be discussed."
       },
       {
-        question: "Can I cancel a product enquiry?",
+        question: "Can I withdraw a product enquiry?",
         answer:
-          "If you want to withdraw a product enquiry or no longer require a selected product, please contact our sales team for assistance."
+          "Yes. If you want to withdraw an enquiry before an order is confirmed, contact our sales team. Withdrawing an enquiry is different from cancelling a confirmed order; confirmed order cancellations are handled according to the applicable cancellation terms."
       },
       {
         question: "Can I track my order status on the website?",
@@ -484,19 +484,114 @@ export const faqs = [
     ]
   },
 
-  // 13. RETURNS, WARRANTY & AFTER-SALES SUPPORT
+  // 13. RETURNS, REFUNDS, REPLACEMENTS & AFTER-SALES SUPPORT
   {
-    category: "Returns, Warranty & Support",
+    category: "Returns, Refunds & Support",
     questions: [
       {
-        question: "Can I return a product after delivery?",
+        question: "Can I cancel a confirmed order?",
         answer:
-          "For return-related queries, please contact our sales team and share your order details and the reason for your request. The applicable terms and conditions will be discussed with you."
+          "Cancellation requests must be submitted in writing. Standard or ready-stock orders may be considered for cancellation before dispatch or fabrication begins. Custom or made-to-order materials cannot be cancelled once raw material allocation, cutting or manufacturing has started. Contact your sales representative as soon as possible to submit a request."
       },
       {
-        question: "What should I do if I receive damaged material?",
+        question: "Can I cancel a standard or ready-stock order before dispatch?",
         answer:
-          "If you notice damaged material, please contact our sales team as soon as possible. Share relevant product, order and damage details, along with photographs if available, so your concern can be reviewed."
+          "You may submit a written cancellation request before the order is dispatched or fabrication begins. The cancellation is subject to approval by Evershine Prefab Solutions. If approved before dispatch, any eligible refund is processed within 7 working days from confirmation of the cancellation."
+      },
+      {
+        question: "Can I cancel a customized or fabricated order?",
+        answer:
+          "Custom or made-to-order materials, including cut-to-length profiles, specialized purlins or flashings, and project-specific PEB components, cannot be cancelled once raw material allocation, cutting or manufacturing has started."
+      },
+      {
+        question: "Can I request a partial order cancellation?",
+        answer:
+          "A partial cancellation may be considered with Evershine Prefab Solutions' approval. Freight, loading or handling charges applicable to the order may not be refundable."
+      },
+      {
+        question: "In which situations can I request a return or replacement?",
+        answer:
+          "A return or replacement may be requested if the supplied material materially differs from the agreed order specifications, has a major manufacturing or quality defect that makes it unusable for its intended purpose, or has significant transit damage during transportation arranged by Evershine Prefab Solutions. The request is subject to timely reporting, supporting evidence and inspection."
+      },
+      {
+        question: "How soon must I report damaged, short or defective material?",
+        answer:
+          "Report any visible damage, shortage or defect immediately during unloading and no later than 24 hours after delivery or unloading at the site. Note the issue on the delivery or unloading challan before unloading is completed, and notify Evershine Prefab Solutions."
+      },
+      {
+        question: "What evidence is required for a damage or defect claim?",
+        answer:
+          "Share your invoice and delivery or unloading challan details, including remarks recorded at delivery, along with timestamped photographs and videos showing the material and, where relevant, its vehicle or packaging. Keep the affected goods available for inspection."
+      },
+      {
+        question: "Will a claim be accepted if I report it after 24 hours?",
+        answer:
+          "Claims reported after the 24-hour reporting period are not eligible for return, replacement or refund. A claim may also be ineligible if the material was unloaded without recording the visible issue on the delivery or unloading challan."
+      },
+      {
+        question: "Which products or situations are not eligible for return?",
+        answer:
+          "Returns are generally not available for custom or fabricated goods, except where a manufacturing defect is verified. Goods that have been installed, cut, welded, drilled, painted, improperly unbundled, or damaged through site handling, exposure or improper storage after delivery are also not eligible. Product-specific warranty or project terms may separately exclude returns."
+      },
+      {
+        question: "Can I return material if I no longer need it or ordered too much?",
+        answer:
+          "A change in project plans, surplus material or a decision that the material is no longer required does not qualify for a return as a matter of course. Such a request may be considered only if Evershine Prefab Solutions expressly approves it in writing."
+      },
+      {
+        question: "Can the delivered steel quantity or weight differ from the ordered quantity?",
+        answer:
+          "For industrial steel, coil, sheet and structural supplies, the actual dispatched quantity or weight may vary by up to ±10%. Final invoicing is based on the actual supplied quantity or weight, and any applicable billing adjustment or refund is settled against those actuals rather than treated as a product defect."
+      },
+      {
+        question: "What should I do while my return or replacement request is being reviewed?",
+        answer:
+          "Keep the disputed material secure, segregated and protected from weather, theft or further damage. Retain its tags, labels, packaging, invoice and any applicable mill or test certificates. Do not install or alter the material, and allow Evershine Prefab Solutions or its authorized representative to inspect it."
+      },
+      {
+        question: "How is a return or replacement request reviewed?",
+        answer:
+          "Evershine Prefab Solutions may review the documents and evidence, inspect the material or arrange a site verification before deciding whether to approve the request. A return or replacement is not confirmed until the verification and approval process is complete."
+      },
+      {
+        question: "What happens after my return or replacement request is verified?",
+        answer:
+          "Evershine Prefab Solutions will coordinate an inspection or discuss a resolution with you. If a mutually agreed resolution is not reached within 3 business days after verification, Evershine Prefab Solutions may determine an appropriate resolution, such as a replacement, credit note or refund, in accordance with the applicable policy and supply contract."
+      },
+      {
+        question: "Who arranges and pays for return transportation?",
+        answer:
+          "For an approved return or replacement arising from an eligible material issue, Evershine Prefab Solutions will coordinate pickup or reverse logistics. Approved return or replacement freight will be borne by Evershine Prefab Solutions as agreed. The buyer must provide safe vehicle access and the required loading or unloading support at the site."
+      },
+      {
+        question: "When will an approved refund be processed?",
+        answer:
+          "An approved refund is processed within 7 working days after final approval and completion of the required verification and return checks. For an approved cancellation of a standard or ready-stock order before dispatch, the eligible refund is processed within 7 working days from confirmation of cancellation."
+      },
+      {
+        question: "How will I receive my refund?",
+        answer:
+          "Refunds are issued by NEFT, RTGS or IMPS, or through the original payment method or the buyer's registered bank account, as applicable. Any outstanding dues, freight or handling charges, applicable tax adjustments, credit note or GST adjustments, and promotional or discount benefits may be adjusted against the refund."
+      },
+      {
+        question: "When will a replacement be dispatched?",
+        answer:
+          "A replacement is dispatched after the claim has been verified and, where applicable, the disputed material has been returned or collected, or the required inspection formalities have been completed."
+      },
+      {
+        question: "Can a return or replacement request be rejected?",
+        answer:
+          "Yes. A request may be rejected if it does not meet the eligibility or reporting requirements, if the evidence does not support the claim, or if inspection shows that the issue resulted from buyer-side handling or storage. For false or unsubstantiated claims, inspection, transport or handling costs incurred may be recovered."
+      },
+      {
+        question: "What happens if a return claim is false or the return process is misused?",
+        answer:
+          "Fabricated claims, repeated cancellations after commitment or misrepresentation of site conditions may result in recovery of damages and direct costs. Evershine Prefab Solutions may also suspend credit or order privileges or decline future business dealings."
+      },
+      {
+        question: "How are disputes relating to returns or refunds resolved?",
+        answer:
+          "Disputes are first addressed through an attempt at amicable resolution. If they remain unresolved for 30 days, they are referred to arbitration under the Arbitration and Conciliation Act, 1996, as amended. The seat and venue are Nagpur, Maharashtra, and the proceedings are in English. Subject to arbitration, courts in Nagpur have exclusive jurisdiction."
       },
       {
         question: "Do your products come with a warranty?",
@@ -504,14 +599,9 @@ export const faqs = [
           "Warranty availability and applicable terms may vary depending on the product. Please confirm the relevant warranty details with our sales team before placing your order."
       },
       {
-        question: "What should I do if the delivered material does not match my requirements?",
-        answer:
-          "Please contact our sales team with your order details and explain the discrepancy. Our team will coordinate with you to understand and review your concern."
-      },
-      {
         question: "Do you provide after-sales support?",
         answer:
-          "For assistance after your purchase, you can contact our team at +91 9860118911 or evershineng@gmail.com with your order details and query."
+          "For assistance after your purchase, contact our team at +91 9860118911 or evershineng@gmail.com and share your order details and query."
       }
     ]
   },
