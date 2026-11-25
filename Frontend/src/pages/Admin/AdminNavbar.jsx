@@ -23,7 +23,10 @@ export default function AdminNavbar({
   const userInitial = user?.username ? user.username.charAt(0).toUpperCase() : "A";
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-full bg-[#004060] border-b border-light-gray select-none">
+    <header
+      className="fixed top-0 left-0 z-50 w-full border-b border-[#c4a574]/30 select-none"
+      style={{ backgroundColor: "#efe4d2" }}
+    >
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20 h-[64px] sm:h-[72px] lg:h-[84px] flex items-center justify-between gap-3 sm:gap-4 lg:gap-6">
         {/* LEFT — LOGO + ADMIN BADGE */}
         <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 shrink-0">
@@ -38,7 +41,7 @@ export default function AdminNavbar({
             />
           </Link>
 
-          <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase bg-slate-100 text-primary border border-slate-200">
+          <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold tracking-wide uppercase bg-white/80 text-neutral-900 border border-[#c4a574]/40">
             Admin Panel
           </span>
         </div>
@@ -46,14 +49,14 @@ export default function AdminNavbar({
         {/* CENTER — SEARCH BAR (tablet & up) */}
         <div className="hidden md:flex flex-1 justify-center min-w-0">
           <div className="relative w-full max-w-[620px] lg:max-w-[800px] xl:max-w-[920px]">
-            <div className="flex items-center bg-light-gray rounded-lg border border-transparent px-3 lg:px-4 h-[38px] lg:h-[46px] transition-all duration-300 hover:border-light focus-within:border-primary focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(0,64,96,0.08)]">
-              <HiOutlineSearch className="text-gray text-base lg:text-lg shrink-0" />
+            <div className="flex items-center bg-white/90 rounded-xl border border-[#c4a574]/40 px-3 lg:px-4 h-[38px] lg:h-[46px] transition-all duration-300 focus-within:ring-2 focus-within:ring-[#c4a574]">
+              <HiOutlineSearch className="text-slate-400 text-base lg:text-lg shrink-0" />
               <input
                 type="text"
                 placeholder="Search admin panel..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 min-w-0 pl-2 lg:pl-3 pr-2 text-sm bg-transparent text-dark placeholder-gray outline-none"
+                className="flex-1 min-w-0 pl-2 lg:pl-3 pr-2 text-sm bg-transparent text-neutral-900 placeholder-slate-400 outline-none"
               />
             </div>
           </div>
@@ -66,22 +69,22 @@ export default function AdminNavbar({
             <button
               type="button"
               onClick={() => setIsProfileOpen((prev) => !prev)}
-              className="flex items-center gap-2 p-1 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50/80 hover:bg-slate-100 transition-all text-slate-800 focus:outline-none"
+              className="flex items-center gap-2 p-1 sm:px-3 sm:py-1.5 rounded-xl border border-[#c4a574]/40 hover:border-[#c4a574] bg-white/80 hover:bg-white transition-all text-neutral-900 focus:outline-none cursor-pointer"
               aria-expanded={isProfileOpen}
               aria-label="User profile menu"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-xs shadow-xs uppercase">
+              <div className="w-8 h-8 rounded-lg bg-neutral-900 text-white flex items-center justify-center font-bold text-xs uppercase">
                 {userInitial}
               </div>
               <div className="hidden sm:flex flex-col text-left">
-                <span className="text-xs font-semibold text-slate-800 leading-tight">Admin User</span>
-                <span className="text-[10px] text-slate-500 leading-tight truncate max-w-[120px]">
+                <span className="text-xs font-semibold text-neutral-900 leading-tight">Admin User</span>
+                <span className="text-[10px] text-neutral-600 leading-tight truncate max-w-[120px]">
                   {user?.username || "Admin"}
                 </span>
               </div>
               <HiOutlineChevronDown
-                className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${
-                  isProfileOpen ? "rotate-180 text-primary" : ""
+                className={`w-3.5 h-3.5 text-neutral-600 transition-transform duration-200 ${
+                  isProfileOpen ? "rotate-180 text-[#c4a574]" : ""
                 }`}
               />
             </button>
@@ -118,7 +121,7 @@ export default function AdminNavbar({
                     <Link
                       to="/"
                       onClick={() => setIsProfileOpen(false)}
-                      className="flex items-center justify-between px-4 py-2 text-xs text-[#1849A9] hover:bg-blue-50 transition-colors"
+                      className="flex items-center justify-between px-4 py-2 text-xs text-neutral-900 hover:text-[#c4a574] hover:bg-slate-50 transition-colors"
                     >
                       <span>View Live Site</span>
                       <span className="text-[10px] text-slate-400">Exit</span>
@@ -142,7 +145,7 @@ export default function AdminNavbar({
           {/* Mobile Sidebar Toggle Button for Admin */}
           <button
             type="button"
-            className="lg:hidden p-2 rounded-lg text-primary hover:bg-slate-100 transition-colors text-xl font-bold"
+            className="lg:hidden p-2 rounded-lg text-neutral-900 hover:text-[#c4a574] hover:bg-white/60 transition-colors text-xl font-bold cursor-pointer"
             onClick={onToggleSidebar}
             aria-label="Toggle admin sidebar"
           >

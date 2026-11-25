@@ -1,52 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Calendar, ArrowRight, BookOpen, ChevronRight, ChevronLeft, Loader2, AlertCircle, Search, X } from "lucide-react";
-
-// In-memory cache + sessionStorage persistence across route navigations
-const blogsCache = {
-  pages: {},
-  search: {},
-};
-
-const getCachedPage = (pageNum) => {
-  if (blogsCache.pages[pageNum]) {
-    return blogsCache.pages[pageNum];
-  }
-  try {
-    const raw = sessionStorage.getItem(`evershine_blogs_p_${pageNum}`);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      blogsCache.pages[pageNum] = parsed;
-      return parsed;
-    }
-  } catch {
-    // sessionStorage unavailable or parse error
-  }
-  return null;
-};
-
-const setCachedPage = (pageNum, data) => {
-  blogsCache.pages[pageNum] = data;
-  try {
-    sessionStorage.setItem(`evershine_blogs_p_${pageNum}`, JSON.stringify(data));
-  } catch {
-    // ignore quota errors
-  }
-};
+import { Link, useSearchParams } from "react-router-dom";
+import { Calendar, ArrowRight, BookOpen, ChevronRight, Loader2, AlertCircle } from "lucide-react";
+import {
+  fetchBlogsPage,
+  formatBlogDate,
+  getCachedBlogsPage,
+  getCachedBlogSearch,
+  searchBlogsByKeyword,
+} from "../../services/blogService";
+import BlogFilterBar from "../../components/ui/BlogFilterBar";
+import BlogPagination from "../../components/ui/BlogPagination";
 
 export default function Blogs() {
-  const [page, setPage] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialUrlSearch = (searchParams.get("search") || searchParams.get("keyword") || "").trim();
+  const initialUrlPage = Math.max(0, (parseInt(searchParams.get("page"), 10) || 1) - 1);
+  const initialSortBy = searchParams.get("sortBy") === "title" ? "title" : "createdAt";
+  const initialSortDir = searchParams.get("sortDir") === "asc" ? "asc" : "desc";
+
+  const [page, setPage] = useState(initialUrlPage);
+  const [sortBy, setSortBy] = useState(initialSortBy);
+  const [sortDir, setSortDir] = useState(initialSortDir);
 
   // Initialize state directly from cache if available so there is zero flicker/re-fetch on navigation
-  const [blogs, setBlogs] = useState(() => getCachedPage(0)?.content || []);
-  const [totalPages, setTotalPages] = useState(() => getCachedPage(0)?.totalPages || 1);
-  const [loading, setLoading] = useState(() => !getCachedPage(0));
+  const [blogs, setBlogs] = useState(
+    () => getCachedBlogsPage(initialUrlPage, 6, initialSortBy, initialSortDir)?.content || []
+  );
+  const [totalPages, setTotalPages] = useState(
+    () => getCachedBlogsPage(initialUrlPage, 6, initialSortBy, initialSortDir)?.totalPages || 1
+  );
+  const [loading, setLoading] = useState(
+    () => !getCachedBlogsPage(initialUrlPage, 6, initialSortBy, initialSortDir)
+  );
   const [error, setError] = useState(null);
 
-  // Debounced search state
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  // Debounced search state synced with URL
+  const [searchQuery, setSearchQuery] = useState(initialUrlSearch);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialUrlSearch);
+  const [searchResults, setSearchResults] = useState(
+    () => (initialUrlSearch ? getCachedBlogSearch(initialUrlSearch) || [] : [])
+  );
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
 
@@ -65,42 +58,39 @@ export default function Blogs() {
     };
   }, [searchQuery]);
 
+  // Sync URL query params with debounced search, sort & page
+  useEffect(() => {
+    const next = new URLSearchParams();
+    if (debouncedQuery) {
+      next.set("search", debouncedQuery);
+    } else {
+      if (page > 0) next.set("page", String(page + 1));
+      if (sortBy !== "createdAt") next.set("sortBy", sortBy);
+      if (sortDir !== "desc") next.set("sortDir", sortDir);
+    }
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [debouncedQuery, page, sortBy, sortDir, searchParams, setSearchParams]);
+
   // Fetch paginated blogs only when not in cache
   useEffect(() => {
-    const cached = getCachedPage(page);
-    if (cached) {
-      return;
-    }
+    const cached = getCachedBlogsPage(page, 6, sortBy, sortDir);
+    if (cached) return;
 
     let isMounted = true;
-    async function fetchBlogs() {
+    async function load() {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(
-          `https://evershine-backend-1.onrender.com/api/blogs?pageNo=${page}&size=6&sortBy=createdAt&sortDir=desc`,
-          {
-            headers: {
-              accept: "*/*",
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Failed to load blogs (${res.status})`);
-        }
-
-        const data = await res.json();
+        const data = await fetchBlogsPage({ pageNo: page, size: 6, sortBy, sortDir });
         if (isMounted) {
-          const content = Array.isArray(data.content) ? data.content : [];
-          const pagesCount = data.totalPages || 1;
-          setCachedPage(page, { content, totalPages: pagesCount });
-          setBlogs(content);
-          setTotalPages(pagesCount);
+          setBlogs(data.content);
+          setTotalPages(data.totalPages);
         }
       } catch (err) {
         if (isMounted) {
-          setError(err.message || "Failed to load blogs");
+          setError(err?.message || "Failed to load blogs");
         }
       } finally {
         if (isMounted) {
@@ -109,15 +99,14 @@ export default function Blogs() {
       }
     }
 
-    fetchBlogs();
+    load();
     return () => {
       isMounted = false;
     };
-  }, [page]);
+  }, [page, sortBy, sortDir]);
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-    const cached = getCachedPage(newPage);
+  const applyCachedOrReset = (nextPage, nextSortBy, nextSortDir) => {
+    const cached = getCachedBlogsPage(nextPage, 6, nextSortBy, nextSortDir);
     if (cached) {
       setBlogs(cached.content);
       setTotalPages(cached.totalPages);
@@ -125,9 +114,26 @@ export default function Blogs() {
     }
   };
 
-  // Fetch search results via debounced search API (uses search cache)
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    applyCachedOrReset(newPage, sortBy, sortDir);
+  };
+
+  const handleSortByChange = (newSortBy) => {
+    setSortBy(newSortBy);
+    setPage(0);
+    applyCachedOrReset(0, newSortBy, sortDir);
+  };
+
+  const handleSortDirChange = (newSortDir) => {
+    setSortDir(newSortDir);
+    setPage(0);
+    applyCachedOrReset(0, sortBy, newSortDir);
+  };
+
+  // Fetch search results via debounced search API (uses shared blogService cache)
   useEffect(() => {
-    if (!debouncedQuery || blogsCache.search[debouncedQuery]) {
+    if (!debouncedQuery || getCachedBlogSearch(debouncedQuery)) {
       return;
     }
 
@@ -136,28 +142,13 @@ export default function Blogs() {
       try {
         setIsSearching(true);
         setSearchError(null);
-        const res = await fetch(
-          `https://evershine-backend-1.onrender.com/api/blogs/search?keyword=${encodeURIComponent(debouncedQuery)}`,
-          {
-            headers: {
-              accept: "*/*",
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Search failed (${res.status})`);
-        }
-
-        const data = await res.json();
+        const results = await searchBlogsByKeyword(debouncedQuery);
         if (isMounted) {
-          const results = Array.isArray(data) ? data : [];
-          blogsCache.search[debouncedQuery] = results;
           setSearchResults(results);
         }
       } catch (err) {
         if (isMounted) {
-          setSearchError(err.message || "Failed to search articles");
+          setSearchError(err?.message || "Failed to search articles");
         }
       } finally {
         if (isMounted) {
@@ -180,10 +171,10 @@ export default function Blogs() {
   };
 
   const isSearchMode = debouncedQuery.length > 0;
-  const activeSearchResults = blogsCache.search[debouncedQuery] || searchResults;
+  const activeSearchResults = getCachedBlogSearch(debouncedQuery) || searchResults;
   const displayedBlogs = isSearchMode ? activeSearchResults : blogs;
   const isOverallLoading = isSearchMode
-    ? isSearching && !blogsCache.search[debouncedQuery]
+    ? isSearching && !getCachedBlogSearch(debouncedQuery)
     : loading;
 
   return (
@@ -206,31 +197,19 @@ export default function Blogs() {
             Steel &amp; Industrial Roofing Insights
           </h1>
 
-          {/* Quick Search Bar with Live Debouncing - Increased width */}
-          <div className="relative max-w-xl sm:max-w-2xl mx-auto mt-6 sm:mt-8">
-            {isSearching ? (
-              <Loader2 className="w-5 h-5 text-[#004060] animate-spin absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-            ) : (
-              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-            )}
-            <input
-              type="text"
-              placeholder="Search articles by title or keyword..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white text-slate-900 placeholder-slate-400 rounded-2xl pl-12 pr-12 py-3.5 text-sm sm:text-base shadow-sm border border-slate-300/80 focus:outline-none focus:ring-2 focus:ring-[#004060] focus:border-transparent transition-all"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={handleClearSearch}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
-                aria-label="Clear search"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          {/* Quick Search Bar + Sort Controls */}
+          <BlogFilterBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onClearSearch={handleClearSearch}
+            isSearching={isSearching}
+            isSearchMode={isSearchMode}
+            sortBy={sortBy}
+            sortDir={sortDir}
+            onSortByChange={handleSortByChange}
+            onSortDirChange={handleSortDirChange}
+            className="max-w-3xl mx-auto mt-6 sm:mt-8"
+          />
         </div>
 
         {/* Loading State */}
@@ -271,16 +250,18 @@ export default function Blogs() {
             <p className="text-sm text-slate-600 mb-6">{error}</p>
             <button
               type="button"
-              onClick={() => {
-                delete blogsCache.pages[page];
-                try {
-                  sessionStorage.removeItem(`evershine_blogs_p_${page}`);
-                } catch {
-                  // ignore
-                }
+              onClick={async () => {
                 setLoading(true);
                 setError(null);
-                setPage(page);
+                try {
+                  const data = await fetchBlogsPage({ pageNo: page, size: 6, sortBy, sortDir, force: true });
+                  setBlogs(data.content);
+                  setTotalPages(data.totalPages);
+                } catch (err) {
+                  setError(err?.message || "Failed to load blogs");
+                } finally {
+                  setLoading(false);
+                }
               }}
               className="px-5 py-2.5 rounded-xl bg-[#004060] text-white font-bold hover:bg-[#002f48] transition cursor-pointer"
             >
@@ -338,13 +319,7 @@ export default function Blogs() {
               <div className="flex flex-col space-y-10 sm:space-y-14">
                 {displayedBlogs.map((blog, index) => {
                   const isReverse = index % 2 === 1; // Alternating zig-zag
-                  const formattedDate = blog.createdAt
-                    ? new Date(blog.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })
-                    : null;
+                  const formattedDate = formatBlogDate(blog.createdAt);
 
                   return (
                     /* Separated by the line used in About Us section (no chevron/accordion icons) */
@@ -417,31 +392,11 @@ export default function Blogs() {
 
             {/* Pagination Controls - always visible in normal browsing mode */}
             {!isSearchMode && blogs.length > 0 && (
-              <div className="flex items-center justify-center gap-3 pt-10 pb-4">
-                <button
-                  type="button"
-                  onClick={() => handlePageChange(Math.max(0, page - 1))}
-                  disabled={page === 0}
-                  className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#004060] font-bold border border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 active:scale-[0.98] transition shadow-xs cursor-pointer text-sm sm:text-base"
-                  aria-label="Previous Page"
-                >
-                  <ChevronLeft className="w-4.5 h-4.5 shrink-0" />
-                  <span>Previous</span>
-                </button>
-                <span className="text-sm sm:text-base font-bold text-slate-700 px-4 py-2 bg-white/80 backdrop-blur-xs rounded-xl border border-slate-200/90 shadow-xs select-none">
-                  Page {page + 1} of {Math.max(1, totalPages)}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handlePageChange(Math.min(totalPages - 1, page + 1))}
-                  disabled={page >= totalPages - 1}
-                  className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#004060] font-bold border border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 active:scale-[0.98] transition shadow-xs cursor-pointer text-sm sm:text-base"
-                  aria-label="Next Page"
-                >
-                  <span>Next</span>
-                  <ChevronRight className="w-4.5 h-4.5 shrink-0" />
-                </button>
-              </div>
+              <BlogPagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             )}
           </div>
         )}

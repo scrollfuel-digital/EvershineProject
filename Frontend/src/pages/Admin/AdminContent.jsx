@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { ADMIN_NAV_CONFIG } from "./adminNavConfig";
 import ProductAdminView from "./products/ProductAdminView";
+import BlogAdminView from "./blogs/BlogAdminView";
 
 // Section icon resolver
 function getSectionIcon(iconName, className = "w-5 h-5") {
@@ -48,9 +49,13 @@ export default function AdminContent() {
 
   const isProductsSection = activeSection.id === "products";
 
-  // When viewing products, render the required Product Catalogue layout directly
+  // When viewing products or blogs, render their dedicated Admin views
   if (isProductsSection) {
     return <ProductAdminView />;
+  }
+
+  if (activeSection.id === "blogs") {
+    return <BlogAdminView />;
   }
 
   // Placeholder for other admin sections (Users, Contacts, Blogs)

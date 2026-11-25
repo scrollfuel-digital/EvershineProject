@@ -23,7 +23,7 @@ import { useAuth } from "../hooks/useAuth";
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isAdmin, user } = useAuth();
 
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -101,7 +101,7 @@ export function CartProvider({ children }) {
    */
   const fetchCartItems = useCallback(
     async (force = false) => {
-      if (!isAuthenticated) {
+      if (!isAuthenticated || isAdmin) {
         syncCartState([]);
         return [];
       }
@@ -126,14 +126,14 @@ export function CartProvider({ children }) {
         setLoading(false);
       }
     },
-    [isAuthenticated, syncCartState]
+    [isAuthenticated, isAdmin, syncCartState]
   );
 
   // Initial fetch and user info sync when authentication status changes
   useEffect(() => {
     let isMounted = true;
 
-    if (isAuthenticated) {
+    if (isAuthenticated && !isAdmin) {
       fetchCartApi()
         .then((items) => {
           if (isMounted) {
@@ -165,13 +165,13 @@ export function CartProvider({ children }) {
       hasFetchedRef.current = false;
       // oxlint-disable-next-line react/set-state-in-effect
       syncCartState([]);
-      setUserName("");
+      setUserName(isAuthenticated && user?.username ? user.username : "");
     }
 
     return () => {
       isMounted = false;
     };
-  }, [isAuthenticated, user?.username, syncCartState]);
+  }, [isAuthenticated, isAdmin, user?.username, syncCartState]);
 
   /**
    * Add a product to the cart (POST /api/cart)
@@ -449,10 +449,10 @@ export function CartProvider({ children }) {
    */
   const openCart = useCallback(() => {
     setIsCartOpen(true);
-    if (!hasFetchedRef.current && isAuthenticated) {
+    if (!hasFetchedRef.current && isAuthenticated && !isAdmin) {
       fetchCartItems();
     }
-  }, [isAuthenticated, fetchCartItems]);
+  }, [isAuthenticated, isAdmin, fetchCartItems]);
 
   /**
    * Close the cart flyout/drawer

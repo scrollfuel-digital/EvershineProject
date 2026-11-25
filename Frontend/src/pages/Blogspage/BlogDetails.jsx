@@ -1,40 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronRight, ArrowLeft, Calendar, Loader2, AlertCircle } from "lucide-react";
-
-// In-memory cache + sessionStorage for individual blog posts
-const blogDetailsCache = {};
-
-const getCachedBlog = (slug) => {
-  if (!slug) return null;
-  if (blogDetailsCache[slug]) return blogDetailsCache[slug];
-  try {
-    const raw = sessionStorage.getItem(`evershine_blog_${slug}`);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      blogDetailsCache[slug] = parsed;
-      return parsed;
-    }
-  } catch {
-    // ignore
-  }
-  return null;
-};
-
-const setCachedBlog = (slug, data) => {
-  if (!slug || !data) return;
-  blogDetailsCache[slug] = data;
-  try {
-    sessionStorage.setItem(`evershine_blog_${slug}`, JSON.stringify(data));
-  } catch {
-    // ignore
-  }
-};
+import { fetchBlogBySlug, formatBlogDate, getCachedBlogBySlug } from "../../services/blogService";
 
 export default function BlogDetails() {
   const { slug } = useParams();
-  const [blog, setBlog] = useState(() => getCachedBlog(slug));
-  const [loading, setLoading] = useState(() => !getCachedBlog(slug));
+  const [blog, setBlog] = useState(() => getCachedBlogBySlug(slug));
+  const [loading, setLoading] = useState(() => !getCachedBlogBySlug(slug));
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -42,60 +14,31 @@ export default function BlogDetails() {
   }, [slug]);
 
   useEffect(() => {
-    if (!slug) return;
-
-    // If already in cache, do not re-fetch
-    if (getCachedBlog(slug)) {
-      return;
-    }
+    if (!slug || getCachedBlogBySlug(slug)) return;
 
     let isMounted = true;
-    async function fetchBlog() {
+    async function load() {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(
-          `https://evershine-backend-1.onrender.com/api/blogs/${encodeURIComponent(slug)}`,
-          {
-            headers: {
-              accept: "*/*",
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Failed to load article (${res.status})`);
-        }
-
-        const data = await res.json();
-        if (isMounted) {
-          setCachedBlog(slug, data);
-          setBlog(data);
-        }
+        const data = await fetchBlogBySlug(slug);
+        if (isMounted) setBlog(data);
       } catch (err) {
         if (isMounted) {
-          setError(err.message || "Failed to load blog post");
+          setError(err?.response?.data?.message || err?.message || "Failed to load blog post");
         }
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     }
 
-    fetchBlog();
+    load();
     return () => {
       isMounted = false;
     };
   }, [slug]);
 
-  const formattedDate = blog?.createdAt
-    ? new Date(blog.createdAt).toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
-    : null;
+  const formattedDate = formatBlogDate(blog?.createdAt);
 
   return (
     <div className="bg-[#fdf8ef] border-t border-[#004060]/10 min-h-screen text-slate-800 font-sans pt-[116px] sm:pt-[124px] md:pt-[116px] lg:pt-[128px] pb-20">

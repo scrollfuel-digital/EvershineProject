@@ -9,7 +9,7 @@ export default function AdminLayout() {
 
   return (
     <AdminDashboardProvider>
-      <div className="admin-root min-h-screen bg-slate-50 flex flex-col font-sans">
+      <div className="admin-root min-h-screen bg-[#fdf8ef] flex flex-col font-sans text-neutral-900">
         {/* Dedicated Admin Navbar */}
         <AdminNavbar
           isSidebarOpen={isSidebarOpen}
