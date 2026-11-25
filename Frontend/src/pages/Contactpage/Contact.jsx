@@ -144,12 +144,12 @@ export default function Contact() {
   }, [selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-[#dedfe3]/50 text-slate-800 font-sans pt-[85px] sm:pt-[105px] md:pt-[120px] lg:pt-[140px] pb-20">
+    <div className="min-h-screen bg-[#fdf8ef] text-slate-800 font-sans pt-[116px] sm:pt-[124px] md:pt-[116px] lg:pt-[128px] pb-20">
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
 
         {/* Breadcrumb Navigation - Consistent with Policy Page */}
         <ScrollReveal direction="left" duration={1500} distance={20}>
-          <nav className="flex items-center gap-2.5 text-base sm:text-lg lg:text-[19px] text-slate-700 mb-6 font-semibold flex-wrap">
+          <nav className="flex items-center gap-2.5 text-base sm:text-lg lg:text-[19px] text-slate-700 font-semibold flex-wrap py-5 sm:py-6">
             <Link to="/" className="hover:text-[#004060] transition-colors">
               Home
             </Link>
@@ -266,9 +266,6 @@ export default function Contact() {
                     >
                       +91 7774078785
                     </a>
-                    <span className="text-xs lg:text-sm text-slate-300 block mt-1">
-                      Instant response
-                    </span>
                   </div>
                 </div>
               </ScrollReveal>
@@ -287,9 +284,6 @@ export default function Contact() {
                     >
                       evershinengp@gmail.com
                     </a>
-                    <span className="text-xs lg:text-sm text-slate-300 block mt-1">
-                      For formal RFQs
-                    </span>
                   </div>
                 </div>
               </ScrollReveal>
@@ -314,34 +308,6 @@ export default function Contact() {
                 </div>
               </ScrollReveal>
             </div>
-
-            {/* 3. WIDE PROMINENT SEARCH BAR (Bigger Width for Desktop) */}
-            <ScrollReveal direction="up" duration={2200} delay={700} distance={35}>
-              <div className="mt-5 sm:mt-8 pt-5 sm:pt-6 border-t border-white/15">
-                <div className="w-full max-w-3xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto">
-                  <div className="relative">
-                    <Search className="w-5 h-5 sm:w-6 sm:h-6 text-slate-400 absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <input
-                      type="text"
-                      placeholder="Search FAQs by question, topic or keyword..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-white text-slate-900 placeholder-slate-400 rounded-xl pl-12 sm:pl-14 pr-12 py-3.5 sm:py-4 text-base sm:text-lg shadow-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#FBBF24] transition-all"
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
-                        aria-label="Clear search"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
           </div>
         </ScrollReveal>
 
@@ -418,6 +384,29 @@ export default function Contact() {
 
             {/* Right: FAQ Questions / Search Results View */}
             <main className="lg:col-span-8 xl:col-span-9 w-full">
+              {/* Search Bar: Positioned beside the Category Sidebar, directly above FAQs */}
+              <ScrollReveal direction="up" duration={2000} distance={25}>
+                <div className="relative mb-6">
+                  <Search className="w-5 h-5 text-slate-400 absolute left-4 sm:left-4.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Search FAQs by question, topic or keyword..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white text-slate-900 placeholder-slate-400 rounded-xl sm:rounded-2xl pl-11 sm:pl-12 pr-11 py-3.5 sm:py-4 text-base shadow-sm border border-slate-200/90 focus:outline-none focus:ring-2 focus:ring-[#004060] focus:border-transparent transition-all"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              </ScrollReveal>
               {filteredResults ? (
                 <div>
                   <ScrollReveal direction="up" duration={2000} distance={35}>

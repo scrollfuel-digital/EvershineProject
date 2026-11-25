@@ -48,6 +48,7 @@ import AllCategories from "./pages/catergoriespage/AllCategories";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/productpage/ProductDetails";
 import Blogs from "./pages/Blogspage/Blogs";
+import BlogDetails from "./pages/Blogspage/BlogDetails";
 import PolicyPage from "./pages/Policypage/PolicyPage";
 
 function AppContent() {
@@ -96,6 +97,8 @@ function AppContent() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blogs/:slug" element={<BlogDetails />} />
+        <Route path="/blog/:slug" element={<BlogDetails />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/products" element={<Products />} />

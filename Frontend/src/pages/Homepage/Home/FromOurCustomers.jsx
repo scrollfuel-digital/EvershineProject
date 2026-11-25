@@ -154,7 +154,7 @@ const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
         "absolute left-1/2 top-1/2 cursor-pointer border-2 p-7 sm:p-8 transition-all duration-500 ease-in-out select-none",
         isCenter
           ? "z-30 bg-[#E5E7EB] text-slate-900 border-[#E5E7EB]"
-          : "z-10 bg-[#FFFFFF] text-slate-800 border-slate-300 hover:border-slate-400 shadow-md",
+          : "z-10 bg-[#FFFFFF] text-slate-800 border-slate-300 hover:border-slate-400",
         isHidden && "opacity-0 pointer-events-none"
       )}
       style={{
@@ -167,8 +167,7 @@ const TestimonialCard = ({ position, testimonial, handleMove, cardSize }) => {
           translateX(${(cardSize / 1.5) * position}px)
           translateY(${isCenter ? -65 : position % 2 ? 15 : -15}px)
           rotate(${isCenter ? 0 : position % 2 ? 2.5 : -2.5}deg)
-        `,
-        boxShadow: isCenter ? "0px 8px 0px 4px rgba(0,0,0,0.15)" : "0px 4px 14px rgba(0,0,0,0.08)"
+        `
       }}
     >
       <span
@@ -245,7 +244,7 @@ export default function FromOurCustomers() {
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#FFFFFF] select-none" style={{ height: 600 }}>
+    <section className="relative w-full overflow-hidden bg-[#fdf8ef] select-none" style={{ height: 600 }}>
       {testimonialsList.map((testimonial, index) => {
         const position = testimonialsList.length % 2
           ? index - (testimonialsList.length + 1) / 2

@@ -78,7 +78,7 @@ const About = () => {
 
   return (
     <main
-      className="bg-white text-slate-900 font-body-md antialiased overflow-x-hidden selection:bg-amber-300 selection:text-slate-950 pt-[85px] sm:pt-[105px] md:pt-[120px] lg:pt-[140px]"
+      className="bg-[#fdf8ef] text-slate-900 font-body-md antialiased overflow-x-hidden selection:bg-amber-300 selection:text-slate-950"
       itemScope
       itemType="https://schema.org/AboutPage"
     >
@@ -89,7 +89,7 @@ const About = () => {
       />
 
       {/* Hero Section */}
-      <section className="relative w-full min-h-[500px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#002840]">
+      <section className="relative w-full min-h-[500px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#002840] pt-[110px] md:pt-[130px] lg:pt-[140px]">
         <div className="absolute inset-0 z-0">
           <div
             className="w-full h-full bg-cover bg-center opacity-40 transition-transform duration-1000 transform hover:scale-105"
@@ -211,9 +211,6 @@ const About = () => {
           >
             <div className="flex flex-col justify-between h-full py-0.5 sm:py-1">
               <div>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#004060]/10 text-[#004060] uppercase tracking-wider mb-3 sm:mb-4">
-                  About Us
-                </div>
                 <h2 className="text-2xl sm:text-3xl lg:text-[36px] xl:text-[38px] font-extrabold text-[#004060] leading-[1.25] mb-5 sm:mb-6 font-display">
                   Pre-Engineered Buildings &amp; High-Performance Industrial Roofing Systems
                 </h2>
@@ -314,7 +311,7 @@ const About = () => {
       </section>
 
       {/* Why Commercial Buyers Partner With Us */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-[#dbe9f4] via-[#eaf2f8] to-[#d6e5f1] border-t border-[#b8cad9]">
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#fdf8ef] border-t border-[#004060]/15">
         <div className="max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-10">
           <ScrollReveal duration={2200} distance={60}>
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">

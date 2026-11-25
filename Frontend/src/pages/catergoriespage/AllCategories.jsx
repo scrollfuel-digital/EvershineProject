@@ -3,7 +3,7 @@ import { categoryListData } from "../../data/categoryListData";
 
 export default function AllCategories() {
   return (
-    <main className="min-h-screen pt-[160px] pb-16 px-4 sm:px-6 lg:px-16 bg-[#FAFAF7]">
+    <main className="min-h-screen pt-[160px] pb-16 px-4 sm:px-6 lg:px-16 bg-[#fdf8ef]">
       <div className="max-w-7xl mx-auto">
         <h1 className="font-['Sora',sans-serif] text-3xl md:text-4xl font-semibold text-[#14152B] mb-2">
           All Categories

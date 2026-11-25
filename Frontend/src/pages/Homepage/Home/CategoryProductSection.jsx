@@ -24,7 +24,7 @@ export default function CategoryProductSection({ category, products = [], nameMa
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = direction === "left" ? -scrollRef.current.clientWidth / 2 : scrollRef.current.clientWidth / 2;
+      const scrollAmount = direction === "left" ? -scrollRef.current.clientWidth * 0.82 : scrollRef.current.clientWidth * 0.82;
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
@@ -53,14 +53,14 @@ export default function CategoryProductSection({ category, products = [], nameMa
   return (
     <section className="w-full">
       {/* Category Header: Category name on left, See all on right */}
-      <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-200">
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+      <div className="flex items-center justify-between gap-4 pb-4 border-b border-[#c4a574]/30">
+        <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 tracking-tight">
           {category.name}
         </h2>
 
         <Link
           to={`/products?category=${encodeURIComponent(category.name)}`}
-          className="group inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#004060] hover:text-[#002840] transition-colors shrink-0"
+          className="group inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-neutral-900 hover:text-[#c4a574] transition-colors shrink-0"
         >
           <span>See all</span>
           <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
@@ -75,7 +75,7 @@ export default function CategoryProductSection({ category, products = [], nameMa
           onClick={() => handleScroll("left")}
           disabled={!canScrollLeft}
           aria-label="Slide previous products"
-          className={`absolute -left-2 sm:-left-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-slate-800 border border-slate-200 shadow-md flex items-center justify-center transition-all duration-200 lg:hidden ${
+          className={`absolute -left-2 sm:-left-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-slate-800 border border-slate-200 flex items-center justify-center transition-all duration-200 lg:hidden ${
             canScrollLeft
               ? "opacity-100 hover:bg-slate-50 cursor-pointer"
               : "opacity-0 pointer-events-none"
@@ -90,7 +90,7 @@ export default function CategoryProductSection({ category, products = [], nameMa
           onClick={() => handleScroll("right")}
           disabled={!canScrollRight}
           aria-label="Slide next products"
-          className={`absolute -right-2 sm:-right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-slate-800 border border-slate-200 shadow-md flex items-center justify-center transition-all duration-200 lg:hidden ${
+          className={`absolute -right-2 sm:-right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white text-slate-800 border border-slate-200 flex items-center justify-center transition-all duration-200 lg:hidden ${
             canScrollRight
               ? "opacity-100 hover:bg-slate-50 cursor-pointer"
               : "opacity-0 pointer-events-none"
@@ -99,11 +99,11 @@ export default function CategoryProductSection({ category, products = [], nameMa
           <ChevronRight className="w-4 h-4" />
         </button>
 
-        {/* 1x4 Grid Layout: horizontal scrolling on mobile/tab, 4-col grid on desktop */}
+        {/* 1x4 Grid Layout: 1 + 0.2 peek on mobile phone view, 4-col grid on desktop */}
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="grid grid-flow-col auto-cols-[calc(50%-6px)] sm:auto-cols-[220px] lg:auto-cols-fr lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8 xl:gap-9 overflow-x-auto lg:overflow-visible scroll-smooth snap-x snap-mandatory py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="grid grid-flow-col auto-cols-[80%] sm:auto-cols-[280px] lg:auto-cols-fr lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-9 overflow-x-auto lg:overflow-visible scroll-smooth snap-x snap-mandatory py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
           {displayProducts.map((product) => {
             const productSlug = product.slug || product.id;

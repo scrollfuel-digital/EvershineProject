@@ -1,22 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-import CrimpingBanner from "../../../assets/banner/crimping_profile_banner.png";
-import GIAngleBanner from "../../../assets/banner/GI Banner.png";
-import AluminiumCrimpingBanner from "../../../assets/banner/aluminium_crimping_banner.png";
-import PuffPanelsBanner from "../../../assets/banner/puff_panels_banner.jpg";
-import DeckSheetsBanner from "../../../assets/banner/deck_sheets_banner.png";
-import BareGalvalumeBanner from "../../../assets/banner/bare_galvalume_banner.png";
-import StandingSeamBanner from "../../../assets/banner/standing_seam_banner.jpg";
+import CrimpingSheetBanner from "../../../assets/banner/crimping-profile-sheet-16x9-v3.png";
+import CrimpingSheetsPromoBanner from "../../../assets/banner/crimping-profile-sheets-16x9-v3.png";
+import GalvanizedCoilsBanner from "../../../assets/banner/galvanized-coils-16x9-v3.png";
+import PuffPanelBanner from "../../../assets/banner/puff-panel-16x9-v3.png";
+import GIAnglesPhotoBanner from "../../../assets/banner/gi-angles-structural-section-16x9-photo.png";
+import AluminiumCrimpingPhotoBanner from "../../../assets/banner/aluminium-crimping-profile-sheets-16x9-photo.png";
+import DeckSheetsPhotoBanner from "../../../assets/banner/deck-sheets-16x9-photo.png";
 
 const banners = [
-  CrimpingBanner,
-  GIAngleBanner,
-  AluminiumCrimpingBanner,
-  PuffPanelsBanner,
-  DeckSheetsBanner,
-  BareGalvalumeBanner,
-  StandingSeamBanner,
+  CrimpingSheetsPromoBanner,
+  GalvanizedCoilsBanner,
+  PuffPanelBanner,
+  GIAnglesPhotoBanner,
+  DeckSheetsPhotoBanner,
 ];
 
 const AUTOPLAY_DELAY = 4000;
@@ -59,7 +57,7 @@ const Hero = () => {
   }, [maxIndex]);
 
   return (
-    <section className="w-full overflow-hidden mt-[114px] md:mt-[114px] lg:mt-[126px] pt-3 sm:pt-4 pb-2">
+    <section className="w-full overflow-hidden mt-[114px] lg:mt-[128px] pt-3 sm:pt-4 pb-2">
       {/* Banner carousel viewport with equal left and right spacing */}
       <div ref={containerRef} className="mx-4 md:mx-[4vw] overflow-hidden">
         <motion.div
@@ -74,7 +72,7 @@ const Hero = () => {
           {banners.map((banner, index) => (
             <div
               key={index}
-              className="shrink-0 overflow-hidden rounded-xl md:rounded-2xl shadow-sm"
+              className="shrink-0 overflow-hidden rounded-xl md:rounded-2xl"
               style={{ width: cardWidth > 0 ? `${cardWidth}px` : "auto" }}
             >
               <img
@@ -97,8 +95,8 @@ const Hero = () => {
             aria-label={`Go to slide ${index + 1}`}
             className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
               safeCurrent === index
-                ? "w-6 bg-gray-500"
-                : "w-1.5 bg-gray-300 hover:bg-gray-500"
+                ? "w-6 bg-neutral-900"
+                : "w-1.5 bg-[#c4a574]/50 hover:bg-[#c4a574]"
             }`}
           />
         ))}

@@ -25,11 +25,11 @@ export default function PolicyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#dedfe3]/50 text-slate-800 font-sans pt-[85px] sm:pt-[105px] md:pt-[120px] lg:pt-[140px] pb-20">
+    <div className="min-h-screen bg-[#fdf8ef] text-slate-800 font-sans pt-[116px] sm:pt-[124px] md:pt-[116px] lg:pt-[128px] pb-20">
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-20">
         {/* Breadcrumb Navigation - Big font size, separated by > icon, all clickable */}
         <ScrollReveal direction="left" duration={1500} distance={20}>
-          <nav className="flex items-center gap-2.5 text-base sm:text-lg lg:text-[19px] text-slate-700 mb-6 font-semibold flex-wrap">
+          <nav className="flex items-center gap-2.5 text-base sm:text-lg lg:text-[19px] text-slate-700 font-semibold flex-wrap py-5 sm:py-6">
             <Link to="/" className="hover:text-[#004060] transition-colors">
               Home
             </Link>

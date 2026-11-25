@@ -366,7 +366,7 @@ export default function ProductDetails() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f5f7fb] pt-[85px] sm:pt-[100px] md:pt-[115px] lg:pt-[135px] pb-16 px-4 sm:px-6 lg:px-8 xl:px-12 font-sans">
+      <main className="min-h-screen bg-[#fdf8ef] pt-[85px] sm:pt-[100px] md:pt-[115px] lg:pt-[135px] pb-16 px-4 sm:px-6 lg:px-8 xl:px-12 font-sans">
         <div className="max-w-[1440px] mx-auto animate-pulse space-y-6">
           <div className="h-5 w-64 bg-slate-200 rounded" />
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_330px] gap-6 items-start">
@@ -394,7 +394,7 @@ export default function ProductDetails() {
 
   if (error || !product) {
     return (
-      <main className="min-h-screen bg-[#f5f7fb] pt-[85px] sm:pt-[100px] md:pt-[115px] lg:pt-[135px] pb-16 px-4 sm:px-6 lg:px-8 font-sans text-center">
+      <main className="min-h-screen bg-[#fdf8ef] pt-[85px] sm:pt-[100px] md:pt-[115px] lg:pt-[135px] pb-16 px-4 sm:px-6 lg:px-8 font-sans text-center">
         <div className="max-w-xl mx-auto py-16 bg-white border border-[#e5eaf2] rounded-xl shadow-xs p-8">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
@@ -415,10 +415,10 @@ export default function ProductDetails() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] text-slate-900 font-sans pt-[85px] sm:pt-[100px] md:pt-[115px] lg:pt-[135px] pb-16 px-4 sm:px-6 lg:px-8 xl:px-12">
+    <main className="min-h-screen bg-[#fdf8ef] text-slate-900 font-sans pt-[116px] sm:pt-[124px] md:pt-[116px] lg:pt-[128px] pb-16 px-4 sm:px-6 lg:px-8 xl:px-12">
       <div className="max-w-[1440px] mx-auto">
-        {/* Breadcrumb Navigation - Clickable, large font size, separated by > icon */}
-        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2.5 mb-6 text-base sm:text-lg lg:text-[19px] font-semibold text-slate-700">
+        {/* Breadcrumb Navigation - Clickable, large font size, separated by > icon with equal top/bottom spacing */}
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2.5 py-5 sm:py-6 text-base sm:text-lg lg:text-[19px] font-semibold text-slate-700">
           <Link to="/" className="hover:text-[#004060] transition-colors">
             Home
           </Link>
@@ -430,8 +430,8 @@ export default function ProductDetails() {
             <>
               <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
               <Link
-                to={`/category/${product.categoryId || encodeURIComponent(resolvedCategory)}`}
-                className="hover:text-[#004060] transition-colors"
+                to={`/products?category=${encodeURIComponent(resolvedCategory)}`}
+                className="hover:text-[#004060] transition-colors capitalize"
               >
                 {resolvedCategory}
               </Link>
@@ -440,13 +440,21 @@ export default function ProductDetails() {
           {resolvedSubcategory && (
             <>
               <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
-              <span className="text-slate-700 font-semibold">{resolvedSubcategory}</span>
+              <Link
+                to={`/products?category=${encodeURIComponent(resolvedCategory || '')}&subcategory=${encodeURIComponent(resolvedSubcategory)}`}
+                className="hover:text-[#004060] transition-colors capitalize"
+              >
+                {resolvedSubcategory}
+              </Link>
             </>
           )}
           <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
-          <span className="text-[#004060] font-bold truncate max-w-xs sm:max-w-md">
+          <Link
+            to={`/products/${product.id || product.slug || ''}`}
+            className="text-[#004060] font-bold hover:underline truncate max-w-xs sm:max-w-md"
+          >
             {product.title}
-          </span>
+          </Link>
         </nav>
 
         {/* Main Product Layout */}
@@ -850,7 +858,7 @@ export default function ProductDetails() {
           </div>
 
           {/* Right Column: Sticky Purchase Assistance Sidebar */}
-          <aside className="w-full flex flex-col gap-5 lg:sticky lg:top-[135px]">
+          <aside className="w-full flex flex-col gap-5 lg:sticky lg:top-[135px] lg:max-h-[calc(100vh-155px)] lg:overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] [scrollbar-color:#285870_transparent]">
             {/* Supplier Contact Card */}
             <div className="p-6 bg-gradient-to-br from-[#092e59] to-[#075da8] rounded-xl text-white shadow-xs">
               <span className="text-xs font-bold tracking-wider text-[#a9d3ff] uppercase block">

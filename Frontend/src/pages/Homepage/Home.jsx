@@ -10,7 +10,10 @@ import FromOurCustomers from "./Home/FromOurCustomers";
 
 const Home = () => {
   return (
-    <div className="flex flex-col w-full overflow-x-hidden">
+    <div
+      className="flex flex-col w-full overflow-x-hidden min-h-screen"
+      style={{ backgroundColor: "#fdf8ef" }}
+    >
       {/* 1. Dynamic Dual-Column Hero with Synchronized Material Spotlight */}
       <Hero />
 

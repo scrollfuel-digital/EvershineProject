@@ -36,6 +36,14 @@ export function CartProvider({ children }) {
   const [updatingItemIds, setUpdatingItemIds] = useState(new Set());
   const [deletingItemIds, setDeletingItemIds] = useState(new Set());
 
+  // Track whether cart products have already been fetched to avoid repeated API calls on click
+  const hasFetchedRef = useRef(false);
+  const cartItemsRef = useRef(cartItems);
+
+  useEffect(() => {
+    cartItemsRef.current = cartItems;
+  }, [cartItems]);
+
   // Toast Notification State (Auto-dismisses in 2s with X button)
   const [toastMessage, setToastMessage] = useState(null);
   const toastTimeoutRef = useRef(null);
@@ -89,27 +97,37 @@ export function CartProvider({ children }) {
 
   /**
    * Fetch latest cart items from the backend database
+   * @param {boolean} force - Force refresh from server even if already fetched
    */
-  const fetchCartItems = useCallback(async () => {
-    if (!isAuthenticated) {
-      syncCartState([]);
-      return [];
-    }
+  const fetchCartItems = useCallback(
+    async (force = false) => {
+      if (!isAuthenticated) {
+        syncCartState([]);
+        return [];
+      }
 
-    setLoading(true);
-    setError(null);
-    try {
-      const items = await fetchCartApi();
-      syncCartState(items);
-      return items;
-    } catch (err) {
-      const message = parseCartError(err, "Failed to load your cart.");
-      setError(message);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  }, [isAuthenticated, syncCartState]);
+      // If already loaded and not forced, return cached items immediately without network request
+      if (force !== true && hasFetchedRef.current) {
+        return cartItemsRef.current;
+      }
+
+      setLoading(true);
+      setError(null);
+      try {
+        const items = await fetchCartApi();
+        hasFetchedRef.current = true;
+        syncCartState(items);
+        return items;
+      } catch (err) {
+        const message = parseCartError(err, "Failed to load your cart.");
+        setError(message);
+        return [];
+      } finally {
+        setLoading(false);
+      }
+    },
+    [isAuthenticated, syncCartState]
+  );
 
   // Initial fetch and user info sync when authentication status changes
   useEffect(() => {
@@ -119,6 +137,7 @@ export function CartProvider({ children }) {
       fetchCartApi()
         .then((items) => {
           if (isMounted) {
+            hasFetchedRef.current = true;
             syncCartState(items);
             setError(null);
           }
@@ -143,6 +162,8 @@ export function CartProvider({ children }) {
           if (isMounted && user?.username) setUserName(user.username);
         });
     } else {
+      hasFetchedRef.current = false;
+      // oxlint-disable-next-line react/set-state-in-effect
       syncCartState([]);
       setUserName("");
     }
@@ -194,7 +215,7 @@ export function CartProvider({ children }) {
             return [...prev, addedItem];
           });
         } else {
-          await fetchCartItems();
+          await fetchCartItems(true);
         }
 
         // Show Section 8 required bottom notification (auto-dismiss in 2s)
@@ -423,12 +444,15 @@ export function CartProvider({ children }) {
   }, []);
 
   /**
-   * Open the cart flyout/drawer and refresh cart items
+   * Open the cart flyout/drawer
+   * Opens instantly with cached products without making redundant network calls
    */
   const openCart = useCallback(() => {
     setIsCartOpen(true);
-    fetchCartItems();
-  }, [fetchCartItems]);
+    if (!hasFetchedRef.current && isAuthenticated) {
+      fetchCartItems();
+    }
+  }, [isAuthenticated, fetchCartItems]);
 
   /**
    * Close the cart flyout/drawer

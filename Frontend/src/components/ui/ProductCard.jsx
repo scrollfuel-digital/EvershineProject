@@ -80,7 +80,7 @@ export default function ProductCard({
 
   const content = (
     <article
-      className={`group relative flex h-[320px] sm:h-[370px] w-full sm:max-w-[280px] lg:max-w-[290px] mx-auto flex-col overflow-hidden rounded-xl sm:rounded-2xl bg-white text-neutral-800 shadow-[0_10px_16px_-6px_rgba(0,0,0,0.15)] hover:shadow-[0_16px_24px_-6px_rgba(0,0,0,0.22)] transition-all duration-200 ${className}`}
+      className={`group relative flex h-[380px] sm:h-[415px] lg:h-[425px] w-full max-w-[340px] sm:max-w-[310px] lg:max-w-[320px] mx-auto flex-col overflow-hidden rounded-xl sm:rounded-2xl bg-white text-neutral-800 transition-all duration-200 border border-[#004060]/15 ${className}`}
       onClick={(e) => {
         if (isUnavailable && !resolvedIsAdmin) {
           e.preventDefault();
@@ -98,7 +98,7 @@ export default function ProductCard({
             alt={product.title || "Steel product"}
             loading="lazy"
             onError={() => setImgError(true)}
-            className="absolute inset-0 h-full w-full object-contain object-center p-2.5 sm:p-3.5 transition-transform duration-500 group-hover:scale-[1.03]"
+            className="absolute inset-0 h-full w-full object-contain object-center p-3 sm:p-4 transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-neutral-400">
@@ -107,13 +107,10 @@ export default function ProductCard({
           </div>
         )}
 
-        {/* SOFT IMAGE SHADING */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-neutral-900/5" />
-
         {/* TOP BADGES - ONLY BRAND (AND UNAVAILABLE IF APPLICABLE) */}
         <div className="absolute left-2.5 right-2.5 top-2.5 z-10 flex items-start justify-between gap-1.5">
           {brand ? (
-            <span className="max-w-[85%] truncate rounded-md border border-neutral-200/90 bg-white/95 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-semibold text-neutral-800 shadow-2xs backdrop-blur-sm">
+            <span className="max-w-[85%] truncate rounded-md border border-neutral-200/90 bg-white/95 px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-semibold text-neutral-800 backdrop-blur-sm">
               {brand}
             </span>
           ) : (
@@ -129,17 +126,17 @@ export default function ProductCard({
       </div>
 
       {/* PRODUCT DETAILS */}
-      <div className="relative z-10 flex shrink-0 flex-col gap-1.5 sm:gap-2 bg-white p-2.5 sm:p-3.5">
+      <div className="relative z-10 flex shrink-0 flex-col gap-2 sm:gap-2.5 bg-white p-3 sm:p-3.5 border-t border-slate-100/90">
         {/* PRODUCT NAME - FIXED 2-LINE HEIGHT TO PREVENT UNEVEN ALIGNMENT */}
         <h3
-          className="h-8 sm:h-10 line-clamp-2 text-xs sm:text-[14px] font-semibold leading-snug text-neutral-800"
+          className="h-9 sm:h-10 line-clamp-2 text-[13px] sm:text-[14.5px] font-bold leading-snug text-neutral-900 group-hover:text-[#004060] transition-colors"
           title={product.title || "Untitled product"}
         >
           {product.title || "Untitled product"}
         </h3>
 
-        {/* ATTRIBUTES - AT MOST 3, ICONS HIDDEN ON MOBILE, NO SEPARATORS, FIXED SLOTS */}
-        <div className="flex h-[66px] sm:h-[78px] flex-col justify-start">
+        {/* ATTRIBUTES - FULLY VISIBLE, CLEAN TYPOGRAPHY, NO AWKWARD TRUNCATION */}
+        <div className="flex h-[74px] sm:h-[82px] flex-col justify-center gap-1">
           {[0, 1, 2].map((slotIndex) => {
             const attr = attributes[slotIndex];
             const Icon = icons[slotIndex];
@@ -148,7 +145,7 @@ export default function ProductCard({
               return (
                 <div
                   key={`empty-${slotIndex}`}
-                  className="h-[22px] sm:h-[26px] shrink-0"
+                  className="h-[22px] sm:h-[25px] shrink-0"
                   aria-hidden="true"
                 />
               );
@@ -157,20 +154,20 @@ export default function ProductCard({
             return (
               <div
                 key={attr.id || `${attr.label}-${slotIndex}`}
-                className="flex h-[22px] sm:h-[26px] shrink-0 items-center justify-between gap-1 sm:gap-2 text-[11px] sm:text-xs md:text-sm"
+                className="flex h-[22px] sm:h-[25px] shrink-0 items-center justify-between gap-2 text-xs sm:text-[13px] leading-tight"
               >
-                <div className="flex items-center gap-1.5 min-w-0 flex-1 truncate">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <Icon
-                    size={13}
+                    size={14}
                     strokeWidth={1.8}
-                    className="hidden sm:inline-block shrink-0 text-neutral-400"
+                    className="shrink-0 text-slate-400"
                   />
-                  <span className="truncate font-medium text-neutral-500 sm:text-neutral-600">
+                  <span className="font-medium text-slate-600 whitespace-nowrap">
                     {attr.label}
                   </span>
                 </div>
 
-                <span className="shrink-0 text-right font-bold text-neutral-900 ml-1">
+                <span className="font-bold text-slate-900 text-right whitespace-nowrap ml-auto">
                   {`${attr.min} - ${attr.max}${attr.unit ? ` ${attr.unit}` : ""}`}
                 </span>
               </div>
@@ -191,7 +188,7 @@ export default function ProductCard({
             type="button"
             disabled={isUnavailable}
             onClick={handlePurchase}
-            className="flex h-7 sm:h-8.5 w-full items-center justify-between rounded-lg bg-primary hover:bg-secondary text-white px-2.5 sm:px-3 py-[2px] text-[11px] sm:text-xs md:text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer shadow-xs"
+            className="flex h-8 sm:h-9 w-full items-center justify-between rounded-xl bg-[#004060] hover:bg-[#002f48] active:scale-[0.99] text-white px-3 sm:px-3.5 text-xs sm:text-[13px] font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer shadow-xs mt-0.5"
           >
             <span className="text-white font-medium">
               {isUnavailable ? "Unavailable" : "View Product"}

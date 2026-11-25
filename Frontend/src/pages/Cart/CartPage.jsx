@@ -39,8 +39,10 @@ export default function CartPage() {
   } = useCart();
 
   useEffect(() => {
-    fetchCartItems();
-  }, [fetchCartItems]);
+    if (cartItems.length === 0) {
+      fetchCartItems();
+    }
+  }, [fetchCartItems, cartItems.length]);
 
   const selectedCount = selectedItemIds.size;
   const isAllSelected = cartItems.length > 0 && selectedCount === cartItems.length;
@@ -48,7 +50,7 @@ export default function CartPage() {
 
   if (!isAuthenticated) {
     return (
-      <main className="min-h-[70vh] flex items-center justify-center py-16 px-4 bg-slate-50">
+      <main className="min-h-[70vh] flex items-center justify-center py-16 px-4 bg-[#fdf8ef]">
         <div className="max-w-md w-full bg-white rounded-2xl border border-slate-200 p-8 text-center shadow-sm">
           <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
             <ShoppingBag className="w-8 h-8" />
@@ -69,7 +71,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20 pt-[80px] sm:pt-[95px] md:pt-[110px] lg:pt-[130px] pb-16 font-sans bg-slate-50 min-h-screen">
+    <main className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20 pt-[80px] sm:pt-[95px] md:pt-[110px] lg:pt-[130px] pb-16 font-sans bg-[#fdf8ef] min-h-screen">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs">
@@ -123,7 +125,7 @@ export default function CartPage() {
             <p className="text-base font-semibold text-slate-800">{error}</p>
             <button
               type="button"
-              onClick={fetchCartItems}
+              onClick={() => fetchCartItems(true)}
               className="mt-4 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-secondary transition"
             >
               Retry

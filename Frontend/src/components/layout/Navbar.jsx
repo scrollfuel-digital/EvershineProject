@@ -84,7 +84,7 @@ function CategoryNavItem({
         >
             <Link
                 to={`/products?category=${encodeURIComponent(category.name)}`}
-                className="text-[12.5px] xl:text-[13.5px] font-medium py-1.5 px-2.5 xl:px-3 flex cursor-pointer group transition-colors duration-200 items-center justify-center gap-1 text-white/90 hover:text-[#FBBF24] relative rounded-full whitespace-nowrap"
+                className="text-[12.5px] xl:text-[13.5px] font-bold py-1.5 px-2.5 xl:px-3 flex cursor-pointer group transition-colors duration-200 items-center justify-center gap-1 text-neutral-900 hover:text-[#c4a574] relative rounded-full whitespace-nowrap"
                 onMouseEnter={() => setIsHover(category.id)}
                 onMouseLeave={() => setIsHover(null)}
                 onClick={() => setOpenMenu(null)}
@@ -93,14 +93,14 @@ function CategoryNavItem({
                 {hasTypes && (
                     <ChevronDown
                         className={`h-3.5 w-3.5 transition-transform duration-300 ${
-                            isOpen ? "rotate-180 text-[#FBBF24]" : "text-white/60 group-hover:text-[#FBBF24]"
+                            isOpen ? "rotate-180 text-[#c4a574]" : "text-neutral-700 group-hover:text-[#c4a574]"
                         }`}
                     />
                 )}
                 {(isHover === category.id || isOpen) && (
                     <motion.div
                         layoutId="cat-hover-bg"
-                        className="absolute inset-0 size-full bg-white/10 rounded-full -z-10"
+                        className="absolute inset-0 size-full bg-white/70 rounded-full -z-10"
                         transition={{ type: "spring", bounce: 0.15, duration: 0.3 }}
                     />
                 )}
@@ -137,7 +137,7 @@ function CategoryNavItem({
                                                 <Link
                                                     to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
                                                     onClick={() => setOpenMenu(null)}
-                                                    className="text-sm xl:text-[14.5px] font-semibold text-primary hover:text-secondary transition-colors block pb-2 border-b border-slate-100 whitespace-nowrap"
+                                                    className="text-sm xl:text-[14.5px] font-semibold text-neutral-900 hover:text-[#c4a574] transition-colors block pb-2 border-b border-slate-100 whitespace-nowrap"
                                                 >
                                                     {type.name}
                                                 </Link>
@@ -148,7 +148,7 @@ function CategoryNavItem({
                                                                 <Link
                                                                     to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(v.name)}`}
                                                                     onClick={() => setOpenMenu(null)}
-                                                                    className="text-[12.5px] xl:text-[13px] font-medium text-slate-600 hover:text-primary transition-colors block whitespace-nowrap"
+                                                                    className="text-[12.5px] xl:text-[13px] font-medium text-neutral-700 hover:text-[#c4a574] transition-colors block whitespace-nowrap"
                                                                 >
                                                                     {v.name}
                                                                 </Link>
@@ -167,7 +167,7 @@ function CategoryNavItem({
                                             key={type.id || type.name}
                                             to={`/products?category=${encodeURIComponent(category.name)}&subCategory=${encodeURIComponent(type.name)}`}
                                             onClick={() => setOpenMenu(null)}
-                                            className="text-sm xl:text-[14px] font-semibold text-primary hover:text-secondary transition-colors block whitespace-nowrap px-3 py-1.5 rounded-lg hover:bg-slate-50"
+                                            className="text-sm xl:text-[14px] font-semibold text-neutral-900 hover:text-[#c4a574] transition-colors block whitespace-nowrap px-3 py-1.5 rounded-lg hover:bg-slate-50"
                                         >
                                             {type.name}
                                         </Link>
@@ -307,7 +307,7 @@ export default function Navbar() {
     // Reusable search bar input with auto-complete dropdown
     const renderSearchBar = (isMobile = false) => (
         <div className="relative w-full">
-            <div className={`flex items-center bg-white rounded-xl border border-white/20 px-3 sm:px-4 ${isMobile ? "h-[40px]" : "h-[38px] sm:h-[42px]"} transition-all duration-300 focus-within:ring-2 focus-within:ring-[#FBBF24] shadow-xs`}>
+            <div className={`flex items-center bg-white/90 rounded-xl border border-[#c4a574]/40 px-3 sm:px-4 ${isMobile ? "h-[40px]" : "h-[38px] sm:h-[42px]"} transition-all duration-300 focus-within:ring-2 focus-within:ring-[#c4a574]`}>
                 <HiOutlineSearch className="text-slate-400 text-base sm:text-lg shrink-0" />
                 <input
                     type="text"
@@ -383,9 +383,15 @@ export default function Navbar() {
     );
 
     return (
-        <header className="fixed top-0 left-0 z-50 w-full bg-[#004060] shadow-md">
+        <header
+            className="fixed top-0 left-0 z-50 w-full"
+            style={{ backgroundColor: "#efe4d2" }}
+        >
             {/* ================= 1. PRIMARY MAIN NAVBAR (TOP TIER) ================= */}
-            <div className="w-full border-b border-white/10 bg-[#004060]">
+            <div
+                className="w-full border-b border-[#c4a574]/30"
+                style={{ backgroundColor: "#ffffff" }}
+            >
                 <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 h-[64px] sm:h-[72px] lg:h-[84px] flex items-center justify-between gap-3 lg:gap-6">
 
                     {/* LEFT SECTION: LOGO + MAIN NAV LINKS */}
@@ -393,13 +399,13 @@ export default function Navbar() {
                         {/* Logo -> Redirect to Home */}
                         <Link
                             to="/"
-                            className="shrink-0 flex items-center px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl shadow-xs transition-transform duration-300 ease-out hover:scale-105"
+                            className="shrink-0 flex items-center transition-transform duration-300 ease-out hover:scale-105 py-0.5"
                             title="Evershine Solution - Home"
                         >
                             <img
                                 src={evershineLogo}
                                 alt="Evershine Solution Logo"
-                                className="h-[36px] sm:h-[42px] lg:h-[48px] w-auto object-contain"
+                                className="h-[46px] sm:h-[54px] md:h-[58px] lg:h-[68px] xl:h-[72px] w-auto object-contain transition-all"
                             />
                         </Link>
 
@@ -411,10 +417,10 @@ export default function Navbar() {
                                     <Link
                                         key={link.href}
                                         to={link.href}
-                                        className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-[13.5px] xl:text-[14px] font-semibold transition-colors duration-150 whitespace-nowrap ${
+                                        className={`px-2.5 xl:px-3 py-1.5 rounded-lg text-[13.5px] xl:text-[14px] font-bold transition-all duration-150 whitespace-nowrap ${
                                             isActive
-                                                ? "text-[#FBBF24] bg-white/10"
-                                                : "text-white/90 hover:text-white hover:bg-white/10"
+                                                ? "text-[#c4a574] bg-white/80 border border-[#c4a574]/40"
+                                                : "text-neutral-900 hover:text-[#c4a574] hover:bg-white/60"
                                         }`}
                                     >
                                         {link.label}
@@ -439,13 +445,13 @@ export default function Navbar() {
                             <button
                                 type="button"
                                 onClick={openCart}
-                                className="relative flex items-center justify-center p-2 rounded-lg text-white hover:text-[#FBBF24] hover:bg-white/10 transition-colors cursor-pointer group"
+                                className="relative flex items-center justify-center p-2 rounded-lg text-neutral-900 hover:text-[#c4a574] hover:bg-white/60 transition-colors cursor-pointer group"
                                 aria-label="Open Cart"
                                 title="Enquiry Cart"
                             >
                                 <HiOutlineShoppingCart className="text-2xl transition-transform duration-200 group-hover:scale-110" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-[#FBBF24] text-[#004060] text-[11px] font-black rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center shadow-sm">
+                                    <span className="absolute -top-1 -right-1 bg-neutral-900 text-white text-[11px] font-black rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center">
                                         {cartCount}
                                     </span>
                                 )}
@@ -458,7 +464,7 @@ export default function Navbar() {
                                 {isAdmin && (
                                     <Link
                                         to="/admin"
-                                        className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white/15 text-white hover:bg-white/25 border border-white/20 transition-all shadow-sm whitespace-nowrap"
+                                        className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-neutral-900 text-white hover:bg-[#c4a574] transition-all whitespace-nowrap"
                                     >
                                         Admin Panel
                                     </Link>
@@ -468,7 +474,7 @@ export default function Navbar() {
                                 <button
                                     type="button"
                                     onClick={() => setIsProfileOpen((prev) => !prev)}
-                                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-[#004060] font-black text-sm sm:text-base flex items-center justify-center hover:bg-slate-100 transition-transform active:scale-95 shadow-sm focus:outline-none cursor-pointer uppercase shrink-0"
+                                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-neutral-900 text-white font-black text-sm sm:text-base flex items-center justify-center hover:bg-[#c4a574] transition-colors active:scale-95 focus:outline-none cursor-pointer uppercase shrink-0"
                                     title="Account Profile"
                                     aria-label="Account Profile"
                                     aria-expanded={isProfileOpen}
@@ -508,7 +514,7 @@ export default function Navbar() {
                         ) : (
                             <Link
                                 to="/login"
-                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-[#FBBF24] text-[#004060] hover:bg-[#F59E0B] transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-neutral-900 text-white hover:bg-[#c4a574] transition-all active:scale-95 whitespace-nowrap"
                             >
                                 Sign In
                             </Link>
@@ -521,13 +527,13 @@ export default function Navbar() {
                         <button
                             type="button"
                             onClick={openCart}
-                            className="relative flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition-colors cursor-pointer"
+                            className="relative flex items-center justify-center p-2 rounded-lg text-neutral-900 hover:text-[#c4a574] hover:bg-white/60 transition-colors cursor-pointer"
                             aria-label="Open Cart"
                             title="Enquiry Cart"
                         >
                             <HiOutlineShoppingCart className="text-2xl" />
                             {cartCount > 0 && (
-                                <span className="absolute top-0.5 right-0.5 bg-[#FBBF24] text-[#004060] text-[10px] font-black rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center shadow-sm">
+                                <span className="absolute top-0.5 right-0.5 bg-neutral-900 text-white text-[10px] font-black rounded-full h-4 min-w-[16px] px-1 flex items-center justify-center">
                                     {cartCount}
                                 </span>
                             )}
@@ -539,7 +545,7 @@ export default function Navbar() {
                             onClick={() => setIsMobileOpen((prev) => !prev)}
                             aria-expanded={isMobileOpen}
                             aria-label="Toggle navigation menu"
-                            className="flex items-center justify-center w-10 h-10 rounded-lg text-white hover:bg-white/10 transition-colors cursor-pointer"
+                            className="flex items-center justify-center w-10 h-10 rounded-lg text-neutral-900 hover:text-[#c4a574] hover:bg-white/60 transition-colors cursor-pointer"
                         >
                             <div className="w-5 h-4 relative flex flex-col justify-between items-center pointer-events-none">
                                 <span
@@ -570,7 +576,10 @@ export default function Navbar() {
             </div>
 
             {/* ================= 2. SECOND NAVBAR: CATEGORIES (DropdownNavigation) ================= */}
-            <div className="w-full bg-[#003860] border-b border-white/10 hidden md:block select-none shadow-[0_1px_2px_rgba(0,0,0,0.08)] z-40 relative">
+            <div
+                className="w-full border-b border-[#c4a574]/30 hidden md:block select-none z-40 relative"
+                style={{ backgroundColor: "#fff" }}
+            >
                 <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 h-[44px] flex items-center text-sm relative">
                     <ul className="relative flex items-center space-x-0.5 xl:space-x-1 h-full">
                         {categories.map((category) => {

@@ -123,7 +123,7 @@ export default function CartDrawer() {
                 <p className="text-sm font-semibold text-slate-800">{error}</p>
                 <button
                   type="button"
-                  onClick={fetchCartItems}
+                  onClick={() => fetchCartItems(true)}
                   className="mt-4 px-4 py-2 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-secondary transition cursor-pointer"
                 >
                   Try Again

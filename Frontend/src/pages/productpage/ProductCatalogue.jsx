@@ -71,11 +71,10 @@ export default function ProductCatalogue({ initialCategory = null }) {
   } = useCatalogProducts({ initialCategory });
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pt-[80px] md:pt-[125px] lg:pt-[138px] pb-12 w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20">
+    <div className="min-h-screen bg-[#fdf8ef] text-slate-800 font-sans pt-[116px] sm:pt-[124px] md:pt-[116px] lg:pt-[128px] pb-12 w-full px-4 sm:px-6 lg:px-10 xl:px-16 2xl:px-20">
       <div className="w-full">
-        {/* Breadcrumb Navigation - Clickable, large font size, separated by > icon.
-            Strictly clean for phone view: nav does NOT include filters */}
-        <nav className="flex items-center gap-2.5 text-base sm:text-lg lg:text-[19px] text-slate-700 mb-6 font-semibold flex-wrap">
+        {/* Breadcrumb Navigation - Clickable, large font size, separated by > icon with equal top/bottom spacing */}
+        <nav className="flex items-center gap-2.5 text-base sm:text-lg lg:text-[19px] text-slate-700 font-semibold flex-wrap py-5 sm:py-6">
           <Link to="/" className="hover:text-[#004060] transition-colors">
             Home
           </Link>
@@ -84,12 +83,15 @@ export default function ProductCatalogue({ initialCategory = null }) {
             All Products
           </Link>
           {initialCategory && (
-            <span className="hidden md:inline-flex items-center gap-2.5">
+            <>
               <ChevronRight className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-slate-400 shrink-0" />
-              <span className="text-[#004060] font-bold capitalize">
+              <Link
+                to={`/products?category=${encodeURIComponent(initialCategory)}`}
+                className="text-[#004060] font-bold capitalize hover:underline"
+              >
                 {initialCategory}
-              </span>
-            </span>
+              </Link>
+            </>
           )}
         </nav>
 

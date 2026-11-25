@@ -63,7 +63,10 @@ export default function AppSidebar({
         }}
       >
         <div
-          className={`bg-[#004060] rounded-2xl border border-[#003860] shadow-md p-4 sm:p-5 text-white max-h-[calc(100vh-${stickyTopOffset + 30}px)] flex flex-col ${cardClassName}`}
+          className={`bg-[#004060] rounded-2xl border border-[#003860] shadow-md p-4 sm:p-5 text-white flex flex-col ${cardClassName}`}
+          style={{
+            maxHeight: `calc(100vh - ${stickyTopOffset + 24}px)`,
+          }}
         >
           {/* Header */}
           {customHeader ? (
@@ -79,7 +82,7 @@ export default function AppSidebar({
           ) : null}
 
           {/* Scrollable Children Body */}
-          <div className="mt-3 flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 [scrollbar-width:thin] [scrollbar-color:#285870_transparent]">
+          <div className="mt-3 flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1.5 flex flex-col gap-1.5 [scrollbar-width:thin] [scrollbar-color:#285870_transparent]">
             {children}
           </div>
 

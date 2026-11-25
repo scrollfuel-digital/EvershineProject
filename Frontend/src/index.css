@@ -93,6 +93,7 @@ html {
 body {
   overflow-x: clip;
   max-width: 100vw;
+  background-color: #fdf8ef;
 }
 
 /* Tiptap Rich Text Editor Typography */
@@ -337,6 +338,171 @@ body {
 
 .policy-content a:hover {
   color: #002840;
+}
+
+/* ==========================================================================
+   Blog HTML Content Styles
+   ========================================================================== */
+.blog-content {
+  font-size: 1.125rem;
+  line-height: 1.85;
+  color: #1e293b;
+}
+
+.blog-content h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #004060;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.25;
+}
+
+@media (min-width: 640px) {
+  .blog-content h1 {
+    font-size: 2.35rem;
+  }
+}
+
+.blog-content h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #004060;
+  margin-top: 2.25rem;
+  margin-bottom: 0.85rem;
+  line-height: 1.3;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+@media (min-width: 640px) {
+  .blog-content h2 {
+    font-size: 1.85rem;
+  }
+}
+
+.blog-content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #004060;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.35;
+}
+
+@media (min-width: 640px) {
+  .blog-content h3 {
+    font-size: 1.45rem;
+  }
+}
+
+.blog-content p {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #334155;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .blog-content p {
+    font-size: 1.125rem;
+  }
+}
+
+.blog-content a {
+  color: #004060;
+  font-weight: 700;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.blog-content a:hover {
+  color: #002840;
+}
+
+.blog-content ul {
+  list-style-type: disc;
+  padding-left: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-content ol {
+  list-style-type: decimal;
+  padding-left: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-content li {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .blog-content li {
+    font-size: 1.125rem;
+  }
+}
+
+.blog-content strong {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.blog-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.75rem;
+  margin-bottom: 1.75rem;
+  font-size: 0.95rem;
+  border: 1px solid #cbd5e1;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 640px) {
+  .blog-content table {
+    display: table;
+    font-size: 1.05rem;
+  }
+}
+
+.blog-content th {
+  background-color: #004060;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  border: 1px solid #cbd5e1;
+}
+
+.blog-content td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.blog-content tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #004060;
+  padding-left: 1.25rem;
+  font-style: italic;
+  color: #475569;
+  margin: 1.5rem 0;
+}
+
+.blog-content img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 0.75rem;
+  margin: 1.5rem auto;
+  display: block;
 }
 
 /* Scroll Reveal Fade Animations (Up, Down, Left, Right) */

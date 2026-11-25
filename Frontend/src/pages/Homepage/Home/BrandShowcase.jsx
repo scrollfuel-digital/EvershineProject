@@ -118,7 +118,7 @@ export default function BrandShowcase() {
             onClick={() => handleScroll("left")}
             disabled={!canScrollLeft}
             aria-label="Slide previous brands"
-            className={`absolute -left-2 sm:-left-3.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-slate-700 border border-slate-200 flex items-center justify-center shadow-md transition-all duration-200 ${
+            className={`absolute -left-2 sm:-left-3.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-slate-700 border border-slate-200 flex items-center justify-center transition-all duration-200 ${
               canScrollLeft
                 ? "opacity-100 hover:bg-slate-50 cursor-pointer"
                 : "opacity-0 pointer-events-none"
@@ -133,7 +133,7 @@ export default function BrandShowcase() {
             onClick={() => handleScroll("right")}
             disabled={!canScrollRight}
             aria-label="Slide next brands"
-            className={`absolute -right-2 sm:-right-3.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-slate-700 border border-slate-200 flex items-center justify-center shadow-md transition-all duration-200 ${
+            className={`absolute -right-2 sm:-right-3.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-slate-700 border border-slate-200 flex items-center justify-center transition-all duration-200 ${
               canScrollRight
                 ? "opacity-100 hover:bg-slate-50 cursor-pointer"
                 : "opacity-0 pointer-events-none"
